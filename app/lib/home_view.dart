@@ -1,30 +1,19 @@
 import 'package:flutter/material.dart';
 
 
-
-
-// I made this as a stateless Widget, thinking that this screen should
-// only show if the user is not logged in, so there will not be a need to 
-// access the state, since the screen will always look the same.
+// information/instructions: Flutter Widget; This is the home view, when the
+      //user first opesn the app and is not signed in.
+// @params: no params
+// @return: nothing returned
+// bugs: no known bugs
+// TODO: Figure out the cross-origin problem for images. 
+// 
 class HomeView extends StatelessWidget {
   const HomeView({ Key? key }) : super(key: key);
-  
-  final String title = "The Bike Kollective";
-  final String aboutUs = "We help communities share bikes.";  
-  // I tried using network Image at first, but ran into some trouble
-  // with cross-origin requests, and I couldn't remember how to fix it.
-  // This was the url for a placeholder image, which is currently not
-  // being used.
-  //final String bannerImageUrl = "https://via.placeholder.com/468x60";
+  final String aboutUs = "We help communities share bikes.";
   @override
   Widget build(BuildContext context) {
-    
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-      ),
-      endDrawer: const MenuDrawer(),
-      body: Column(
+    return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
@@ -37,21 +26,25 @@ class HomeView extends StatelessWidget {
             Text(aboutUs),
             const HomeButtonGroup()
           ],
-        ),
-      
-    );
+        );
   }
 }
 
-// This widget is the three buttons on the home page. I 
-// think we want to center them eventually.
+
+// information/instructions: Stateless Flutter Widget, to be rendered by 
+  // the HomeView widget. Contains the three buttons on the 
+  //main homescreen.
+// @params: no params
+// @return: nothing returned
+// bugs: no known bugs
+// TODO: I think we want to center the buttons eventually. 
+// TODO: navigate to a form to create new account.
 class HomeButtonGroup extends StatelessWidget {
   const HomeButtonGroup({ Key? key }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
-      // to do: Figure out how to center these buttons. 
       children: [  
         OutlinedButton(
           onPressed: () {
@@ -65,14 +58,14 @@ class HomeButtonGroup extends StatelessWidget {
         ),
         OutlinedButton(
           onPressed: () {
-            //to do: navigate to a form to create new account.
+           
             debugPrint('Create Account Clicked');
           },
           child: const Text('Create Account'),
         ),
         OutlinedButton(
           onPressed: () {
-            // to do: navigate to a form to exit application.
+            // TODO: navigate to a form to exit application.
             debugPrint('Quit Clicked');
           },
           child: const Text('Quit'),
@@ -81,29 +74,3 @@ class HomeButtonGroup extends StatelessWidget {
     );
   }
 }
-
-// The menu drawer comes out when you click on the icon. 
-// To do: decide which items should be in the menu. 
-// Suggestions: exit app, sign out, edit profile, 
-// settings (if we have any).
-class MenuDrawer extends StatelessWidget {
-  const MenuDrawer({ Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Drawer(
-      child: ListView(
-        children: const [
-          DrawerHeader(
-            child: Text('Menu'),
-          ),
-          // To do: The items below will be changed to links
-          // that navigate to whevever we want them to.
-          Text('Item 1'),
-          Text('Item 2'),
-        ]
-      )
-    ); 
-  }
-}
-
