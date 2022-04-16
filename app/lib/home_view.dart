@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'profile_view.dart';
+import 'package:the_bike_kollective/profile_view.dart';
+import 'mainDrawer.dart';
+import 'models.dart';
 
 
 // information/instructions: Flutter Widget; This is the home view, when the
@@ -6,14 +10,25 @@ import 'package:flutter/material.dart';
 // @params: no params
 // @return: nothing returned
 // bugs: no known bugs
-// TODO: Figure out the cross-origin problem for images. 
-// 
+// TODO: 
+//  1. Figure out the cross-origin problem for images. 
+// Currently asset images are being used, but when we start 
+// using URLs we'll need a solution for this.
+// 2. Style this page, it looks like garbage right now (I can 
+// say that because I made it. David)
+// 3. Preload the image so you don't have to wait for the image
+//  to load. 
 class HomeView extends StatelessWidget {
   const HomeView({ Key? key }) : super(key: key);
   final String aboutUs = "We help communities share bikes.";
   @override
   Widget build(BuildContext context) {
-    return Column(
+    return Scaffold( 
+        appBar: AppBar(
+          title: const Text('The Bike Kollective'),
+        ),
+        endDrawer: const MenuDrawer(),
+        body: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
@@ -26,7 +41,8 @@ class HomeView extends StatelessWidget {
             Text(aboutUs),
             const HomeButtonGroup()
           ],
-        );
+        )
+    );
   }
 }
 
@@ -52,7 +68,14 @@ class HomeButtonGroup extends StatelessWidget {
             // prints the message to the console. All the buttons work
             // so we know this is where we put the code to do whatever
             // we want this button to do.
+            Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => 
+              ProfileView(user: testUser), 
+            ),
+          );       
             debugPrint('sign in clicked');
+            
           },
           child: const Text('Sign In'),
         ),
