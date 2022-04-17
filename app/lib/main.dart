@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:the_bike_kollective/mainscreen.dart';
 import 'home_view.dart';
-import 'mainscreen.dart';
+import 'mainDrawer.dart';
 
 void main() {
   runApp(const App());
@@ -25,7 +24,7 @@ class App extends StatelessWidget {
         // This is the theme of your application.
         primarySwatch: Colors.blue,
       ),
-      home: const MainScreen(),
+      home: const HomeView(),
     );
   }
 }

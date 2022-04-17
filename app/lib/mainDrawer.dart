@@ -1,35 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:the_bike_kollective/home_view.dart';
 
 
-// information/instructions: Flutter Widget, rendered by App 
-// widget. This widget renders the HomeView widget under its
-// "home" attribute. This widget also contains the appBar, which
-//  goes at the top of the page, and contains the MenuDrawer().
-// @params: no params
-// @return: nothing returned
-// bugs: The structure may need to be modified slightly for 
-// navigation. HomeView might have to become it's own Scaffold
-// Widget. I'm not sure about that yet. 
-// TODO: Investigate that potential bug listed above.
-
-class MainScreen extends StatelessWidget {
-  const MainScreen({ Key? key }) : super(key: key);
-  final String title = "The Bike Kollective";
-  
-  @override
-  Widget build(BuildContext context) {
-    
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(title),
-      ),
-      endDrawer: const MenuDrawer(),
-      body: const HomeView()
-      
-    );
-  }
-}
+// NOTE: This file used to be called MainScreen, because I tried to 
+// make it a template, but it turned out to work better to 
+// do it another way, so all that's left here is the MainDrawer. 
+// Sorry for the confusion if there is any.
 
 
 // information/instructions: The drawer pulls out when the user
