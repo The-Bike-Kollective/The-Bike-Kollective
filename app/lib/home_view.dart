@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'profile_view.dart';
-import 'package:the_bike_kollective/profile_view.dart';
-import 'mainDrawer.dart';
-import 'models.dart';
+import 'MenuDrawer.dart';
 
 
 // information/instructions: Flutter Widget; This is the home view, when the
@@ -68,14 +65,10 @@ class HomeButtonGroup extends StatelessWidget {
             // prints the message to the console. All the buttons work
             // so we know this is where we put the code to do whatever
             // we want this button to do.
-            Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => 
-              ProfileView(user: testUser), 
-            ),
-          );       
-            debugPrint('sign in clicked');
-            
+            Navigator.pushNamed(
+              context, '/profile',
+            );       
+            debugPrint('sign in clicked');   
           },
           child: const Text('Sign In'),
         ),
