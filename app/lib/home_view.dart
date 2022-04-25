@@ -3,7 +3,10 @@ import 'profile_view.dart';
 import 'package:the_bike_kollective/profile_view.dart';
 import 'mainDrawer.dart';
 import 'models.dart';
-
+import 'Login/login_page.dart';
+import 'main.dart';
+import 'Login/create_account_page.dart';
+import 'Login/user_agreement.dart';
 
 // information/instructions: Flutter Widget; This is the home view, when the
       //user first opesn the app and is not signed in.
@@ -70,18 +73,19 @@ class HomeButtonGroup extends StatelessWidget {
             // we want this button to do.
             Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => 
-              ProfileView(user: testUser), 
-            ),
+            MaterialPageRoute(builder: (context) => const LoginPage()),
           );       
             debugPrint('sign in clicked');
-            
           },
           child: const Text('Sign In'),
         ),
         OutlinedButton(
           onPressed: () {
-           
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const CreateAccountPage()),
+            );
             debugPrint('Create Account Clicked');
           },
           child: const Text('Create Account'),
@@ -89,6 +93,10 @@ class HomeButtonGroup extends StatelessWidget {
         OutlinedButton(
           onPressed: () {
             // TODO: navigate to a form to exit application.
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const AgreementPage()),
+            );
             debugPrint('Quit Clicked');
           },
           child: const Text('Quit'),
