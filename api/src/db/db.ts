@@ -2,6 +2,8 @@ import mongoose from 'mongoose';
 import {IUser} from '../models/user';
 import {IBike} from '../models/bike';
 
+let ObjectID = require('mongodb').ObjectID;
+
 const connectDB = async function () {
   await mongoose.connect(
     "mongodb://localhost:27017/test",
@@ -53,6 +55,40 @@ const addUsertoDB = async(newUser:IUser)=>{
   return result;
 }
 
+const findUserByIdentifier = async(identifier:string)=>{
+  const user = await User.find({'identifier':identifier})
+  console.log(user);
+  return user
+}
+
+const findUserByID = async(id:string)=>{
+  const user = await User.find({_id: new ObjectID(id)})
+  console.log(user);
+  return user
+}
+
+const findUserByAccessToekn = async(access_toekn:string)=>{
+  const user = await User.find({'access_token':access_toekn})
+  console.log(user);
+  return user
+}
+
+
+const updateAccessTokeninDB = async ( id:string , new_access_token:string )=>{
+  User.updateOne({_id: new ObjectID(id)}, 
+    {access_token:new_access_token}, function (err:any, docs:any) {
+    if (err){
+        console.log(err)
+        return false
+    }
+    else{
+        console.log("access token is updated on DB");
+        return true
+    }
+});
+}
+
+
 const addBiketoDB = async(newBike:IBike)=>{
   const result = await Bike.create(newBike);
   console.log('ADED!');
@@ -62,4 +98,4 @@ const addBiketoDB = async(newBike:IBike)=>{
 
 
 
-export {connectDB,addUsertoDB , IUser};
+export {connectDB,addUsertoDB, findUserByIdentifier, findUserByID ,findUserByAccessToekn,updateAccessTokeninDB};
