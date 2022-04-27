@@ -111,6 +111,15 @@ const addBiketoDB = async(newBike:IBike)=>{
   return result;
 }
 
+const getAllBikes = async()=>{
+  const result = await Bike.find();
+  console.log('All Bikes');
+  console.log(result);
+  return result;
+}
 
 
-export {connectDB,addUsertoDB, findUserByIdentifier, findUserByID ,findUserByAccessToekn,updateAccessTokeninDB,updateRefreshTokeninDB};
+
+export {connectDB,addUsertoDB, findUserByIdentifier, findUserByID ,findUserByAccessToekn,updateAccessTokeninDB,
+  updateRefreshTokeninDB,
+  addBiketoDB,getAllBikes};
