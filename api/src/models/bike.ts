@@ -1,5 +1,5 @@
 
-interface Inote{
+interface INote{
     id:string,
     note_body:string
 }
@@ -25,12 +25,12 @@ interface IBike {
     condition: boolean;
     owner_id: string;
     lock_combination: number;
-    notes: Array<Inote>;
+    notes: Array<INote>;
     rating: number;
     rating_history: Array<IRating>;
     location_long: number;
     location_lat:number;
-    check_out_id:number;
+    check_out_id:string;
     check_out_time:number;
     check_out_history:Array<ICheckOut>;
 }
@@ -44,12 +44,12 @@ class Bike {
     condition: boolean;
     owner_id: string;
     lock_combination: number;
-    notes: Array<Inote>;
+    notes: Array<INote>;
     rating: number;
     rating_history: Array<IRating>;
     location_long: number;
     location_lat:number;
-    check_out_id:number;
+    check_out_id:string;
     check_out_time:number;
     check_out_history:Array<ICheckOut>;
 
@@ -62,12 +62,12 @@ class Bike {
     condition: boolean,
     owner_id: string,
     lock_combination: number,
-    notes: Array<Inote>,
+    notes: Array<INote>,
     rating: number,
     rating_history: Array<IRating>,
     location_long: number,
     location_lat:number,
-    check_out_id:number,
+    check_out_id:string,
     check_out_time:number,
     check_out_history:Array<ICheckOut>,
     id?: string | undefined,
@@ -94,4 +94,4 @@ class Bike {
 }
 
 
-export {Bike, IBike, IRating, ICheckOut}
+export {Bike, IBike, IRating, ICheckOut,INote}
