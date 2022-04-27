@@ -89,6 +89,21 @@ const updateAccessTokeninDB = async ( id:string , new_access_token:string )=>{
 }
 
 
+const updateRefreshTokeninDB = async ( id:string , new_refresh_token:string )=>{
+  User.updateOne({_id: new ObjectID(id)}, 
+    {refresh_token:new_refresh_token}, function (err:any, docs:any) {
+    if (err){
+        console.log(err)
+        return false
+    }
+    else{
+        console.log("access token is updated on DB");
+        return true
+    }
+});
+}
+
+
 const addBiketoDB = async(newBike:IBike)=>{
   const result = await Bike.create(newBike);
   console.log('ADED!');
@@ -98,4 +113,4 @@ const addBiketoDB = async(newBike:IBike)=>{
 
 
 
-export {connectDB,addUsertoDB, findUserByIdentifier, findUserByID ,findUserByAccessToekn,updateAccessTokeninDB};
+export {connectDB,addUsertoDB, findUserByIdentifier, findUserByID ,findUserByAccessToekn,updateAccessTokeninDB,updateRefreshTokeninDB};

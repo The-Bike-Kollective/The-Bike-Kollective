@@ -13,7 +13,8 @@ import {
   findUserByIdentifier,
   findUserByID,
   findUserByAccessToekn,
-  updateAccessTokeninDB
+  updateAccessTokeninDB,
+  updateRefreshTokeninDB
 } from "../db/db";
 import { IUser } from "../models/user";
 
@@ -42,9 +43,15 @@ router.post("/", async (req: Request, res: Response) => {
     const profile_refresh_token = tokens["refresh_token"];
 
     // TODO: Check DB for existing user
-    const userInDB = await findUserByIdentifier(profile_identifier);
+    let userInDB = await findUserByIdentifier(profile_identifier);
     if (userInDB.length != 0) {
-      // user exists
+      // user exists; no sign up only sign in.
+      // update access token and refresh token, because they might have been changed by Google Oauth service
+      updateRefreshTokeninDB(String(userInDB[0]['_id']),profile_refresh_token)
+      updateAccessTokeninDB(String(userInDB[0]['_id']),profile_access_token)
+
+      // get the updated user and send it to user:
+      userInDB = await findUserByIdentifier(profile_identifier)
       res.status(200).send(createUserObject(userInDB[0]));
     } else {
       // user does not exist. create a new user
