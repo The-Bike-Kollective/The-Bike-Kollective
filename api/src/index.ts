@@ -8,6 +8,8 @@ import {
 } from "./services/google_auth";
 import { connectDB, addUsertoDB } from "./db/db";
 const userRoutes = require('./routes/userRoutes');
+const bikeRoutes = require('./routes/bikeRoutes');
+
 
 dotenv.config({ path: ".env" });
 
@@ -26,6 +28,8 @@ connectDB();
 printKeys();
 
 app.use('/users',userRoutes)
+app.use('/bikes',bikeRoutes)
+
 
 // information/instructions: for login redirect to google service
 // @params: [Maybe] state
