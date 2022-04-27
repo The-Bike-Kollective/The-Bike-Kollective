@@ -17,6 +17,7 @@ import {
   updateRefreshTokeninDB
 } from "../db/db";
 import { IUser } from "../models/user";
+import {verifyUserIdentity} from './userHelperFunctions'
 
 const router = express.Router();
 
@@ -103,7 +104,7 @@ const createUserObject = (user: any) => {
 router.get("/:id", async (req, res) => {
   const identifier = req.params.id;
   console.log(`id is :${identifier}`);
-
+  
   // check if access_token is provided.
   if (!req.headers.authorization) {
     return res.status(403).json({ message: "access token is missing" });
@@ -115,56 +116,26 @@ router.get("/:id", async (req, res) => {
   console.log(access_token);
 
   // retrive user information from DB to find refresh token
-//   const userFromDb = await findUserByAccessToekn(access_token)
+  // const userFromDb = await findUserByAccessToekn(access_token)
   let userFromDb = await findUserByIdentifier(identifier)
 
+  const verificationResult = await verifyUserIdentity(userFromDb,access_token)
 
-  if (userFromDb.length==0){
+  if (verificationResult==404){
     return res.status(404).json({ message: "User not found" });
-  }else if(userFromDb.length>1){
+  }else if (verificationResult==500){
     return res.status(500).json({ message: "Multiple USER ERROR" });
-  }else if (userFromDb[0]['access_token']!=access_token){
-    return res.status(401).send({ message: "unauthorized. invalid access_token" })
-  }
-
-  const refreshTokenFromDB =userFromDb[0]['refresh_token'];
-  console.log("refresh token from DB is:");
-  console.log(refreshTokenFromDB);
-
-  const identifierFromDB =userFromDb[0]['identifier'];
-  console.log("identifier from DB is:");
-  console.log(identifierFromDB);
-
-  const idFromDB =userFromDb[0]['id'];
-  console.log("idFromDB is:");
-  console.log(idFromDB);
-
-
-
-  // check validy of access token, and get a valid one if expired
-  access_token = await verifyAccessToken(access_token, refreshTokenFromDB) as string;
-//   access_token = await get_renewed_access_token(access_token, refreshTokenFromDB) as string;
-  console.log("new Access token is:");
-  console.log(access_token);
-
-
-  // verify user identity by checking identifier
-  // TODO: keep or remove?
-  const profileData = await getProfileInfo(access_token);
-  
-  const identifierFromGoogle =
-      profileData["emailAddresses"]["0"]["metadata"]["source"]["id"];
-   
-  if(identifierFromGoogle==identifierFromDB){
-        //update accesstoken in DB  
-        updateAccessTokeninDB(idFromDB,access_token)
-        // get updated information from DB before sending to client
-        userFromDb = await findUserByIdentifier(identifier)
-        res.status(200).send(createUserObject(userFromDb[0]));
-  }else{
-        res.status(401).send({ message: "unauthorized. invalid identifier" });
-  }
+  }else if (verificationResult==401){
+    return res.status(401).send({ message: "unauthorized. invalid access_token or identifier" })
+  }else if (verificationResult==200){
+    // get updated information from DB before sending to client
+    userFromDb = await findUserByIdentifier(identifier)
+    res.status(200).send(createUserObject(userFromDb[0]));
+  }   
+ 
 });
+
+
 
 // For Debug purposes
 // TODO: clean in final release
@@ -205,3 +176,4 @@ router.get("/find", async (req, res) => {
 });
 
 module.exports = router;
+
