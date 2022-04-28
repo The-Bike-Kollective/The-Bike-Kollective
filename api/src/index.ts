@@ -16,6 +16,8 @@ dotenv.config({ path: ".env" });
 export const app: Express = express();
 const port = process.env.PORT;
 
+app.use(express.json({limit: '5mb'}));
+app.use(express.urlencoded({limit: '5mb'}));
 
 const bodyParser = require('body-parser')
 app.use(bodyParser.json())
@@ -27,8 +29,12 @@ app.use(bodyParser.json())
 connectDB();
 printKeys();
 
+const imageRoutes = require('./routes/imageRoutes');
+
 app.use('/users',userRoutes)
 app.use('/bikes',bikeRoutes)
+app.use('/images',imageRoutes)
+
 
 
 // information/instructions: for login redirect to google service
