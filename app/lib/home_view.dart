@@ -7,6 +7,8 @@ import 'Login/login_page.dart';
 import 'main.dart';
 import 'Login/create_account_page.dart';
 import 'Login/user_agreement.dart';
+import 'MenuDrawer.dart';
+
 
 // information/instructions: Flutter Widget; This is the home view, when the
       //user first opesn the app and is not signed in.

@@ -1,12 +1,5 @@
 import 'package:flutter/material.dart';
 
-
-// NOTE: This file used to be called MainScreen, because I tried to 
-// make it a template, but it turned out to work better to 
-// do it another way, so all that's left here is the MainDrawer. 
-// Sorry for the confusion if there is any.
-
-
 // information/instructions: The drawer pulls out when the user
 // clicks on the menu icon found in the appBar. This Widget is 
 // rendered in the appBar under the "endDrawer" attribute. 

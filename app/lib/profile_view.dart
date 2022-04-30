@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'models.dart';
 
-
 // information/instructions: ProfileView is a template that will
 // conditionally render profileViewA or ProfileViewB. If property 
 // hasABikeCheckedOut is true, ProfileViewA is rendered, otherwise
@@ -20,6 +19,7 @@ class ProfileView extends StatefulWidget {
   State<ProfileView> createState() => _ProfileViewState();
 }
 
+// This is the state class that is used by ProfileViewState.
 class _ProfileViewState extends State<ProfileView> {
   @override
   Widget build(BuildContext context) {
@@ -63,9 +63,7 @@ class ProfileViewA extends StatelessWidget {
           },
           child: const Text('Return Bike'),
         ),
-
-    ],);
-      
+    ],);   
   }
 }
 
@@ -89,6 +87,9 @@ class ProfileViewB extends StatelessWidget {
         OutlinedButton(
           onPressed: () {
             debugPrint('Find a Bike button clicked');
+            Navigator.pushNamed(
+              context, '/bike-list'
+            );
           },
           child: const Text('Find a Bike'),
         ),
@@ -99,10 +100,21 @@ class ProfileViewB extends StatelessWidget {
           child: const Text('Add a Bike'),
         ),
       ],
-    );
-      
+    );  
   }
 }
+
+
+// information/instructions: Rendered by profileViewA, when the 
+// user has a bike that is checked out. 
+// @params: Bike
+// @return: Renders row with info about the bike that is
+// checked out
+// bugs: no known bugs
+// TODO: 
+// 1. Stub at this point. 
+// 2. Needs to be set up to take Bike(), and render using
+//    the data from the Bike.
 
 class CheckedOutBikeRow extends StatelessWidget {
   const CheckedOutBikeRow({ Key? key }) : super(key: key);
@@ -115,7 +127,8 @@ class CheckedOutBikeRow extends StatelessWidget {
        
         Image.asset('assets/coolBike.jpeg',
           width: 200,
-          fit:BoxFit.cover  ),
+          fit:BoxFit.cover  
+        ),
         const Text('Due Back in 22 Minutes')
 
       ],
