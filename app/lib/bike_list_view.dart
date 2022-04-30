@@ -26,6 +26,7 @@ class BikeListView extends StatefulWidget {
 
 // This is the state object that is called by BikeListView().
 class _BikeListViewState extends State<BikeListView> {
+  String buttonToolTipText = "add a bike";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +34,19 @@ class _BikeListViewState extends State<BikeListView> {
         title: const Text('Bikes Nearby'),
       ),
       endDrawer: const MenuDrawer(),
-      body: BikeListBody(bikeList: mockList)
+      body: BikeListBody(bikeList: mockList),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // Add your onPressed code here!
+          Navigator.pushNamed(
+              context, '/add-bike',
+            );       
+            debugPrint('add bike clicked');   
+        },
+        tooltip: buttonToolTipText,
+        backgroundColor: Colors.blue,
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
@@ -95,7 +108,7 @@ class BikeListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double bikeRating = bikeData.getRating();
-    String bikeNameString = 'bike name: ' + bikeData.getName();
+    String? bikeNameString = bikeData.getName()!;
     String distanceString = 'distance:' + distanceFromUser.toString();
     String bikeImageUrl = bikeData.getImageUrl();
     return 
