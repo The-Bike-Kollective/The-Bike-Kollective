@@ -16,6 +16,8 @@ dotenv.config({ path: ".env" });
 
 export const app: Express = express();
 const port = process.env.PORT;
+export const db_url = process.env.DB_URL;
+export const db_name = process.env.DB_NAME;
 
 app.use(express.json({limit: '5mb'}));
 app.use(express.urlencoded({limit: '5mb'}));

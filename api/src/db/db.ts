@@ -1,12 +1,16 @@
 import mongoose from 'mongoose';
 import {IUser} from '../models/user';
 import {IBike} from '../models/bike';
+import {db_url,db_name} from '../index';
 
 let ObjectID = require('mongodb').ObjectID;
 
 const connectDB = async function () {
+  console.log(`db_url is : ${db_url}`)
+  console.log(`db_name is : ${db_name}`)
+
   await mongoose.connect(
-    "mongodb://localhost:27017/test",
+    db_url+"/"+db_name,
     () => {
       console.log("DB is connected!");
     }

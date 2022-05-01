@@ -92,7 +92,9 @@ router.post("/", async (req: Request, res: Response) => {
 // bugs: no known bugs
 // TODO : add pagination
 router.get("/", async (req: Request, res: Response) => {
+  console.log("in get all bikes. Fetching from DB...")
   const bikes = await getAllBikes();
+  console.log("in get all bikes. Fetched!")
   const bikesToSend: any = [];
   bikes.forEach((bike) => {
     bikesToSend.push(createBikeObjectfromDB(bike));
