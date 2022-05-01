@@ -9,6 +9,7 @@ import {
 import { connectDB, addUsertoDB } from "./db/db";
 const userRoutes = require('./routes/userRoutes');
 const bikeRoutes = require('./routes/bikeRoutes');
+const imageRoutes = require('./routes/imageRoutes');
 
 
 dotenv.config({ path: ".env" });
@@ -29,7 +30,6 @@ app.use(bodyParser.json())
 connectDB();
 printKeys();
 
-const imageRoutes = require('./routes/imageRoutes');
 
 app.use('/users',userRoutes)
 app.use('/bikes',bikeRoutes)

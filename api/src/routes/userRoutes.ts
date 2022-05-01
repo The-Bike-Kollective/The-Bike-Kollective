@@ -1,18 +1,11 @@
 import express, { Request, Response } from "express";
 import {
-  getAuthURL,
   get_tokens,
   getProfileInfo,
-  printKeys,
-  verifyAccessToken,
-  get_renewed_access_token,
 } from "../services/google_auth";
 import {
-  connectDB,
   addUsertoDB,
   findUserByIdentifier,
-  findUserByID,
-  findUserByAccessToekn,
   updateAccessTokeninDB,
   updateRefreshTokeninDB
 } from "../db/db";
