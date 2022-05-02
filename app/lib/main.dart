@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:the_bike_kollective/add_bike_form.dart';
 import 'package:the_bike_kollective/bike_list_view.dart';
 import 'home_view.dart';
 import 'models.dart';
@@ -57,6 +58,8 @@ class App extends StatelessWidget {
       '/profile': (context) => ProfileView(user: testUser),
       // When navigating to the "/second" route, build the SecondScreen widget.
       '/bike-list': (context) => BikeListView(bikeList: mockList),
+      // TODO: We will need to change the user to the current user at some point.
+      '/add-bike': (context) => AddBikePage(user: testUser),
       }
     );
   }
