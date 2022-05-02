@@ -95,7 +95,10 @@ class ProfileViewB extends StatelessWidget {
         ),
         OutlinedButton(
           onPressed: () {
-            debugPrint('Add a Bike button clicked');
+            Navigator.pushNamed(
+              context, '/add-bike',
+            );       
+            debugPrint('add bike clicked');   
           },
           child: const Text('Add a Bike'),
         ),

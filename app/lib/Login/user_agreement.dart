@@ -1,6 +1,6 @@
 import 'package:the_bike_kollective/home_view.dart';
-import 'package:the_bike_kollective/profile_view.dart';
 import 'package:flutter/material.dart';
+import 'package:the_bike_kollective/profile_view.dart';
 import 'package:the_bike_kollective/models.dart';
 
 // information/instructions: user reads and either
@@ -16,7 +16,7 @@ import 'package:the_bike_kollective/models.dart';
 //  4. implement URL retrival to obtain call_back uri
 //  5. parse uri to obtain auth code and send to back-end
 
-final String pdfText = """MEMBERSHIP RULES
+const String pdfText = """MEMBERSHIP RULES
 Lorem ipsum dolor sit amet. Sed repudiandae voluptas et consequatur perspiciatis 
 cum quia corrupti aut illum iusto cum voluptatem maxime. Est numquam maxime est culpa 
 reiciendis et odit eaque et sapiente blanditiis ad voluptas omnis. Ut quod atque 
@@ -30,7 +30,7 @@ libero. Et dicta esse ea repellendus officiis id excepturi temporibus in
 deserunt ducimus. Id delectus omnis aut atque sapiente ea eius corrupti.""";
 
 class AgreementPage extends StatefulWidget {
-  const AgreementPage({Key? key}) : super(key: key);
+  //const AgreementPage({Key? key}) : super(key: key);
 
   @override
   _AgreementPage createState() => _AgreementPage();
@@ -45,12 +45,13 @@ class _AgreementPage extends State<AgreementPage> {
   void _doSomething() {
     // Do something
   }
+  
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: scaffoldKey,
-      backgroundColor: Theme.of(context).accentColor,
+      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -58,15 +59,17 @@ class _AgreementPage extends State<AgreementPage> {
               children: <Widget>[
                 Container(
                   width: double.infinity,
-                  padding: EdgeInsets.symmetric(vertical: 30, horizontal: 20),
-                  margin: EdgeInsets.symmetric(vertical: 85, horizontal: 20),
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 30, horizontal: 20),
+                  margin:
+                      const EdgeInsets.symmetric(vertical: 85, horizontal: 20),
                   decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(20),
                       color: Theme.of(context).primaryColor,
                       boxShadow: [
                         BoxShadow(
                             color: Theme.of(context).hintColor.withOpacity(0.2),
-                            offset: Offset(0, 10),
+                            offset: const Offset(0, 10),
                             blurRadius: 20)
                       ]),
 
@@ -128,9 +131,7 @@ class _AgreementPage extends State<AgreementPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) =>
-                                      ProfileView(user: testUser),
-                                ),
+                                    builder: (context) => ProfileView(user: testUser),),
                               );
                               debugPrint('Agree clicked');
                             },
