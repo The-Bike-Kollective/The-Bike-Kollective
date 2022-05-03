@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:the_bike_kollective/Login/user_agreement.dart';
+
 
 // information/instructions: The drawer pulls out when the user
 // clicks on the menu icon found in the appBar. This Widget is 
@@ -18,14 +20,25 @@ class MenuDrawer extends StatelessWidget {
   Widget build(BuildContext context) {
     return Drawer(
       child: ListView(
-        children: const [
+        children: [
           DrawerHeader(
             child: Text('Menu'),
           ),
+          //temporary measure to display profile view without back-end implementation
+          ListTile(
+            title: Text("User Profile"),
+            onTap: (){
+              Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => AgreementPage()),
+              );
+            },
+          )
           // TODO: The items below will be changed to links
           // that navigate to whevever we want them to.
-          Text('Item 1'),
-          Text('Item 2'),
+          // Text('Item 1'),
+          // Text('Item 2'),
         ]
       )
     ); 

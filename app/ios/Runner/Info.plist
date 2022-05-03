@@ -37,11 +37,42 @@
 	<key>UISupportedInterfaceOrientations~ipad</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
-		<string>UIInterfaceOrientationPortraitUpsideDown</string>
+		<string>UIInterfaceOrientationPortraitUpsideDownls</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>https</string>
+		<string>http</string>
+	</array>
+	<key>CFBundleURLTypes</key>
+   	<array>
+      	<dict>
+         <key>CFBundleTypeRole</key>
+         	<string>Editor</string>
+         <key>CFBundleURLSchemes</key>
+        <array>
+        	<string>com.auth0.flutterdemo</string>
+        </array>
+      </dict>
+   	</array>
+	<key>FlutterDeepLinkingEnabled</key>
+	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+		<key>CFBundleTypeRole</key>
+		<string>Editor</string>
+		<key>CFBundleURLName</key>
+		<string>flutterbooksample.com</string>
+		<key>CFBundleURLSchemes</key>
+		<array>
+		<string>customscheme</string>
+		</array>
+		</dict>
+	</array>
 </dict>
 </plist>
