@@ -29,6 +29,14 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  url_launcher: ^6.1.0
+  http: ^0.13.4
+  #dio: ^4.0.6
+  #flutter_polyline_points: ^1.0.0
+  google_maps_flutter: ^2.1.4
+  location: ^4.3.0
+  #flutter_appauth: ^2.4.1+1
+  #//flutter_secure_storage: ^3.3.3
 
   http: ^0.13.4
   # The following adds the Cupertino Icons font to your application.
@@ -61,6 +69,7 @@ flutter:
   assets:
     - assets/bikes.png
     - assets/coolBike.jpeg
+    - assets/btn_google_signin_light_focus_web@2x.png
     
 
   # An image asset can refer to one or more resolution-specific "variants", see

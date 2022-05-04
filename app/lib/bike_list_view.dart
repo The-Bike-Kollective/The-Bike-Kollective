@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'models.dart';
 import 'MenuDrawer.dart';
 import 'bike_detail_view.dart';
+import 'Maps/googlemaps.dart';
 
 
 // information/instructions: Renders the bike list from the 
@@ -31,7 +32,23 @@ class _BikeListViewState extends State<BikeListView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
         title: const Text('Bikes Nearby'),
+        actions: <Widget>[
+            IconButton(
+              icon: Icon(
+                Icons.map,
+                color: Colors.white,
+              ),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const MapsView()),
+                );
+                debugPrint('Find Bike Near Me Clicked');
+              },
+            )
+          ],
       ),
       endDrawer: const MenuDrawer(),
       body: BikeListBody(bikeList: mockList),

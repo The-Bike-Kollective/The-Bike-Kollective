@@ -28,6 +28,7 @@ class AddBikePage extends StatelessWidget {
     return Scaffold( 
         appBar: AppBar(
           title: const Text('The Bike Kollective'),
+          leading: (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
         ),
         endDrawer: const MenuDrawer(),
         body: AddBikeForm(user: user)
