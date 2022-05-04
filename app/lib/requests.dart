@@ -21,15 +21,22 @@ Future<http.Response> fetchResponse() async {
 
 Future<Bike> createBike(Bike newBike) async {
   print("createBike()");
+  String authorization = testUser.getAuthorization();
   final response = await http.post(
     Uri.parse('http://localhost:5000/bikes'),
     headers: <String, String>{
       //'Content-Type': 'application/json; charset=UTF-8',
-      'Authorization': "Bearer ya29.A0ARrdaM8SE1M_BoQ9KeC6DowJkwYH-4IX-hMA_HiiQu6JHPpPglBjRyXOgtVwZnXD_9aJ-MnO5-cWkFTbwzYmYzUMeU1_XVf4lxV_hUiFLkAnjIoHOmU6_HjhFNDQS_AVG0feUL4q6CYlFnUPdsxEYil0Q1qH"
+      'authorization': authorization
 
-      //'Authorization': '4/0AX4XfWjjvF3_SlxV1wbnvoTIH80NEKImLzw0LfDMBDdYSx-ra0_ooC_5OQXuv3EGzbK-JA'
     },
-    body: newBike.toJson() 
+    body: {
+      "image": "test_bike",
+      "lock_combination":300,
+      "location_long":300,
+      "location_lat":-300
+    }
+
+    //newBike.toJson() 
   );
 
   print(response.statusCode);

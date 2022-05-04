@@ -16,6 +16,11 @@ class User {
   
   bool hasABikeCheckedOut = false; 
 
+  final String authorization = "ya29.A0ARrdaM8DRV280-aXIG5Kl2o_LSreQdj0KJvzjD7hMcWG-EUB-V6huaanXaG-r-F40KSFLJ2Ou-NAO2w8haLqCz0PSkJbwgCtx0SSbBFPNsPWmMbNx4yVrQr5NK6LlpvhjAXoX48hDYq1Sc3e0m5x2sQhvLLB";
+
+  //getters
+  String getAuthorization() { return authorization;}
+
 }
 
 
@@ -208,3 +213,7 @@ void fillMockList() {
   mockList.addBike(esther);
 
 }
+
+
+// user object from db
+// {  "_id": {    "$oid": "6271a72d95d945001c65dc98"  },  "family_name": "Servias",  "given_name": "David",  "email": "serviasd@oregonstate.edu",  "identifier": "106003633980667953838",  "owned_biks": [],  "check_out_bike": -1,  "checked_out_time": 0,  "suspended": false,  "access_token": "ya29.A0ARrdaM8DRV280-aXIG5Kl2o_LSreQdj0KJvzjD7hMcWG-EUB-V6huaanXaG-r-F40KSFLJ2Ou-NAO2w8haLqCz0PSkJbwgCtx0SSbBFPNsPWmMbNx4yVrQr5NK6LlpvhjAXoX48hDYq1Sc3e0m5x2sQhvLLB",  "refresh_token": "1//0649ezurf7g-hCgYIARAAGAYSNwF-L9IrN__Q1pO92M1QPgBwdbiOqTrNapMTSGtdAeDpDVmONyNCJKRqLaVUXsLWQupYz8kpiCg",  "__v": 0}
