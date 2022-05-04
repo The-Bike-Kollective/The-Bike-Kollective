@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'models.dart';
 import 'MenuDrawer.dart';
+import 'requests.dart';
+
 
 
 // information/instructions: 
@@ -32,7 +34,6 @@ class AddBikePage extends StatelessWidget {
     );
   }
 }
-
 
 
 // information/instructions: This is the form that is rendered inside
@@ -124,7 +125,7 @@ class _AddBikeFormState extends State<AddBikeForm> {
               if (_formKey.currentState!.validate()) {
                 // If the form is valid, display a snackbar. In the real world,
                 // you'd often call a server or save the information in a database.
-                newBike.setOwnderId(widget.user.userId);
+                //newBike.setOwnderId(widget.user.userId);
                 _formKey.currentState?.save();
                 sendBikeData(newBike);
                 ScaffoldMessenger.of(context).showSnackBar(
@@ -151,18 +152,23 @@ class _AddBikeFormState extends State<AddBikeForm> {
 // @return: no return value. Just updates the database. 
 // bugs: no known bugs
 void sendBikeData(Bike bikeData) {
+  print("sendDataToBike()");
   // complete bike model with user data, id, etc.
   // for now, here is some partial data.
-  int id = 101;
-  bikeData.addNote('The bike is in good condition.');
-  bikeData.setId(id);
-
+  //String id = '101';
+  //bikeData.addNote('The bike is in good condition.');
+  //bikeData.setId(id);
 
   // convert bike data to JSON
-  var bikeDataAsJson = bikeData.toJson();
-
-
+  // I don't think I need this anymore, because bikeData is converted
+  // to JSON inside of the createBike function.
+  // var bikeDataAsJson = bikeData.toJson();
   // update database. TODO: How do I do this?
-  print(bikeDataAsJson);
+
+  createBike(bikeData);
+
+  
 
 }
+
+

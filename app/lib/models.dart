@@ -10,7 +10,8 @@
 // with all the same properties and datatypes.
 class User {
   int userId;
-  User({this.userId = -1});
+  String userName;
+  User({this.userId = -1, this.userName = 'no name'});
   // change to integer data type (0 is false, 1 is true) 
   
   bool hasABikeCheckedOut = false; 
@@ -28,52 +29,52 @@ class User {
 // 1. complete the model, making sure that it matches the back end, 
 // with all the same properties and datatypes.
 class Bike {
-  int id;
+  //String id;
   //DateTime? dataAdded;
   String imageUrl;
   String? name;
-  bool active;
-  bool condition;
-  int ownerId;
+  //bool active;
+  //bool condition;
+  //int ownerId;
   int lockCombination;
   List? notes;
   double rating;
-  List? ratingHistory;
+  //List? ratingHistory;
   double locationLong;
   double locationLat;
-  int checkOutId;
-  int checkOutTime;
-  List? checkOutHistory;
+  //int checkOutId;
+  //int checkOutTime;
+  //List? checkOutHistory;
 
   Bike({  
     this.name = "unnamed", // TODO: add 'name' to the backend
     // model
-    this.id = -1,
+    //this.id = '-1',
     //this.dataAdded = DateTime.now();
-     this.imageUrl = 'no image',
-     this.active = true,
-     this.condition = true, // change to rideable?
-    this.ownerId = -1,
+    this.imageUrl = 'no image',
+    //this.active = true,
+    //this.condition = true, // change to rideable?
+    //this.ownerId = -1,
     this.lockCombination = -1,
     this.rating = -1,
     this.locationLong = -1,
     this.locationLat = -1,
-    this.checkOutId = -1,
-    this.checkOutTime = -1,
+    //this.checkOutId = -1,
+    //this.checkOutTime = -1,
           
          
-          });
+  });
 
 
   //setters
-  setOwnderId(int newId) { ownerId = newId;}
+  //setOwnderId(int newId) { ownerId = newId;}
   setLockCombination(int newCombo) { lockCombination = newCombo;}
   addNote(String note) { notes?.add(note); }
-  setIsCheckedId(int id) { checkOutId = -1; }
+  //setIsCheckedId(int id) { checkOutId = -1; }
   setName(String? newName) { name = newName;}
   setRating(double rating) {rating = rating;}
   setImageUrl(String url) {imageUrl = imageUrl;}
-  setId(int newId) {id = newId;}
+  //setId(String newId) {id = newId;}
 
   //getters
   String? getName() => name;
@@ -83,21 +84,30 @@ class Bike {
         
   Map<String, dynamic> toJson() => {
         'name': name,
-        'id': id,
+        //'id': id,
         //'dataAddeded':
         'image': imageUrl, 
-        'active': active,
-        'condition': true,
-        'owner_id': ownerId,
+        //'active': active,
+        //'condition': true,
+        //'owner_id': ownerId,
         'lock_combination': lockCombination,
         'notes': notes,
         'rating': rating,
-        'rating_history': ratingHistory,
+        //'rating_history': ratingHistory,
         'location_long': locationLong,
         'location_lat' : locationLat,
-        'check_out_time': checkOutTime,
-        'check_out_history': checkOutHistory,
+        //'check_out_time': checkOutTime,
+        //'check_out_history': checkOutHistory,
   };
+
+
+  factory Bike.fromJson(Map<String, dynamic> json) {
+    return Bike(
+      //id: json['id'],
+      name: json['name'],
+
+    );
+  }
     
 }
 
@@ -127,14 +137,14 @@ class BikeListModel {
 
 // bikes for mock data
 Bike checkedOutBike = Bike(
-                        checkOutId: 1, 
+                        //checkOutId: 1, 
                         name: 'checkedOut', 
                         rating: 3,
                         imageUrl: 'assets/coolBike.jpeg'
                       );
 
 Bike notCheckedOutBike = Bike(
-                          checkOutId: -1, 
+                          //checkOutId: -1, 
                           name: 'notCheckedOut', 
                           rating: 3,
                           imageUrl: 'assets/coolBike.jpeg',
@@ -156,7 +166,7 @@ BikeListModel mockList = BikeListModel();
 void fillMockList() {
   //Instantiate Bikes for mocklist
   Bike david =  Bike(
-                  checkOutId: 2, 
+                  //checkOutId: 2, 
                   name: 'Big Red', 
                   rating: 3,
                   imageUrl: 'assets/coolBike.jpeg', 
@@ -168,7 +178,7 @@ void fillMockList() {
 
 
   Bike ali =  Bike(
-                checkOutId: 3, 
+                //checkOutId: 3, 
                 name: 'Bob', 
                 rating: 4,
                 imageUrl: 'assets/coolBike.jpeg',
@@ -180,7 +190,7 @@ void fillMockList() {
 
 
   Bike esther = Bike(
-                  checkOutId: 4, 
+                  //checkOutId: 4, 
                   name: 'Thunderbolt', 
                   rating: 5,
                   imageUrl: 'assets/coolBike.jpeg',
