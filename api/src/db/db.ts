@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import {IUser} from '../models/user';
 import {IBike} from '../models/bike';
-import {db_url,db_name} from '../../index';
+import {db_url,db_name} from '../index';
 
 let ObjectID = require('mongodb').ObjectID;
 

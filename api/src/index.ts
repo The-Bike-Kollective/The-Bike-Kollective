@@ -5,11 +5,11 @@ import {
   get_tokens,
   getProfileInfo,
   printKeys,
-} from "./src/services/google_auth";
-import { connectDB, addUsertoDB } from "./src/db/db";
-const userRoutes = require('./src/routes/userRoutes');
-const bikeRoutes = require('./src/routes/bikeRoutes');
-const imageRoutes = require('./src/routes/imageRoutes');
+} from "./services/google_auth";
+import { connectDB, addUsertoDB } from "./db/db";
+const userRoutes = require('./routes/userRoutes');
+const bikeRoutes = require('./routes/bikeRoutes');
+const imageRoutes = require('./routes/imageRoutes');
 
 
 dotenv.config({ path: ".env" });
