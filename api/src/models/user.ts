@@ -10,6 +10,8 @@ interface IUser {
   suspended: boolean;
   access_token: string;
   refresh_token: string;
+  signed_waiver: boolean;
+  state:string;
 }
 
 class User {
@@ -24,6 +26,8 @@ class User {
     suspended: boolean;
     access_token: string;
     refresh_token: string;
+    signed_waiver: boolean;
+    state: string;
     
   constructor(
     family_name: string,
@@ -36,6 +40,8 @@ class User {
     suspended: boolean,
     access_token: string,
     refresh_token: string,
+    signed_waiver: boolean,
+    state : string,
     id?: number | undefined,
   ) {
       this.id = id;
@@ -49,6 +55,8 @@ class User {
       this.suspended=suspended;
       this.access_token=access_token;
       this.refresh_token=refresh_token;
+      this.signed_waiver=signed_waiver;
+      this.state=state;
   }
     
 }
