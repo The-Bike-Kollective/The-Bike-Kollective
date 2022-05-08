@@ -8,6 +8,8 @@
 // TODO: 
 // 1. complete the model, making sure that it matches the back end, 
 // with all the same properties and datatypes.
+import 'package:the_bike_kollective/profile_view.dart';
+
 class User {
   int userId;
   String userName;
@@ -16,7 +18,7 @@ class User {
   
   bool hasABikeCheckedOut = false; 
 
-  final String authorization = "ya29.A0ARrdaM8DRV280-aXIG5Kl2o_LSreQdj0KJvzjD7hMcWG-EUB-V6huaanXaG-r-F40KSFLJ2Ou-NAO2w8haLqCz0PSkJbwgCtx0SSbBFPNsPWmMbNx4yVrQr5NK6LlpvhjAXoX48hDYq1Sc3e0m5x2sQhvLLB";
+  final String authorization = "ya29.A0ARrdaM-uhrlMa0YBPWe6RstI68OYRZE9tDpSFLDAW1j8dZ0mLW38qgARLkvWVK6u0iqGStSaMHF18dvek_Gw_vwSpawSvxGm68VEEP27m3VpPgVLVkQz4FDr5FNQwT-JPiDybIDavW7Fn3MUyO89JU5m0SGq";
 
   //getters
   String getAuthorization() { return authorization;}
@@ -33,89 +35,86 @@ class User {
 // TODO: 
 // 1. complete the model, making sure that it matches the back end, 
 // with all the same properties and datatypes.
+// 2. number 1 is mostly complete, but need to check on some of the 
+// attributes, like arrays and dateTime, to make sure they will correspond.
+
+
 class Bike {
-  //String id;
-  //DateTime? dataAdded;
+  late bool active;
+  List checkOutHistory = [];
+  late int checkOutId;
+  late int checkOutTime;
+  late bool condition;
+  late int dateAdded;
+  late String id;
   String imageUrl;
-  String? name;
-  //bool active;
-  //bool condition;
-  //int ownerId;
-  int lockCombination;
-  List? notes;
-  double rating;
-  //List? ratingHistory;
-  double locationLong;
   double locationLat;
-  //int checkOutId;
-  //int checkOutTime;
-  //List? checkOutHistory;
-
-  Bike({  
-    this.name = "unnamed", // TODO: add 'name' to the backend
-    // model
-    //this.id = '-1',
-    //this.dataAdded = DateTime.now();
-    this.imageUrl = 'no image',
-    //this.active = true,
-    //this.condition = true, // change to rideable?
-    //this.ownerId = -1,
-    this.lockCombination = -1,
-    this.rating = -1,
-    this.locationLong = -1,
-    this.locationLat = -1,
-    //this.checkOutId = -1,
-    //this.checkOutTime = -1,
-          
-         
+  double locationLong;
+  int lockCombination;
+  String name;
+  List notes = [];
+  late String ownerId;
+  late double rating;
+  List ratingHistory = [];
+  Bike({ this.name = "unnamed",
+        this.imageUrl = "no_image",
+        this.locationLat = -1.0,
+        this.locationLong = -1.0,
+        this.lockCombination = -1,
+        this.rating = -1
   });
-
-
+  
   //setters
-  //setOwnderId(int newId) { ownerId = newId;}
+  setOwnderId(String newId) { ownerId = newId;}
   setLockCombination(int newCombo) { lockCombination = newCombo;}
-  addNote(String note) { notes?.add(note); }
-  //setIsCheckedId(int id) { checkOutId = -1; }
-  setName(String? newName) { name = newName;}
+  addNote(String note) { notes.add(note); }
+  setIsCheckedId(int id) { checkOutId = -1; }
+  setName(String newName) { name = newName;}
   setRating(double rating) {rating = rating;}
   setImageUrl(String url) {imageUrl = imageUrl;}
-  //setId(String newId) {id = newId;}
+  setId(String newId) {id = newId;}
 
   //getters
-  String? getName() => name;
+  String getName() => name;
   double getRating() => rating;
   String getImageUrl() => imageUrl;
 
-        
+  //methods
   Map<String, dynamic> toJson() => {
         'name': name,
-        //'id': id,
-        //'dataAddeded':
+        'id': id,
+        'dateAdded': dateAdded,
         'image': imageUrl, 
-        //'active': active,
-        //'condition': true,
-        //'owner_id': ownerId,
+        'active': active,
+        'condition': condition,
+        'owner_id': ownerId,
         'lock_combination': lockCombination,
         'notes': notes,
         'rating': rating,
-        //'rating_history': ratingHistory,
+        'rating_history': ratingHistory,
         'location_long': locationLong,
         'location_lat' : locationLat,
-        //'check_out_time': checkOutTime,
-        //'check_out_history': checkOutHistory,
-  };
-
-
-  factory Bike.fromJson(Map<String, dynamic> json) {
-    return Bike(
-      //id: json['id'],
-      name: json['name'],
-
-    );
-  }
+        'check_out_time': checkOutTime,
+        'check_out_history': checkOutHistory,
+  };    
+  Bike.fromJson(Map<String, dynamic> json)
+      : name = json['name'],
+        id = json['id'],
+        dateAdded = json['dateAdded'],
+        imageUrl = json['imageUrl'], 
+        active = json['active'],
+        condition = json['condition'],
+        ownerId = json['owner_id'],
+        lockCombination = json['lock_combination'],
+        notes = json['notes'],
+        rating = json['rating'],
+        ratingHistory = json['rating_history'],
+        locationLong = json['location_long'],
+        locationLat = json['location_lat'],
+        checkOutTime = json['check_out_time'],
+        checkOutHistory = json['check_out_history'];
     
 }
-
 
 // information/instructions: The BikeListView() widget takes 
 // a BikeListModel as a parameter and uses the data to render 
@@ -140,18 +139,18 @@ class BikeListModel {
   int getLength() => bikes.length;
 }
 
+
 // bikes for mock data
 Bike checkedOutBike = Bike(
-                        //checkOutId: 1, 
                         name: 'checkedOut', 
-                        rating: 3,
                         imageUrl: 'assets/coolBike.jpeg'
                       );
+
+//checkedOutBike
 
 Bike notCheckedOutBike = Bike(
                           //checkOutId: -1, 
                           name: 'notCheckedOut', 
-                          rating: 3,
                           imageUrl: 'assets/coolBike.jpeg',
                         );
 
@@ -173,9 +172,10 @@ void fillMockList() {
   Bike david =  Bike(
                   //checkOutId: 2, 
                   name: 'Big Red', 
-                  rating: 3,
                   imageUrl: 'assets/coolBike.jpeg', 
                 );
+
+  david.setRating(5);
 
   david.addNote('Brakes do not work.');
   david.addNote('This bike only makes left turns.');
@@ -185,9 +185,9 @@ void fillMockList() {
   Bike ali =  Bike(
                 //checkOutId: 3, 
                 name: 'Bob', 
-                rating: 4,
                 imageUrl: 'assets/coolBike.jpeg',
               );
+  ali.setRating(4);
 
   ali.addNote( 'The horn sounds wimpy.');
   ali.addNote( 'The bike smells like garbage.');
@@ -197,10 +197,11 @@ void fillMockList() {
   Bike esther = Bike(
                   //checkOutId: 4, 
                   name: 'Thunderbolt', 
-                  rating: 5,
                   imageUrl: 'assets/coolBike.jpeg',
                 
                 );
+
+  esther.setRating(5);
 
   esther.addNote( 'Missing seat.' );
   esther.addNote(  'Hit by a train, so it does not ride well.');
@@ -211,9 +212,5 @@ void fillMockList() {
   mockList.addBike(david);
   mockList.addBike(ali);
   mockList.addBike(esther);
-
 }
 
-
-// user object from db
-// {  "_id": {    "$oid": "6271a72d95d945001c65dc98"  },  "family_name": "Servias",  "given_name": "David",  "email": "serviasd@oregonstate.edu",  "identifier": "106003633980667953838",  "owned_biks": [],  "check_out_bike": -1,  "checked_out_time": 0,  "suspended": false,  "access_token": "ya29.A0ARrdaM8DRV280-aXIG5Kl2o_LSreQdj0KJvzjD7hMcWG-EUB-V6huaanXaG-r-F40KSFLJ2Ou-NAO2w8haLqCz0PSkJbwgCtx0SSbBFPNsPWmMbNx4yVrQr5NK6LlpvhjAXoX48hDYq1Sc3e0m5x2sQhvLLB",  "refresh_token": "1//0649ezurf7g-hCgYIARAAGAYSNwF-L9IrN__Q1pO92M1QPgBwdbiOqTrNapMTSGtdAeDpDVmONyNCJKRqLaVUXsLWQupYz8kpiCg",  "__v": 0}

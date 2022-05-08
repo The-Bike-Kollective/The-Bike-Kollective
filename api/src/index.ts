@@ -25,7 +25,9 @@ app.use(express.urlencoded({limit: '5mb'}));
 const bodyParser = require('body-parser')
 app.use(bodyParser.json())
 
+const cors = require('cors')
 
+app.use(cors())
 
 // @Debug
 // TODO: clean in final release

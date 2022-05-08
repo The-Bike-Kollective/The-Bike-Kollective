@@ -125,7 +125,7 @@ class BikeListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double bikeRating = bikeData.getRating();
-    String? bikeNameString = bikeData.getName()!;
+    String bikeNameString = bikeData.getName();
     String distanceString = 'distance:' + distanceFromUser.toString();
     String bikeImageUrl = bikeData.getImageUrl();
     return 

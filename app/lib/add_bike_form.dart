@@ -45,6 +45,9 @@ class AddBikePage extends StatelessWidget {
 // input is validated, converted to JSON and sent to the database.
 // bugs: no known bugs
 // TODO: need to make it update the database.
+// Update: it does update the database, but not completely. The backend
+// does not yet accept any more than the required four attributes to create
+// a bike. 
 
 class AddBikeForm extends StatefulWidget {
   const AddBikeForm({  Key? key, 
@@ -64,17 +67,15 @@ class _AddBikeFormState extends State<AddBikeForm> {
   // Note: This is a `GlobalKey<FormState>`,
   // not a GlobalKey<MyCustomFormState>.
   final _formKey = GlobalKey<FormState>();
-  Bike newBike = Bike();
+  var bikeData = {};
 
   @override
   Widget build(BuildContext context) {
     // Build a Form widget using the _formKey created above.
-    
     return Form(
       key: _formKey,
       child: Column(
         children: <Widget>[
-          // Add TextFormFields and ElevatedButton here.
           TextFormField(
             // The validator receives the text that the user has entered.
             decoration: const InputDecoration(
@@ -89,11 +90,9 @@ class _AddBikeFormState extends State<AddBikeForm> {
               return null;
             },
             onSaved: (String? value) {
-              // This optional block of code can be used to run
-              // code when the user saves the form.
               print("set name to bike");
-              newBike.setName(value);
-
+              // TODO: add "name" to back end bike model
+              // bikeData["name"] = value;
             },
 
           ),  
@@ -111,24 +110,32 @@ class _AddBikeFormState extends State<AddBikeForm> {
               return null;
             },
             onSaved: (String? value) {
-              // This optional block of code can be used to run
-              // code when the user saves the form.
-              newBike.setLockCombination(int.parse(value!));
-
+              bikeData["lock_combination"] = int.parse(value!);
+             
             },
-
-
           ),
+
+          // Notes:
+          TextFormField(
+            decoration: const InputDecoration(
+              icon: Icon(Icons.lock),
+              hintText: '[Notes about the bike]',
+              labelText: 'Notes',
+            ),
+            
+            onSaved: (String? value) {
+              bikeData["notes"] = [[value]];
+             
+            },
+          ),
+
 
           ElevatedButton(
             onPressed: () {
               // Validate returns true if the form is valid, or false otherwise.
               if (_formKey.currentState!.validate()) {
-                // If the form is valid, display a snackbar. In the real world,
-                // you'd often call a server or save the information in a database.
-                //newBike.setOwnderId(widget.user.userId);
                 _formKey.currentState?.save();
-                sendBikeData(newBike);
+                sendBikeData(bikeData);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Adding bike to the database.')),
                 );
@@ -152,24 +159,19 @@ class _AddBikeFormState extends State<AddBikeForm> {
 // is updated with necessary user data inside the form widget.
 // @return: no return value. Just updates the database. 
 // bugs: no known bugs
-void sendBikeData(Bike bikeData) {
-  print("sendDataToBike()");
-  // complete bike model with user data, id, etc.
-  // for now, here is some partial data.
-  //String id = '101';
-  //bikeData.addNote('The bike is in good condition.');
-  //bikeData.setId(id);
-
-  // convert bike data to JSON
-  // I don't think I need this anymore, because bikeData is converted
-  // to JSON inside of the createBike function.
-  // var bikeDataAsJson = bikeData.toJson();
-  // update database. TODO: How do I do this?
+void sendBikeData(bikeData) {
+  print("sendBikeData()");
+  print(bikeData);
+  // The following values are currently hardcoded, but should
+  // be from the user when they upload a photo, their location, 
+  // etc.
+  bikeData['image'] = "default_image_string";
+  bikeData['location_long'] = 25;
+  bikeData['location_lat'] = -25;
 
   createBike(bikeData);
-
+  //test();
   
-
 }
 
 
