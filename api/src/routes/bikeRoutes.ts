@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { findUserByAccessToekn, addBiketoDB, getAllBikes } from "../db/db";
+import { findUserByAccessToekn, addBiketoDB, getAllBikes , findUserByIdentifier } from "../db/db";
 import { IBike, IRating, ICheckOut, INote } from "../models/bike";
 import { verifyUserIdentity } from "./userHelperFunctions";
 
@@ -88,7 +88,9 @@ router.post("/", async (req: Request, res: Response) => {
 
     const bikeFromDB = await addBiketoDB(newBike);
 
-    res.status(200).send(createBikeObjectfromDB(bikeFromDB));
+    // get updated user info to return valid access token
+    userFromDb = await findUserByIdentifier(userFromDb[0]["identifier"]);
+    res.status(201).send(createBikeResponse(createBikeObjectfromDB(bikeFromDB),userFromDb[0]['access_token']));
   }
 });
 
@@ -214,5 +216,11 @@ const createBikeObjectfromDB = (bikeFromDB: any) => {
 
   return bikeObject;
 };
+
+const createBikeResponse=(bikeObject:any, access_token:string) => {
+
+  return { bike:bikeObject, access_token: access_token };
+
+}
 
 module.exports = router;
