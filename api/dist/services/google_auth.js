@@ -41,7 +41,9 @@ const getAuthURL = () => {
         // If you only need one scope you can pass it as a string
         scope: "https://www.googleapis.com/auth/userinfo.email",
         include_granted_scopes: true,
+        state: "test_state",
     });
+    console.log(`auth_url :${auth_url}`);
     return auth_url;
 };
 exports.getAuthURL = getAuthURL;
@@ -51,7 +53,11 @@ exports.getAuthURL = getAuthURL;
 // bugs: no known bugs
 // TODO: error handler
 const get_tokens = (code) => __awaiter(void 0, void 0, void 0, function* () {
-    return yield oauth2Client.getToken(code);
+    return new Promise((resolve, reject) => {
+        oauth2Client.getToken(code).then((response) => {
+            resolve(response);
+        });
+    });
 });
 exports.get_tokens = get_tokens;
 // NOT COMPLETE
@@ -84,16 +90,23 @@ exports.get_renewed_access_token = get_renewed_access_token;
 // TODO: error handler
 const getProfileInfo = (access_token) => __awaiter(void 0, void 0, void 0, function* () {
     // create a new Oauth object and set credential
-    const oauth2Client = new google.auth.OAuth2();
-    oauth2Client.setCredentials({ access_token: access_token });
-    google.options({ auth: oauth2Client });
-    const people = google.people("v1");
-    const res = yield people.people.get({
-        resourceName: "people/me",
-        personFields: "names,emailAddresses",
+    return new Promise((resolve, reject) => {
+        const oauth2Client = new google.auth.OAuth2();
+        console.log(`in getProfileInfo: access token is :${access_token}`);
+        oauth2Client.setCredentials({ access_token: access_token });
+        google.options({ auth: oauth2Client });
+        const people = google.people("v1");
+        people.people
+            .get({
+            resourceName: "people/me",
+            personFields: "names,emailAddresses",
+        })
+            .then((response) => {
+            console.log(`@@@@@@@@@@@@@@@@@@@@@@@@@@@@got response from People API`);
+            console.log(response.data);
+            resolve(response.data);
+        });
     });
-    console.log(res.data);
-    return res.data;
 });
 exports.getProfileInfo = getProfileInfo;
 // https://www.googleapis.com/oauth2/v3/userinfo?access_token
@@ -109,7 +122,7 @@ const verifyAccessToken = (accessToken, refresh_token) => __awaiter(void 0, void
             const res = yield axios.get("https://www.googleapis.com/oauth2/v3/userinfo", { params: { access_token: accessToken } });
             console.log("AXIOS response is: ");
             console.log(res);
-            // no error if gets response, so the curretn access token is valid and can be returned. 
+            // no error if gets response, so the curretn access token is valid and can be returned.
             resolve(accessToken);
         }
         catch (err) {
@@ -118,7 +131,7 @@ const verifyAccessToken = (accessToken, refresh_token) => __awaiter(void 0, void
                 // if 401 => token is expired and should be renewed
                 console.log("ERROR 401 => refreshing token...");
                 get_renewed_access_token(accessToken, refresh_token).then((renwed_token) => {
-                    console.log('reurning renwed token...');
+                    console.log("reurning renwed token...");
                     resolve(renwed_token);
                 });
             }

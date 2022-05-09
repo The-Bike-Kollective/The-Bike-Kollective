@@ -13,7 +13,6 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const google_auth_1 = require("../services/google_auth");
 const db_1 = require("../db/db");
 const userHelperFunctions_1 = require("./userHelperFunctions");
 const router = express_1.default.Router();
@@ -24,39 +23,18 @@ const router = express_1.default.Router();
 // TODO: decide on state and login design , might be changed based on frond end team design
 // TODO : refactor into correct file
 router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const code = req.body.auth_code;
-        const { tokens } = yield (0, google_auth_1.get_tokens)(code);
-        console.log(tokens);
-        const profileData = yield (0, google_auth_1.getProfileInfo)(tokens.access_token);
-        //if not add a new user
-        const profile_firstName = profileData["names"]["0"]["givenName"];
-        const profile_lastName = profileData["names"]["0"]["familyName"];
-        const profile_identifier = profileData["emailAddresses"]["0"]["metadata"]["source"]["id"];
-        const profile_email = profileData["emailAddresses"]["0"]["value"];
-        const profile_access_token = tokens["access_token"];
-        const profile_refresh_token = tokens["refresh_token"];
-        // TODO: Check DB for existing user
-        let userInDB = yield (0, db_1.findUserByIdentifier)(profile_identifier);
-        if (userInDB.length != 0) {
-            // user exists; no sign up only sign in.
-            // update access token and refresh token, because they might have been changed by Google Oauth service
-            (0, db_1.updateRefreshTokeninDB)(String(userInDB[0]['_id']), profile_refresh_token);
-            (0, db_1.updateAccessTokeninDB)(String(userInDB[0]['_id']), profile_access_token);
-            // get the updated user and send it to user:
-            userInDB = yield (0, db_1.findUserByIdentifier)(profile_identifier);
-            res.status(200).send(createUserObject(userInDB[0]));
-        }
-        else {
-            // user does not exist. create a new user
-            const newUser = yield addNewUser(profile_firstName, profile_lastName, profile_identifier, profile_email, profile_access_token, profile_refresh_token);
-            res.status(201).send(createUserObject(newUser));
-        }
-    }
-    catch (e) {
-        console.log(e);
-        res.send(e);
-    }
+    const state = req.body.state;
+    const code = req.body.auth_code;
+    console.log(`in POST users: code:${code}\nstate:${state}`);
+    (0, userHelperFunctions_1.userRegistration)(code, state)
+        .then((response_code) => {
+        (0, db_1.findUserByState)(state).then((userInDB) => {
+            res.status(response_code).send(createUserObject(userInDB[0]));
+        });
+    })
+        .catch(err => {
+        res.status(400).send({ "message": "something went wrong" });
+    });
 }));
 // create user object for response. replace refresh token with an empty string for security purposes.
 // @params: user data from DB
@@ -75,6 +53,8 @@ const createUserObject = (user) => {
         suspended: user.suspended,
         access_token: user.access_token,
         refresh_token: "",
+        signed_waiver: user.signed_waiver,
+        state: ""
     };
     return userObject;
 };
@@ -114,24 +94,6 @@ router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.status(200).send(createUserObject(userFromDb[0]));
     }
 }));
-// For Debug purposes
-// TODO: clean in final release
-const addNewUser = (first_name, family_name, identifier, email, access_token, refresh_token) => __awaiter(void 0, void 0, void 0, function* () {
-    let data = {
-        family_name: family_name,
-        given_name: first_name,
-        email: email,
-        identifier: identifier,
-        owned_biks: [],
-        check_out_bike: -1,
-        checked_out_time: 0,
-        suspended: false,
-        access_token: access_token,
-        refresh_token: refresh_token,
-    };
-    const result = yield (0, db_1.addUsertoDB)(data);
-    return result;
-});
 // For Debug purposes
 // TODO: clean in final release
 router.get("/find", (req, res) => __awaiter(void 0, void 0, void 0, function* () {

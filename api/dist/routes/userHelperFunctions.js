@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyUserIdentity = void 0;
+exports.userRegistration = exports.verifyUserIdentity = void 0;
 const google_auth_1 = require("../services/google_auth");
 const db_1 = require("../db/db");
 // information/instructions: verifies a user identity and cross check DB and access token inforamtion.
@@ -58,4 +58,70 @@ const verifyUserIdentity = (userFromDb, access_token) => {
     }));
 };
 exports.verifyUserIdentity = verifyUserIdentity;
+const userRegistration = (code, state) => __awaiter(void 0, void 0, void 0, function* () {
+    return new Promise((resolve, reject) => {
+        try {
+            (0, google_auth_1.get_tokens)(code).then((tokens) => {
+                console.log(tokens);
+                console.log(`after get_token. access token is :${tokens.tokens.access_token}`);
+                console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ getting profile info");
+                (0, google_auth_1.getProfileInfo)(tokens.tokens.access_token).then((profileData) => {
+                    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ got profile info");
+                    //if not add a new user
+                    const profile_firstName = profileData["names"]["0"]["givenName"];
+                    const profile_lastName = profileData["names"]["0"]["familyName"];
+                    const profile_identifier = profileData["emailAddresses"]["0"]["metadata"]["source"]["id"];
+                    const profile_email = profileData["emailAddresses"]["0"]["value"];
+                    const profile_access_token = tokens.tokens["access_token"];
+                    const profile_refresh_token = tokens.tokens["refresh_token"];
+                    // TODO: Check DB for existing user
+                    (0, db_1.findUserByIdentifier)(profile_identifier).then((userInDB) => {
+                        if (userInDB.length != 0) {
+                            // user exists; no sign up only sign in.
+                            // update access token and refresh token, because they might have been changed by Google Oauth service
+                            (0, db_1.updateRefreshTokeninDB)(String(userInDB[0]["_id"]), profile_refresh_token);
+                            (0, db_1.updateAccessTokeninDB)(String(userInDB[0]["_id"]), profile_access_token);
+                            // update state
+                            (0, db_1.updateStateinDB)(String(userInDB[0]["_id"]), state);
+                            resolve(200);
+                        }
+                        else {
+                            // user does not exist. create a new user
+                            console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ new user. add to DB");
+                            addNewUser(profile_firstName, profile_lastName, profile_identifier, profile_email, profile_access_token, profile_refresh_token, false, state).then((response) => {
+                                console.log("resolved. send 201");
+                                resolve(201);
+                            });
+                        }
+                    });
+                });
+            });
+        }
+        catch (err) {
+            console.log(err);
+            reject(400);
+        }
+    });
+});
+exports.userRegistration = userRegistration;
+// For Debug purposes
+// TODO: clean in final release
+const addNewUser = (first_name, family_name, identifier, email, access_token, refresh_token, signed_waiver, state) => __awaiter(void 0, void 0, void 0, function* () {
+    let data = {
+        family_name: family_name,
+        given_name: first_name,
+        email: email,
+        identifier: identifier,
+        owned_biks: [],
+        check_out_bike: -1,
+        checked_out_time: 0,
+        suspended: false,
+        access_token: access_token,
+        refresh_token: refresh_token,
+        signed_waiver: signed_waiver,
+        state: state,
+    };
+    console.log('in addNewUser ');
+    return (0, db_1.addUsertoDB)(data);
+});
 //# sourceMappingURL=userHelperFunctions.js.map

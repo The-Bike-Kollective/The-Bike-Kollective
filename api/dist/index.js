@@ -17,27 +17,28 @@ const express_1 = __importDefault(require("express"));
 const dotenv_1 = __importDefault(require("dotenv"));
 const google_auth_1 = require("./services/google_auth");
 const db_1 = require("./db/db");
-const userRoutes = require('./routes/userRoutes');
-const bikeRoutes = require('./routes/bikeRoutes');
-const imageRoutes = require('./routes/imageRoutes');
+const userRoutes = require("./routes/userRoutes");
+const bikeRoutes = require("./routes/bikeRoutes");
+const imageRoutes = require("./routes/imageRoutes");
+const userHelperFunctions_1 = require("./routes/userHelperFunctions");
 dotenv_1.default.config({ path: ".env" });
 exports.app = (0, express_1.default)();
 const port = process.env.PORT;
 exports.db_url = process.env.DB_URL;
 exports.db_name = process.env.DB_NAME;
-exports.app.use(express_1.default.json({ limit: '5mb' }));
-exports.app.use(express_1.default.urlencoded({ limit: '5mb' }));
-const bodyParser = require('body-parser');
+exports.app.use(express_1.default.json({ limit: "5mb" }));
+exports.app.use(express_1.default.urlencoded({ limit: "5mb" }));
+const bodyParser = require("body-parser");
 exports.app.use(bodyParser.json());
-const cors = require('cors');
+const cors = require("cors");
 exports.app.use(cors());
 // @Debug
 // TODO: clean in final release
 (0, db_1.connectDB)();
 (0, google_auth_1.printKeys)();
-exports.app.use('/users', userRoutes);
-exports.app.use('/bikes', bikeRoutes);
-exports.app.use('/images', imageRoutes);
+exports.app.use("/users", userRoutes);
+exports.app.use("/bikes", bikeRoutes);
+exports.app.use("/images", imageRoutes);
 // information/instructions: for login redirect to google service
 // @params: [Maybe] state
 // @return: redirect url
@@ -63,7 +64,18 @@ exports.app.get("/", (req, res) => {
 // TODO : Add DB calls
 exports.app.get("/profile", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const code = req.query.code;
-    res.send({ 'auth_code': code });
+    const state = req.query.state;
+    // call user registration
+    (0, userHelperFunctions_1.userRegistration)(code, state)
+        .then((code) => {
+        // user exists or registred . deep link to loading page
+        //belo line is for debug. no need to send the code in this call
+        res.status(200).send({ auth_code: code, state: state });
+    })
+        .catch((err) => {
+        // something went wrong. deep link to error page!
+        res.status(400).send({ message: "somthing went wrong" });
+    });
 }));
 exports.app.listen(port, () => {
     console.log(`⚡️[server]: Server is running at https://localhost:${port}`);
