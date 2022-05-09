@@ -194,6 +194,16 @@ const getAllBikes = async () => {
   return result;
 };
 
+// information/instructions: retrive bike by DB Id
+// @params: DB id as string
+// @return: array of user object(s) , empty means to user was found
+// bugs: no known bugs
+const findBikeByID = async (id: string) => {
+  const bike = await Bike.find({ _id: new ObjectID(id) });
+  console.log(bike);
+  return bike;
+};
+
 export {
   connectDB,
   addUsertoDB,
@@ -206,4 +216,5 @@ export {
   updateStateinDB,
   addBiketoDB,
   getAllBikes,
+  findBikeByID,
 };

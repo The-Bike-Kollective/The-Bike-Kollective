@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { findUserByAccessToekn, addBiketoDB, getAllBikes , findUserByIdentifier } from "../db/db";
+import { findUserByAccessToekn, addBiketoDB, getAllBikes , findUserByIdentifier, findBikeByID} from "../db/db";
 import { IBike, IRating, ICheckOut, INote } from "../models/bike";
 import { verifyUserIdentity } from "./userHelperFunctions";
 
@@ -111,6 +111,73 @@ router.get("/", async (req: Request, res: Response) => {
   res.status(200).send(bikesToSend);
 });
 
+
+// information/instructions: returns a single bike information. 
+// @params: none
+// @return: array of Bike objects
+// bugs: no known bugs
+// TODO : add pagination
+router.get("/:id", async (req: Request, res: Response) => {
+  const bike_id = req.params.id;
+  console.log(`bike id is :${bike_id}`);
+  // check if access_token is provided.
+  if (!req.headers.authorization) {
+    return res.status(403).json({ message: "access token is missing" });
+  }
+
+  // splits "Breaer TOKEN"
+  let access_token = req.headers.authorization.split(" ")[1];
+  console.log("Access Token from header is:");
+  console.log(access_token);
+
+  // retrive user information from DB to find refresh token
+  // const userFromDb = await findUserByAccessToekn(access_token)
+  let userFromDb = await findUserByAccessToekn(access_token);
+
+  const verificationResult = await verifyUserIdentity(userFromDb, access_token);
+
+  if (verificationResult == 404) {
+    return res.status(404).json({ message: "User not found" });
+  } else if (verificationResult == 500) {
+    return res.status(500).json({ message: "Multiple USER ERROR" });
+  } else if (verificationResult == 401) {
+    return res
+      .status(401)
+      .send({ message: "unauthorized. invalid access_token or identifier" });
+  } else if (verificationResult == 200) {
+    console.log("User is verified. Countiue the process");
+  }
+
+  // get bike inforamtion from DB
+  const bikeFromDB = await findBikeByID(bike_id)
+
+  // get updated user info to return valid access token
+  userFromDb = await findUserByIdentifier(userFromDb[0]["identifier"]);
+  access_token = userFromDb[0]['access_token']
+
+  if (bikeFromDB.length==0){
+
+    return res.status(404).json({ message: "Bike not found", access_token:access_token});
+
+  }else if(bikeFromDB.length==0){
+
+    return res.status(500).json({ message: "Multiple BIKE ERROR" , access_token:access_token});
+
+  }
+
+  // there is 1 bike in returned list
+  return res.status(200).send(createBikeResponse(createBikeObjectfromDB(bikeFromDB[0]),access_token));
+
+
+
+  
+
+
+
+
+
+});
+
 // information/instructions: verifies body data for Bike object
 // @params: JSON object form req body
 // @return: true if valid, flase if not
@@ -217,6 +284,10 @@ const createBikeObjectfromDB = (bikeFromDB: any) => {
   return bikeObject;
 };
 
+// create HTTP response body
+// @params: bike data and access token
+// @return: formatted body for HTTP response.
+// bugs: no known bugs
 const createBikeResponse=(bikeObject:any, access_token:string) => {
 
   return { bike:bikeObject, access_token: access_token };
