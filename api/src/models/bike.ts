@@ -16,7 +16,6 @@ interface ICheckOut{
     damaged_on_return:boolean,
 }
 
-
 interface IBike {
     id?: string;
     date_added: number;
@@ -33,6 +32,9 @@ interface IBike {
     check_out_id:string;
     check_out_time:number;
     check_out_history:Array<ICheckOut>;
+    name: string;
+    type:string;
+    size:string;
 }
 
 
@@ -52,8 +54,10 @@ class Bike {
     check_out_id:string;
     check_out_time:number;
     check_out_history:Array<ICheckOut>;
-
-
+    name: string;
+    type:string;
+    size:string;
+    
     
   constructor(
     date_added: number,
@@ -70,6 +74,9 @@ class Bike {
     check_out_id:string,
     check_out_time:number,
     check_out_history:Array<ICheckOut>,
+    name: string,
+    type: string,
+    size: string,
     id?: string | undefined,
   ) {
       this.id = id;
@@ -87,8 +94,9 @@ class Bike {
       this.check_out_id=check_out_id;
       this.check_out_time=check_out_time;
       this.check_out_history=check_out_history;
-
-      
+      this.name=name;    
+      this.type=type;
+      this.size=size;  
   }
     
 }

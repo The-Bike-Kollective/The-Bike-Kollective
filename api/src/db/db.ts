@@ -43,6 +43,9 @@ const BikeSchema: mongoose.Schema = new mongoose.Schema({
   location_lat: { type: Number, required: true },
   check_out_id: { type: String, required: true },
   check_out_history: { type: [Object], required: true },
+  name: { type: String, required: true },
+  type: { type: String, required: true },
+  size: { type: String, required: true },
 });
 
 const User: mongoose.Model<IUser> = mongoose.model("User", UserSchema);

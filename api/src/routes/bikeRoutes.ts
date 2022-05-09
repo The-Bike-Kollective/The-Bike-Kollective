@@ -50,7 +50,7 @@ router.post("/", async (req: Request, res: Response) => {
     const image = req.body.image;
     const active = true;
     const condition = true;
-    const owner_id = String(userFromDb[0]["_id"]);
+    const owner_id = String(userFromDb[0]["identifier"]);
     const lock_combination = req.body.lock_combination;
     // add a function to set notes with user id as an object
     const notes = new Array<INote>();
@@ -62,6 +62,9 @@ router.post("/", async (req: Request, res: Response) => {
     const check_out_id = "-1";
     const check_out_time = -1;
     const check_out_history = new Array<ICheckOut>();
+    const name = req.body.name;
+    const type = req.body.type;
+    const size = req.body.size
 
     const newBike = createBikeObject(
       date_added,
@@ -77,7 +80,10 @@ router.post("/", async (req: Request, res: Response) => {
       location_lat,
       check_out_id,
       check_out_time,
-      check_out_history
+      check_out_history,
+      name,
+      type,
+      size
     );
 
     const bikeFromDB = await addBiketoDB(newBike);
@@ -114,6 +120,9 @@ const verifyBikePostBody = (body: object) => {
       "lock_combination",
       "location_long",
       "location_lat",
+      "name",
+      "size",
+      "type"
     ];
     const keys_in_body = Object.keys(body);
 
@@ -149,7 +158,10 @@ const createBikeObject = (
   location_lat: number,
   check_out_id: string,
   check_out_time: number,
-  check_out_history: Array<ICheckOut>
+  check_out_history: Array<ICheckOut>,
+  name : string,
+  type: string,
+  size: string
 ) => {
   let bikeObject: IBike = {
     date_added: date_added,
@@ -166,6 +178,9 @@ const createBikeObject = (
     check_out_id: check_out_id,
     check_out_time: check_out_time,
     check_out_history: check_out_history,
+    name: name,
+    type: type,
+    size: size,
   };
 
   return bikeObject;
@@ -192,6 +207,9 @@ const createBikeObjectfromDB = (bikeFromDB: any) => {
     check_out_time: bikeFromDB.check_out_time,
     check_out_history: bikeFromDB.check_out_history,
     id: bikeFromDB._id,
+    name: bikeFromDB.name,
+    type: bikeFromDB.type,
+    size: bikeFromDB.size
   };
 
   return bikeObject;
