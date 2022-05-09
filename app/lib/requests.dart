@@ -10,7 +10,7 @@ const String globalUrl = "http://ec2-35-164-203-209.us-west-2.compute.amazonaws.
 // It will likely not work in the future. To get a new authorization,
 // go to /login, copy the code and post to /user with that code to get a 
 // new user object with a new authcode.  
-String authCode = "ya29.A0ARrdaM8UQOyN2b_gmqIRO3kT0KbeHdrsPqKlWBcdYJvBHBR2iDJ4gvvgJGZQcf7ZvLcEGYjd2sMXgxu5jQJ8l8f_ef46q7mbYkk24TnV6PBHDbtHLiNQAZyJBoK6iIqhXoGqQli2TZzVvJTp9UMzQTkod905";
+String authCode = "ya29.A0ARrdaM84x1ek_XNbAVvwH6mVAi9Q2tAtAnQ6P--hcPY9ZVVPOFD7sEf_NcoNacnR01ylboWOqCwyRC7J67FVtq9pZ8PpVyLdEtfplke4eM0bJxQkyxHMxzNVqj8qfv0XHX1lhfrFPuxpO3wLssyF98OWuIuu";
 
 
 
@@ -36,7 +36,21 @@ void test() async {
 // add functionality to upload photo
 // get user location to add those coordinates to the bike object.
 Future<Bike> createBike(bikeData) async {
-  final String dataString = jsonEncode(bikeData);
+  
+  // temporary fix unit backend can accept the rest of the data
+  var truncatedData = {};
+  truncatedData['image'] = bikeData['image'];
+  truncatedData['lock_combination'] =bikeData['lock_combination'];
+  truncatedData['location_long'] = bikeData['location_long'];
+  truncatedData['location_lat'] = bikeData['location_lat'];
+  
+  
+  // after the backend can accept the rest of the bikeData,
+  // we can assign jsonEncode(BikeData) to datastring:
+  String dataString = jsonEncode(truncatedData);
+  //String dataString = jsonEncode(bikeData);
+  print(dataString);
+  print('test1');
   final response = await http.post(
     Uri.parse("http://localhost:5000/bikes"),
     headers: <String, String>{
@@ -55,9 +69,14 @@ Future<Bike> createBike(bikeData) async {
   else if (response.statusCode == 401) {
     throw Exception('Failure: Unauthorized. Invalide access token.');
   } 
+
+  print('response.body:');
+  print(response.body);
   var json = jsonDecode(response.body); 
+  print('json:');
+  print(json);
   return Bike.fromJson(json); 
-  
+  //return Bike();
 }
 
 // Future<String> getBikeList() async {
@@ -84,3 +103,8 @@ Future<Bike> createBike(bikeData) async {
 //   return Bike.fromJson(jsonDecode(response.body)); 
   
 // }
+
+
+
+
+

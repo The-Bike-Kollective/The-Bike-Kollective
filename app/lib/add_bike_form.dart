@@ -92,7 +92,7 @@ class _AddBikeFormState extends State<AddBikeForm> {
             onSaved: (String? value) {
               print("set name to bike");
               // TODO: add "name" to back end bike model
-              // bikeData["name"] = value;
+              bikeData["name"] = value;
             },
 
           ),  
@@ -124,7 +124,7 @@ class _AddBikeFormState extends State<AddBikeForm> {
             ),
             
             onSaved: (String? value) {
-              bikeData["notes"] = [[value]];
+              bikeData["notes"] = [value];
              
             },
           ),
@@ -159,16 +159,17 @@ class _AddBikeFormState extends State<AddBikeForm> {
 // is updated with necessary user data inside the form widget.
 // @return: no return value. Just updates the database. 
 // bugs: no known bugs
-void sendBikeData(bikeData) {
+void sendBikeData(var bikeData) {
   print("sendBikeData()");
   print(bikeData);
   // The following values are currently hardcoded, but should
   // be from the user when they upload a photo, their location, 
   // etc.
-  bikeData['image'] = "default_image_string";
+  bikeData["image"] = "default_image_string";
   bikeData['location_long'] = 25;
   bikeData['location_lat'] = -25;
-
+  
+  print('test');
   createBike(bikeData);
   //test();
   

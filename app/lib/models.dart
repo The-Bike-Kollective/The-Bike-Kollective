@@ -56,12 +56,24 @@ class Bike {
   late String ownerId;
   late double rating;
   List ratingHistory = [];
+  List checkoutHistory = [];
   Bike({ this.name = "unnamed",
         this.imageUrl = "no_image",
         this.locationLat = -1.0,
         this.locationLong = -1.0,
         this.lockCombination = -1,
-        this.rating = -1
+        this.rating = -1, 
+        this.dateAdded = -1, 
+        this.active = true, 
+        this.condition = true, 
+        this.ownerId = "-1", 
+        //this.notes = L, 
+        //this.ratingHistory, 
+        this.checkOutTime = 1, 
+        //this.checkOutHistory, 
+        this.id = "-1",
+
+
   });
   
   //setters
@@ -96,23 +108,43 @@ class Bike {
         'location_lat' : locationLat,
         'check_out_time': checkOutTime,
         'check_out_history': checkOutHistory,
-  };    
-  Bike.fromJson(Map<String, dynamic> json)
-      : name = json['name'],
-        id = json['id'],
-        dateAdded = json['dateAdded'],
-        imageUrl = json['imageUrl'], 
-        active = json['active'],
-        condition = json['condition'],
-        ownerId = json['owner_id'],
-        lockCombination = json['lock_combination'],
-        notes = json['notes'],
-        rating = json['rating'],
-        ratingHistory = json['rating_history'],
-        locationLong = json['location_long'],
-        locationLat = json['location_lat'],
-        checkOutTime = json['check_out_time'],
-        checkOutHistory = json['check_out_history'];
+  };
+  // example of response from request post /bikes
+//   {date_added: 1652064108174, 
+//    image: default_image_string, 
+//    active: true, 
+//    condition: true, 
+//    owner_id: 6276bb56da39b8d8d54b7477, 
+//    lock_combination: 223344, 
+//    notes: [], 
+//    rating: 0, 
+//    rating_history: [], 
+//    location_long: 25,
+//    location_lat: -25, 
+//    check_out_id: -1, 
+//    check_out_history: [], 
+//    id: 62787f6cfdbef47fca400805}
+
+
+  factory Bike.fromJson(Map<String, dynamic> json) {
+    return Bike(      
+      //name: json['name'] as String,
+      id: json['id'] as String,
+      dateAdded: json['date_added'] as int,
+      imageUrl: json['image'] as String, 
+      active: json['active'] as bool,
+      condition: json['condition'] as bool,
+      ownerId: json['owner_id'] as String,
+      lockCombination: json['lock_combination'] as int,
+      //notes: json['notes'] as List<dynamic>,
+      rating: json['rating'] as double,
+      //ratingHistory: json['rating_history'] as List<dynamic>,
+      locationLong: json['location_long'] as double,
+      locationLat: json['location_lat'] as double,
+      //checkOutTime: json['check_out_time'] as int,
+      //checkOutHistory: json['check_out_history'] as List<dynamic>
+    );
+  }
     
 }
 
