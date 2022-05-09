@@ -1,11 +1,13 @@
 
 interface INote{
     id:string,
+    timestamp:number,
     note_body:string
 }
 
 interface IRating{
     id:string,
+    timestamp:number,
     rating_value:number
 }
 

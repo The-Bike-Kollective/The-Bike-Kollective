@@ -1,5 +1,5 @@
 import express, { Request, Response } from "express";
-import { findUserByAccessToekn, addBiketoDB, getAllBikes , findUserByIdentifier, findBikeByID} from "../db/db";
+import { findUserByAccessToekn, addBiketoDB, getAllBikes , findUserByIdentifier, findBikeByID,updateAnExisitngBike} from "../db/db";
 import { IBike, IRating, ICheckOut, INote } from "../models/bike";
 import { verifyUserIdentity } from "./userHelperFunctions";
 
@@ -168,14 +168,149 @@ router.get("/:id", async (req: Request, res: Response) => {
   // there is 1 bike in returned list
   return res.status(200).send(createBikeResponse(createBikeObjectfromDB(bikeFromDB[0]),access_token));
 
+});
 
 
+// information/instructions: to update a bike 
+// @params: none
+// @return: array of Bike objects
+// bugs: no known bugs
+// TODO : add pagination
+router.put("/:id", async (req: Request, res: Response) => {
+  const bike_id = req.params.id;
+  console.log(`bike id is :${bike_id}`);
+  // check if access_token is provided.
+  if (!req.headers.authorization) {
+    return res.status(403).json({ message: "access token is missing" });
+  }
+
+  // splits "Breaer TOKEN"
+  let access_token = req.headers.authorization.split(" ")[1];
+  console.log("Access Token from header is:");
+  console.log(access_token);
+
+  // retrive user information from DB to find refresh token
+  // const userFromDb = await findUserByAccessToekn(access_token)
+  let userFromDb = await findUserByAccessToekn(access_token);
+
+  const verificationResult = await verifyUserIdentity(userFromDb, access_token);
+
+  if (verificationResult == 404) {
+    return res.status(404).json({ message: "User not found" });
+  } else if (verificationResult == 500) {
+    return res.status(500).json({ message: "Multiple USER ERROR" });
+  } else if (verificationResult == 401) {
+    return res
+      .status(401)
+      .send({ message: "unauthorized. invalid access_token or identifier" });
+  } else if (verificationResult == 200) {
+    console.log("User is verified. Countiue the process");
+  }
+
+  // get bike inforamtion from DB
+  let bikeFromDB = await findBikeByID(bike_id)
+
+  // get updated user info to return valid access token
+  userFromDb = await findUserByIdentifier(userFromDb[0]["identifier"]);
+  access_token = userFromDb[0]['access_token']
+
+  if (bikeFromDB.length==0){
+
+    return res.status(404).json({ message: "Bike not found", access_token:access_token});
+
+  }else if(bikeFromDB.length==0){
+
+    return res.status(500).json({ message: "Multiple BIKE ERROR" , access_token:access_token});
+
+  }
+
+  // check if the user is the actual bike owner.
+  if (bikeFromDB[0]['owner_id']!=userFromDb[0]['identifier']){
+
+    return res.status(403).json({ message: "User is not the owner", access_token:access_token});
+
+  }
+
+  // check if bike is not check out and available 
+  if (bikeFromDB[0]['check_out_id']!="-1"){
+
+    return res.status(409).json({ message: "Bike is currently check out", access_token:access_token});
+
+  }
+
+  // user can change the following properties. the other porperties will be chnaged. 
+  // 1. name 
+  // 2. image 
+  // 3. active 
+  // 4. condition
+  // 5. lock_combination
+  // 6. notes [only add a new note]  => validate type
+  // 7. size 
+  // 8. type
+  // 9. location_long
+  // 10. location_lat
+
+  // only items that can cause 400 is notes if provided
+  let notes = bikeFromDB[0]['notes'];
+  if(req.body.notes){
+    if(validateNoteObject(req.body.notes) && req.body.notes.id==userFromDb[0]['identifier']){
+      notes = [...bikeFromDB[0]['notes'],req.body.notes]
+    }else{
+      return res.status(400).json({ message: "invalid note", access_token:access_token});
+    }   
+  }
+
+  // params that might chnage
+  const image = req.body.image || bikeFromDB[0]['image'];
+  const active = req.body.active || bikeFromDB[0]['active'];
+  const condition = req.body.condition || bikeFromDB[0]['condition'];
+  const lock_combination = req.body.lock_combination || bikeFromDB[0]['lock_combination'];
+  const location_long = req.body.location_long || bikeFromDB[0]['location_long'];
+  const location_lat = req.body.location_lat || bikeFromDB[0]['location_lat'];
+  const name = req.body.name || bikeFromDB[0]['name'];
+  const type = req.body.type || bikeFromDB[0]['type'];
+  const size = req.body.size || bikeFromDB[0]['size'];
+
+  // params that are not chaning
+  const date_added = bikeFromDB[0]['date_added'];
+  const owner_id = bikeFromDB[0]['owner_id'];
+  const rating = bikeFromDB[0]['rating'];
+  const rating_history = bikeFromDB[0]['rating_history'];
+  const check_out_id = bikeFromDB[0]['check_out_id'];
+  const check_out_time = bikeFromDB[0]['check_out_time'];
+  const check_out_history = bikeFromDB[0]['check_out_history'];
+
+  const newBike = createBikeObject(
+    date_added,
+    image,
+    active,
+    condition,
+    owner_id,
+    lock_combination,
+    notes,
+    rating,
+    rating_history,
+    location_long,
+    location_lat,
+    check_out_id,
+    check_out_time,
+    check_out_history,
+    name,
+    type,
+    size
+  );
+
+  // update bike on DB
+  updateAnExisitngBike(bikeFromDB[0]['id'],newBike)
+
+  //get updated bike from DB
+  bikeFromDB = await findBikeByID(bike_id)
+
+
+
+  // return updated result
+  return res.status(200).send(createBikeResponse(createBikeObjectfromDB(bikeFromDB[0]),access_token));
   
-
-
-
-
-
 });
 
 // information/instructions: verifies body data for Bike object
@@ -251,8 +386,9 @@ const createBikeObject = (
     type: type,
     size: size,
   };
-
+  ;
   return bikeObject;
+  // return Object.fromEntries(Object.entries(bikeObject).sort())
 };
 
 // create bike object for response. 
@@ -293,5 +429,12 @@ const createBikeResponse=(bikeObject:any, access_token:string) => {
   return { bike:bikeObject, access_token: access_token };
 
 }
+
+
+
+function validateNoteObject(note: any): note is INote {
+  return note.id !== undefined 
+}
+
 
 module.exports = router;

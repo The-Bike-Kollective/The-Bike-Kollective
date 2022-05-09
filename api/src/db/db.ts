@@ -204,6 +204,15 @@ const findBikeByID = async (id: string) => {
   return bike;
 };
 
+// information/instructions: updates and exisitng bike with a new bike object.
+// @params: bike object
+// @return: none
+// bugs: no known bugs
+const updateAnExisitngBike = async (id: string, newBike: IBike) => {
+  const result = await Bike.replaceOne({ _id: new ObjectID(id) }, newBike);
+  console.log("updated!");  
+};
+
 export {
   connectDB,
   addUsertoDB,
@@ -217,4 +226,5 @@ export {
   addBiketoDB,
   getAllBikes,
   findBikeByID,
+  updateAnExisitngBike
 };
