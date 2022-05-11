@@ -236,13 +236,25 @@ const updateAnExisitngBike = async (id: string, newBike: IBike) => {
 // @params: user id, bike id and timestamp
 // @return: none
 // bugs: no known bugs
-const userCheckoutABikeDB = async (user_id:string,bike_id:string,user_identifier:string,timestamp:number)=>{
-  await User.updateOne({ _id: new ObjectID(user_id)},{ $set: { checked_out_bike: bike_id , checked_out_time: timestamp} })
+const userCheckoutABikeDB = async (user_id:string,bike_id:string,user_identifier:string,timestamp:number, checkoutRecordId:string)=>{
+  await User.updateOne({ _id: new ObjectID(user_id)},{ $set: { checked_out_bike: bike_id , checked_out_time: timestamp, checkout_record_id:checkoutRecordId} })
   await Bike.updateOne({ _id: new ObjectID(bike_id)},{ $set: { check_out_id: user_identifier , check_out_time: timestamp} })
   console.log("Bike checked out in DB!");  
   return true
 
 }
+
+
+// information/instructions: add a a checkoutRecord to DB
+// @params: checkout object
+// @return: checkout object with _id
+// bugs: no known bugs
+const addCheckoutRecordToDB = async (newCheckoutRecord: ICheckoutHistory) => {
+  const result = await CheckoutHistory.create(newCheckoutRecord);
+  console.log(`Check out record ADED to DB. _id=${result._id}`);
+  console.log(result);
+  return result;
+};
 
 export {
   connectDB,
@@ -258,5 +270,6 @@ export {
   getAllBikes,
   findBikeByID,
   updateAnExisitngBike,
-  userCheckoutABikeDB
+  userCheckoutABikeDB,
+  addCheckoutRecordToDB
 };

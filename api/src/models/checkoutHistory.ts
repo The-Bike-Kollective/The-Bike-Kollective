@@ -47,7 +47,7 @@ class CheckoutHistory{
             this.bike_id=bike_id;
             this.checkout_timestamp=checkout_timestamp;
             this.checkin_timestamp=checkin_timestamp;
-            this.total_minutes=this.calculateMinutes(checkin_timestamp,checkout_timestamp),
+            this.total_minutes=total_minutes,
             this.condition_on_return=condition_on_return,
             this.note=note,
             this.rating=rating,
@@ -64,7 +64,7 @@ class CheckoutHistory{
 
         console.log(`Minutes clac: ${end} - ${start} = ${elapsedTimeMS}(ms)\n/60 = ${elapsedTimeS} (s) \n/60 = ${elapsedTimeM} (min)`)
 
-        return elapsedTimeM
+        this.total_minutes = elapsedTimeM
     }
     
 }

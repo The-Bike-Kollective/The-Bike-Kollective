@@ -1,8 +1,9 @@
 import express, { Request, Response } from "express";
 import { findUserByAccessToekn, addBiketoDB, getAllBikes , findUserByIdentifier, findBikeByID,updateAnExisitngBike,
-  userCheckoutABikeDB} from "../db/db";
+  userCheckoutABikeDB,addCheckoutRecordToDB} from "../db/db";
 import { IBike, IRating, INote } from "../models/bike";
 import { verifyUserIdentity } from "./userHelperFunctions";
+import { CheckoutHistory,ICheckoutHistory , ILocation } from "../models/checkoutHistory";
 
 const router = express.Router();
 
@@ -329,23 +330,27 @@ router.post("/:bike_id/:user_identifier", async (req: Request, res: Response) =>
 
   // steps to check out a bike:
   // 1. verify authorization header exists
-  // 2. find user using access token
-  // 3. verify user and update token
-  // 4. get updated user infroamtion after verification
-  // 5. verify provided user identifier belongs to the same user
-  // 6. get bike info from DB
-  // 7. check if user is suspended
-  // 8. check if bike is active or damaged
-  // 9. check if user has not checked out another bike
-  // 10. check if bike is not checked out by another user
-  // 11. check out the bike and add user identifier , time stamp and bike id to DB documents. 
+  // 2. verify body 
+  // 3. find user using access token
+  // 4. verify user and update token
+  // 5. get updated user infroamtion after verification
+  // 6. verify provided user identifier belongs to the same user
+  // 7. get bike info from DB
+  // 9. check if user is suspended
+  // 9. check if bike is active or damaged
+  // 10. check if user has not checked out another bike
+  // 11. check if bike is not checked out by another user
+  // 12. create a new checkout record and add inforamation 
+  // 13. check out the bike and add user identifier , time stamp and bike id to DB documents. 
+  // 14. return sucess and data
 
   const bike_id = req.params.bike_id;
   const user_identifier = req.params.user_identifier;
+  const checkoutTimestamp = Date.now();
 
 
   console.log(`in Bike Checkout.Bike id is :${bike_id}\nuser identifier is: ${user_identifier}`);
-  // check if access_token is provided.
+  // 1. verify authorization header exists
   if (!req.headers.authorization) {
     return res.status(403).json({ message: "access token is missing" });
   }
@@ -355,12 +360,16 @@ router.post("/:bike_id/:user_identifier", async (req: Request, res: Response) =>
   console.log("Access Token from header is:");
   console.log(access_token);
 
-  // check access token and update it
-  // retrive user information from DB to find refresh token
+  // 2. verify body
+  if (!(await verifyBikeCheckOutBody(req.body))) {
+    return res.status(400).json({ message: "invalid body" , access_token:access_token});
+  }
+
+  // 3. find user using access token
   let userFromDb = await findUserByAccessToekn(access_token)
 
+  // 4. verify user and update token
   const verificationResult = await verifyUserIdentity(userFromDb,access_token)
-
   if (verificationResult==404){
     return res.status(404).json({ message: "User not found", access_token:access_token });
   }else if (verificationResult==500){
@@ -370,61 +379,64 @@ router.post("/:bike_id/:user_identifier", async (req: Request, res: Response) =>
   }
 
   // if none of the avoe it means it was success with 200
-
-    
-  // get updated information from and retrive access token to be sent to the user
+      
+  // 5. get updated user infroamtion after verification to be sent to the user
   userFromDb = await findUserByIdentifier(user_identifier)
   access_token=userFromDb[0]['access_token']
 
-  // verify if provided id belongs to this user
+  // 6. verify provided user identifier belongs to the same user
   if(userFromDb[0]['identifier']!=user_identifier){
     return res.status(403).send({ message: "unauthorozrd user", access_token:access_token })
   }
 
 
-  // get bike inforamtion from DB
+  // 7. get bike info from DB
   let bikeFromDb = await findBikeByID(bike_id)
-
   if (bikeFromDb.length == 0) {
     return res.status(404).json({ message: "Bike not found", access_token:access_token });
   } else if (bikeFromDb.length > 1) {
     return res.status(500).json({ message: "Multiple BIKE ERROR", access_token:access_token });
   }
 
-
-  // check if cuse id is associated with the access token
-
-  // check if user is suspended
+  // 8. check if user is suspended
   if(userFromDb[0]['suspended']){
     return res.status(409).send({ message: "user is suspended", access_token:access_token })
   }
 
-  // check if user has already checked out another bike
-  if(userFromDb[0]['checked_out_bike']!="-1"){
-    return res.status(409).send({ message: "user has another checked out bike", access_token:access_token })
-  }
-
-  // check if bike is in good condition and active
+  // 9. check if bike is active or damaged
   if(!bikeFromDb[0]['active']){
     return res.status(409).send({ message: "Bike is not sharable", access_token:access_token })
   }
-
   if(!bikeFromDb[0]['condition']){
     return res.status(409).send({ message: "Bike is damaged", access_token:access_token })
   }
 
-  // check if bike is free for check out
+  // 10. check if user has not checked out another bike
+  if(userFromDb[0]['checked_out_bike']!="-1"){
+    return res.status(409).send({ message: "user has another checked out bike", access_token:access_token })
+  }
+
+  // 11. check if bike is not checked out by another user
   if(bikeFromDb[0]['check_out_id']!="-1"){
     return res.status(409).send({ message: "Bike is checked out by another user", access_token:access_token })
   }
 
-  // check out the bike by adding time stamp and bike id to user And
-  // adding user id and time stamp to the bike object
-  const timestamp = Date.now();
-  userCheckoutABikeDB(userFromDb[0]['id'],bike_id,user_identifier,timestamp)
+  // 12. create a new checkout record using infroamtion and add it to the DB 
+  const checkoutLocation = createNewLocation(req.body.location_long,req.body.location_lat);
+  const checkinLocation = createNewLocation(-999999,-999999);
+  const checkoutRecord=createNewCheckout(user_identifier,bike_id,checkoutLocation,checkoutTimestamp,checkinLocation);
+  const checkoutRecordfromDB:any = await addCheckoutRecordToDB(checkoutRecord)
 
-  
-  return res.status(200).send({ message: "Check out complete", timestamp:timestamp, access_token:access_token })
+  console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ ")
+  console.log(checkoutRecordfromDB)
+  console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ ")
+
+  // 13. check out the bike and add user identifier , time stamp and bike id to DB documents.   
+  userCheckoutABikeDB(userFromDb[0]['id'],bike_id,user_identifier,checkoutTimestamp,checkoutRecordfromDB._id)
+
+
+  // 14. return success  
+  return res.status(200).send({ message: "Check out complete", checkout_timestamp:checkoutTimestamp,checkout_record_id:checkoutRecordfromDB._id, access_token:access_token })
 
 
 
@@ -438,7 +450,7 @@ router.post("/:bike_id/:user_identifier", async (req: Request, res: Response) =>
 // TODO : refactor into functions
 router.delete("/:bike_id/:user_identifier", async (req: Request, res: Response) => {
 
-  // steps to check out a bike:
+  // steps to check_in a bike:
   // 1. verify authorization header exists
   // 2. verify body 
   // 3. find user using access token
@@ -478,7 +490,7 @@ router.delete("/:bike_id/:user_identifier", async (req: Request, res: Response) 
     return res.status(400).json({ message: "invalid body" , access_token:access_token});
   }else if(!req.body.condition && req.body.note.length ==0 ){
     // if damaged, note should not be empty
-    return res.status(400).json({ message: "damaged bike should have a note" ,access_token:access_token});
+    return res.status(400).json({ message: "damaged bike must have a note" ,access_token:access_token});
   }
 
   // check access token and update it
@@ -573,6 +585,33 @@ const verifyBikeCheckInBody = (body: object) => {
       "location_long",
       "location_lat",
       "condition"
+    ];
+    const keys_in_body = Object.keys(body);
+
+    if (valid_keys.length != keys_in_body.length) {
+      resolve(false);
+    }
+
+    keys_in_body.forEach((key) => {
+      if (!valid_keys.includes(key)) {
+        resolve(false);
+      }
+    });
+
+    resolve(true);
+  });
+};
+
+
+// information/instructions: verifies body data for Bike check out
+// @params: JSON object form req body
+// @return: true if valid, flase if not
+// bugs: no known bugs
+const verifyBikeCheckOutBody = (body: object) => {
+  return new Promise(async (resolve) => {
+    const valid_keys = [
+      "location_long",
+      "location_lat"
     ];
     const keys_in_body = Object.keys(body);
 
@@ -717,6 +756,41 @@ const createBikeResponse=(bikeObject:any, access_token:string) => {
 function validateNoteObject(note: any): note is INote {
   return note.id !== undefined 
 }
+
+const createNewCheckout = (user_identifier:string, bike_id:string, checkout_location:ILocation, checkout_timestamp:number,checkin_location:ILocation)=>{
+
+  let newCheckout:ICheckoutHistory = {
+    user_identifier: user_identifier,
+    bike_id: bike_id,
+    checkout_timestamp: checkout_timestamp,
+    checkin_timestamp: 0,
+    total_minutes: 0,
+    condition_on_return: true,
+    note: " ",
+    rating: 0,
+    checkout_location: checkout_location,
+    checkin_location: checkin_location
+  }
+
+  console.log(`newCheckout Record created:`)
+  console.log(newCheckout)
+
+
+  return newCheckout
+}
+
+const createNewLocation = (long:number, lat:number)=>{
+  let newLocation : ILocation = {
+    lat:lat,
+    long:long
+  }
+
+  console.log(`newLocation created:`)
+  console.log(newLocation)
+
+  return newLocation
+}
+
 
 
 module.exports = router;
