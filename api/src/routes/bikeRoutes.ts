@@ -330,7 +330,7 @@ router.post("/:bike_id/:user_identifier", async (req: Request, res: Response) =>
   // steps to check out a bike:
   // 1. verify authorization header exists
   // 2. find user using access token
-  // 3. verify user
+  // 3. verify user and update token
   // 4. get updated user infroamtion after verification
   // 5. verify provided user identifier belongs to the same user
   // 6. get bike info from DB
@@ -429,6 +429,168 @@ router.post("/:bike_id/:user_identifier", async (req: Request, res: Response) =>
 
 
 });
+
+
+// information/instructions: for checking in a bike
+// @params: Auth code, bike_id , user_identifier
+// @return: check out success and time stamp if success , error message on failure
+// bugs: no known bugs
+// TODO : refactor into functions
+router.delete("/:bike_id/:user_identifier", async (req: Request, res: Response) => {
+
+  // steps to check out a bike:
+  // 1. verify authorization header exists
+  // 2. verify body 
+  // 3. find user using access token
+  // 4. verify user and update token
+  // 4. get updated user infroamtion after verification
+  // 5. verify provided user identifier belongs to the same user
+  // 6. get bike info from DB
+  // 7. verify if user is check out the bike 
+  // 8. add a new record  to note history
+  // 9. add a new record  to rating history andcalculate new average
+  // 10. update location
+  // 11. update condition
+  // 12. calculate total check out time using stored timestamp 
+  // 13. suspend user if passed limit
+  // 14. add a new record  to check out history
+  // 15. update bike and user DB with -1
+  // 16. send result and include message, total_time, user_suspended, access_token
+
+  const bike_id = req.params.bike_id;
+  const user_identifier = req.params.user_identifier;
+  const checkInTimestamp = Date.now();
+
+
+  console.log(`in Bike Checkin.Bike id is :${bike_id}\nuser identifier is: ${user_identifier}`);
+  // check if access_token is provided.
+  if (!req.headers.authorization) {
+    return res.status(403).json({ message: "access token is missing" });
+  }
+
+  // splits "Breaer TOKEN" 
+  let access_token = req.headers.authorization.split(" ")[1];
+  console.log("Access Token from header is:");
+  console.log(access_token);
+
+   // 2. verify body
+   if (!(await verifyBikeCheckInBody(req.body))) {
+    return res.status(400).json({ message: "invalid body" , access_token:access_token});
+  }else if(!req.body.condition && req.body.note.length ==0 ){
+    // if damaged, note should not be empty
+    return res.status(400).json({ message: "damaged bike should have a note" ,access_token:access_token});
+  }
+
+  // check access token and update it
+  // retrive user information from DB to find refresh token
+  let userFromDb = await findUserByAccessToekn(access_token)
+
+  const verificationResult = await verifyUserIdentity(userFromDb,access_token)
+
+  if (verificationResult==404){
+    return res.status(404).json({ message: "User not found", access_token:access_token });
+  }else if (verificationResult==500){
+    return res.status(500).json({ message: "Multiple USER ERROR", access_token:access_token });
+  }else if (verificationResult==401){
+    return res.status(401).send({ message: "unauthorized. invalid access_token or identifier", access_token:access_token })
+  }
+
+   // if none of the avoe it means it was success with 200
+
+    
+  // get updated information from and retrive access token to be sent to the user
+  userFromDb = await findUserByIdentifier(user_identifier)
+  access_token=userFromDb[0]['access_token']
+
+  // verify if provided id belongs to this user
+  if(userFromDb[0]['identifier']!=user_identifier){
+    return res.status(403).send({ message: "unauthorozrd user", access_token:access_token })
+  }
+
+
+  // get bike inforamtion from DB
+  let bikeFromDb = await findBikeByID(bike_id)
+
+  if (bikeFromDb.length == 0) {
+    return res.status(404).json({ message: "Bike not found", access_token:access_token });
+  } else if (bikeFromDb.length > 1) {
+    return res.status(500).json({ message: "Multiple BIKE ERROR", access_token:access_token });
+  }
+
+  // 7. verify if user is check out the bike 
+  if(userFromDb[0]['checked_out_bike']!=bikeFromDb[0]['check_out_id']){
+    return res.status(403).send({ message: "User did not check out the bike.", access_token:access_token })
+  }
+
+ // 8. update note history
+  if(req.body.note.length>0){
+    const newNoteEntry:INote={id:user_identifier,timestamp:checkInTimestamp,note_body:req.body.note}
+    // addNoteToNoteHistoryForABike()  
+  }
+  
+  // 9. update rating history andcalculate new average
+  const newRatingEntry:IRating={id:user_identifier,timestamp:checkInTimestamp,rating_value:req.body.rating}
+  // addRatingToRatingHistoryForABike() 
+  // updateRatingForABike()
+  
+
+  // 10. update location
+  // updateLocationForABike() 
+
+  // 11. update condition
+  // updateConditionForABike() 
+
+  // 12. calculate total check out time using stored timestamp 
+  const totalCheckOutTime=checkInTimestamp-bikeFromDb[0]['check_out_time']
+  // calulate minutes
+
+  // 13. suspend user if passed limit
+  let userSuspended = false
+  // if(minutes>limit){
+    // suspendAUser()
+  // }
+
+  // 14. add to check out history
+
+  // 15. update bike and user DB with -1
+  // userCheckInABikeDB(userFromDb[0]['id'],bike_id,user_identifier)
+
+  // 16. send result and include message, total_time, user_suspended, access_token
+  // return res.status(200).send({ message: "Check out complete", timestamp:timestamp, access_token:access_token })
+
+})
+
+
+// information/instructions: verifies body data for Bike check in
+// @params: JSON object form req body
+// @return: true if valid, flase if not
+// bugs: no known bugs
+const verifyBikeCheckInBody = (body: object) => {
+  return new Promise(async (resolve) => {
+    const valid_keys = [
+      "note",
+      "rating",
+      "location_long",
+      "location_lat",
+      "condition"
+    ];
+    const keys_in_body = Object.keys(body);
+
+    if (valid_keys.length != keys_in_body.length) {
+      resolve(false);
+    }
+
+    keys_in_body.forEach((key) => {
+      if (!valid_keys.includes(key)) {
+        resolve(false);
+      }
+    });
+
+    resolve(true);
+  });
+};
+
+
 
 
 
