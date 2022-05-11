@@ -62,6 +62,7 @@ const createUserObject = (user: any) => {
     signed_waiver: user.signed_waiver,
     state: "",
     checkout_history: user.checkout_history,
+    checkout_record_id:user.checkout_record_id
   };
 
   return userObject;

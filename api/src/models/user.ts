@@ -13,6 +13,7 @@ interface IUser {
   signed_waiver: boolean;
   state:string;
   checkout_history:Array<string>;
+  checkout_record_id: string;
 }
 
 class User {
@@ -30,6 +31,7 @@ class User {
     signed_waiver: boolean;
     state: string;
     checkout_history:Array<string>;
+    checkout_record_id: string;
     
   constructor(
     family_name: string,
@@ -39,6 +41,7 @@ class User {
     owned_biks: Array<number>,
     checked_out_bike: string,
     checked_out_time: number,
+    checkout_record_id: string,
     suspended: boolean,
     access_token: string,
     refresh_token: string,
@@ -61,6 +64,7 @@ class User {
       this.signed_waiver=signed_waiver;
       this.state=state;
       this.checkout_history=checkout_history;
+      this.checkout_record_id=checkout_record_id;
   }
     
 }

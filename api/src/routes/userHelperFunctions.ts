@@ -75,7 +75,7 @@ const userRegistration = async (code: string, state: string) => {
         console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ getting profile info")
         getProfileInfo(tokens.tokens.access_token).then((profileData) => {
         console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ got profile info")
-          //if not add a new user
+          //if not, add a new user
           const profile_firstName = profileData["names"]["0"]["givenName"];
           const profile_lastName = profileData["names"]["0"]["familyName"];
           const profile_identifier =
@@ -162,6 +162,7 @@ const addNewUser = async (
     signed_waiver: signed_waiver,
     state: state,
     checkout_history: checkout_history,
+    checkout_record_id:"-1"
   };
 
   console.log('in addNewUser ')
