@@ -60,7 +60,8 @@ const createUserObject = (user: any) => {
     access_token: user.access_token,
     refresh_token: "",
     signed_waiver: user.signed_waiver,
-    state: ""
+    state: "",
+    checkout_history: user.checkout_history,
   };
 
   return userObject;

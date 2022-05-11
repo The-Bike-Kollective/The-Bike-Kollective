@@ -12,6 +12,7 @@ interface IUser {
   refresh_token: string;
   signed_waiver: boolean;
   state:string;
+  checkout_history:Array<string>;
 }
 
 class User {
@@ -28,6 +29,7 @@ class User {
     refresh_token: string;
     signed_waiver: boolean;
     state: string;
+    checkout_history:Array<string>;
     
   constructor(
     family_name: string,
@@ -42,6 +44,7 @@ class User {
     refresh_token: string,
     signed_waiver: boolean,
     state : string,
+    checkout_history:Array<string>,
     id?: number | undefined,
   ) {
       this.id = id;
@@ -57,6 +60,7 @@ class User {
       this.refresh_token=refresh_token;
       this.signed_waiver=signed_waiver;
       this.state=state;
+      this.checkout_history=checkout_history;
   }
     
 }

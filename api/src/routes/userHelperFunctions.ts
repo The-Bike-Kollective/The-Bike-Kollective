@@ -83,6 +83,7 @@ const userRegistration = async (code: string, state: string) => {
           const profile_email = profileData["emailAddresses"]["0"]["value"];
           const profile_access_token = tokens.tokens["access_token"];
           const profile_refresh_token = tokens.tokens["refresh_token"];
+          const checkout_history= new Array<string>();
 
           // TODO: Check DB for existing user
           findUserByIdentifier(profile_identifier).then((userInDB) => {
@@ -117,7 +118,8 @@ const userRegistration = async (code: string, state: string) => {
                 profile_access_token,
                 profile_refresh_token,
                 false,
-                state
+                state,
+                checkout_history
               ).then((response) => {
                 console.log("resolved. send 201")
                 resolve(201);
@@ -143,7 +145,8 @@ const addNewUser = async (
   access_token: string,
   refresh_token: string,
   signed_waiver: boolean,
-  state: string
+  state: string,
+  checkout_history:Array<string>
 ) => {
   let data: IUser = {
     family_name: family_name,
@@ -158,6 +161,7 @@ const addNewUser = async (
     refresh_token: refresh_token,
     signed_waiver: signed_waiver,
     state: state,
+    checkout_history: checkout_history,
   };
 
   console.log('in addNewUser ')

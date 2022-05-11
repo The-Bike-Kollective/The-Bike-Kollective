@@ -28,6 +28,7 @@ const UserSchema: mongoose.Schema = new mongoose.Schema({
   refresh_token: { type: String, required: true },
   signed_waiver: { type: Boolean, required: true },
   state: { type: String, required: true },
+  checkout_history: { type: String, required: true },
 });
 
 const BikeSchema: mongoose.Schema = new mongoose.Schema({
