@@ -5,7 +5,7 @@ interface IUser {
   email: string;
   identifier: string;
   owned_biks: Array<number>;
-  check_out_bike: number;
+  checked_out_bike: string;
   checked_out_time: number;
   suspended: boolean;
   access_token: string;
@@ -21,7 +21,7 @@ class User {
     email: string;
     identifier: string;
     owned_biks: Array<number>;
-    checked_out_bike: number;
+    checked_out_bike: string;
     checked_out_time: number;
     suspended: boolean;
     access_token: string;
@@ -35,7 +35,7 @@ class User {
     email: string,
     identifier: string,
     owned_biks: Array<number>,
-    checked_out_bike: number,
+    checked_out_bike: string,
     checked_out_time: number,
     suspended: boolean,
     access_token: string,

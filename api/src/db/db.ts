@@ -20,7 +20,7 @@ const UserSchema: mongoose.Schema = new mongoose.Schema({
   email: { type: String, required: true },
   identifier: { type: String, required: true },
   owned_biks: { type: [Number], required: true },
-  check_out_bike: { type: Number, required: true },
+  checked_out_bike: { type: String, required: true },
   checked_out_time: { type: Number, required: true },
   suspended: { type: Boolean, required: true },
   access_token: { type: String, required: true },
@@ -42,6 +42,7 @@ const BikeSchema: mongoose.Schema = new mongoose.Schema({
   location_long: { type: Number, required: true },
   location_lat: { type: Number, required: true },
   check_out_id: { type: String, required: true },
+  check_out_time:{ type: Number, required: true },
   check_out_history: { type: [Object], required: true },
   name: { type: String, required: true },
   type: { type: String, required: true },
@@ -213,6 +214,18 @@ const updateAnExisitngBike = async (id: string, newBike: IBike) => {
   console.log("updated!");  
 };
 
+// information/instructions: check out a bike for a user and update models
+// @params: user id, bike id and timestamp
+// @return: none
+// bugs: no known bugs
+const userCheckoutABikeDB = async (user_id:string,bike_id:string,user_identifier:string,timestamp:number)=>{
+  await User.updateOne({ _id: new ObjectID(user_id)},{ $set: { checked_out_bike: bike_id , checked_out_time: timestamp} })
+  await Bike.updateOne({ _id: new ObjectID(bike_id)},{ $set: { check_out_id: user_identifier , check_out_time: timestamp} })
+  console.log("Bike checked out in DB!");  
+  return true
+
+}
+
 export {
   connectDB,
   addUsertoDB,
@@ -226,5 +239,6 @@ export {
   addBiketoDB,
   getAllBikes,
   findBikeByID,
-  updateAnExisitngBike
+  updateAnExisitngBike,
+  userCheckoutABikeDB
 };

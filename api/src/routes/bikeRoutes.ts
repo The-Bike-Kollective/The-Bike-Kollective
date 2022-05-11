@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
-import { findUserByAccessToekn, addBiketoDB, getAllBikes , findUserByIdentifier, findBikeByID,updateAnExisitngBike} from "../db/db";
+import { findUserByAccessToekn, addBiketoDB, getAllBikes , findUserByIdentifier, findBikeByID,updateAnExisitngBike,
+  userCheckoutABikeDB} from "../db/db";
 import { IBike, IRating, ICheckOut, INote } from "../models/bike";
 import { verifyUserIdentity } from "./userHelperFunctions";
 
@@ -10,6 +11,7 @@ const router = express.Router();
 // @return: bike data on success , error message on failure
 // bugs: no known bugs
 // TODO : refactor into correct file
+// TODO: add bike to user owned_bike list
 router.post("/", async (req: Request, res: Response) => {
   // check if access_token is provided.
   if (!req.headers.authorization) {
@@ -90,6 +92,10 @@ router.post("/", async (req: Request, res: Response) => {
 
     // get updated user info to return valid access token
     userFromDb = await findUserByIdentifier(userFromDb[0]["identifier"]);
+
+    // add bike to user owned_bike list
+    // TODO
+
     res.status(201).send(createBikeResponse(createBikeObjectfromDB(bikeFromDB),userFromDb[0]['access_token']));
   }
 });
@@ -238,7 +244,7 @@ router.put("/:id", async (req: Request, res: Response) => {
 
   }
 
-  // user can change the following properties. the other porperties will be chnaged. 
+  // user can change the following properties. the other porperties will NOT be chnaged. 
   // 1. name 
   // 2. image 
   // 3. active 
@@ -312,6 +318,120 @@ router.put("/:id", async (req: Request, res: Response) => {
   return res.status(200).send(createBikeResponse(createBikeObjectfromDB(bikeFromDB[0]),access_token));
   
 });
+
+
+// information/instructions: for checking out a bike
+// @params: Auth code, bike_id , user_identifier
+// @return: check out success and time stamp if success , error message on failure
+// bugs: no known bugs
+// TODO : refactor into functions
+router.post("/:bike_id/:user_identifier", async (req: Request, res: Response) => {
+
+  // steps to check out a bike:
+  // 1. verify authorization header exists
+  // 2. find user using access token
+  // 3. verify user
+  // 4. get updated user infroamtion after verification
+  // 5. verify provided user identifier belongs to the same user
+  // 6. get bike info from DB
+  // 7. check if user is suspended
+  // 8. check if bike is active or damaged
+  // 9. check if user has not checked out another bike
+  // 10. check if bike is not checked out by another user
+  // 11. check out the bike and add user identifier , time stamp and bike id to DB documents. 
+
+  const bike_id = req.params.bike_id;
+  const user_identifier = req.params.user_identifier;
+
+
+  console.log(`in Bike Checkout.Bike id is :${bike_id}\nuser identifier is: ${user_identifier}`);
+  // check if access_token is provided.
+  if (!req.headers.authorization) {
+    return res.status(403).json({ message: "access token is missing" });
+  }
+
+  // splits "Breaer TOKEN" 
+  let access_token = req.headers.authorization.split(" ")[1];
+  console.log("Access Token from header is:");
+  console.log(access_token);
+
+  // check access token and update it
+  // retrive user information from DB to find refresh token
+  let userFromDb = await findUserByAccessToekn(access_token)
+
+  const verificationResult = await verifyUserIdentity(userFromDb,access_token)
+
+  if (verificationResult==404){
+    return res.status(404).json({ message: "User not found", access_token:access_token });
+  }else if (verificationResult==500){
+    return res.status(500).json({ message: "Multiple USER ERROR", access_token:access_token });
+  }else if (verificationResult==401){
+    return res.status(401).send({ message: "unauthorized. invalid access_token or identifier", access_token:access_token })
+  }
+
+  // if none of the avoe it means it was success with 200
+
+    
+  // get updated information from and retrive access token to be sent to the user
+  userFromDb = await findUserByIdentifier(user_identifier)
+  access_token=userFromDb[0]['access_token']
+
+  // verify if provided id belongs to this user
+  if(userFromDb[0]['identifier']!=user_identifier){
+    return res.status(403).send({ message: "unauthorozrd user", access_token:access_token })
+  }
+
+
+  // get bike inforamtion from DB
+  let bikeFromDb = await findBikeByID(bike_id)
+
+  if (bikeFromDb.length == 0) {
+    return res.status(404).json({ message: "Bike not found", access_token:access_token });
+  } else if (bikeFromDb.length > 1) {
+    return res.status(500).json({ message: "Multiple BIKE ERROR", access_token:access_token });
+  }
+
+
+  // check if cuse id is associated with the access token
+
+  // check if user is suspended
+  if(userFromDb[0]['suspended']){
+    return res.status(409).send({ message: "user is suspended", access_token:access_token })
+  }
+
+  // check if user has already checked out another bike
+  if(userFromDb[0]['checked_out_bike']!="-1"){
+    return res.status(409).send({ message: "user has another checked out bike", access_token:access_token })
+  }
+
+  // check if bike is in good condition and active
+  if(!bikeFromDb[0]['active']){
+    return res.status(409).send({ message: "Bike is not sharable", access_token:access_token })
+  }
+
+  if(!bikeFromDb[0]['condition']){
+    return res.status(409).send({ message: "Bike is damaged", access_token:access_token })
+  }
+
+  // check if bike is free for check out
+  if(bikeFromDb[0]['check_out_id']!="-1"){
+    return res.status(409).send({ message: "Bike is checked out by another user", access_token:access_token })
+  }
+
+  // check out the bike by adding time stamp and bike id to user And
+  // adding user id and time stamp to the bike object
+  const timestamp = Date.now();
+  userCheckoutABikeDB(userFromDb[0]['id'],bike_id,user_identifier,timestamp)
+
+  
+  return res.status(200).send({ message: "Check out complete", timestamp:timestamp, access_token:access_token })
+
+
+
+});
+
+
+
 
 // information/instructions: verifies body data for Bike object
 // @params: JSON object form req body

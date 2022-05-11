@@ -151,7 +151,7 @@ const addNewUser = async (
     email: email,
     identifier: identifier,
     owned_biks: [],
-    check_out_bike: -1,
+    checked_out_bike: "-1",
     checked_out_time: 0,
     suspended: false,
     access_token: access_token,
