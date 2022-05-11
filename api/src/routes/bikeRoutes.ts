@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { findUserByAccessToekn, addBiketoDB, getAllBikes , findUserByIdentifier, findBikeByID,updateAnExisitngBike,
   userCheckoutABikeDB} from "../db/db";
-import { IBike, IRating, ICheckOut, INote } from "../models/bike";
+import { IBike, IRating, INote } from "../models/bike";
 import { verifyUserIdentity } from "./userHelperFunctions";
 
 const router = express.Router();
@@ -63,7 +63,7 @@ router.post("/", async (req: Request, res: Response) => {
     const location_lat = req.body.location_lat;
     const check_out_id = "-1";
     const check_out_time = -1;
-    const check_out_history = new Array<ICheckOut>();
+    const check_out_history = new Array<string>();
     const name = req.body.name;
     const type = req.body.type;
     const size = req.body.size
@@ -644,7 +644,7 @@ const createBikeObject = (
   location_lat: number,
   check_out_id: string,
   check_out_time: number,
-  check_out_history: Array<ICheckOut>,
+  check_out_history: Array<string>,
   name : string,
   type: string,
   size: string

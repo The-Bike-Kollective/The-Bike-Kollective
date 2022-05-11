@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import { IUser } from "../models/user";
 import { IBike } from "../models/bike";
+import {ICheckoutHistory} from "../models/history";
 import { db_url, db_name } from "../index";
 
 let ObjectID = require("mongodb").ObjectID;
@@ -49,8 +50,23 @@ const BikeSchema: mongoose.Schema = new mongoose.Schema({
   size: { type: String, required: true },
 });
 
+const CheckoutHistorySchema: mongoose.Schema  = new mongoose.Schema({
+  user_identifier: { type: String, required: true },
+  bike_id: { type: String, required: true },
+  check_out_timestamp: { type: Number, required: true },
+  check_in_timestamp: { type: Number, required: true },
+  total_minutes: { type: Number, required: true },
+  condition_on_return: { type: String, required: true },  
+  note: { type: String, required: true },
+  rating: { type: Number, required: true },
+  pickup_location: { type: [Object], required: true },
+  return_location: { type: [Object], required: true },
+});
+
 const User: mongoose.Model<IUser> = mongoose.model("User", UserSchema);
 const Bike: mongoose.Model<IBike> = mongoose.model("Bike", BikeSchema);
+const CheckoutHistory: mongoose.Model<ICheckoutHistory> = mongoose.model("CheckoutHistory", CheckoutHistorySchema);
+
 
 // information/instructions: add a new user to database
 // @params: User object
