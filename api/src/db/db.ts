@@ -55,14 +55,14 @@ const BikeSchema: mongoose.Schema = new mongoose.Schema({
 const CheckoutHistorySchema: mongoose.Schema  = new mongoose.Schema({
   user_identifier: { type: String, required: true },
   bike_id: { type: String, required: true },
-  check_out_timestamp: { type: Number, required: true },
-  check_in_timestamp: { type: Number, required: true },
+  checkout_timestamp: { type: Number, required: true },
+  checkin_timestamp: { type: Number, required: true },
   total_minutes: { type: Number, required: true },
   condition_on_return: { type: String, required: true },  
   note: { type: String, required: true },
   rating: { type: Number, required: true },
-  pickup_location: { type: [Object], required: true },
-  return_location: { type: [Object], required: true },
+  checkout_location: { type: [Object], required: true },
+  checkin_location: { type: [Object], required: true },
 });
 
 const User: mongoose.Model<IUser> = mongoose.model("User", UserSchema);
