@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { IUser } from "../models/user";
 import { IBike } from "../models/bike";
-import {ICheckoutHistory} from "../models/checkoutHistory";
+import { ICheckoutHistory } from "../models/checkoutHistory";
 import { db_url, db_name } from "../index";
 
 let ObjectID = require("mongodb").ObjectID;
@@ -29,7 +29,7 @@ const UserSchema: mongoose.Schema = new mongoose.Schema({
   signed_waiver: { type: Boolean, required: true },
   state: { type: String, required: true },
   checkout_history: { type: [String], required: true },
-  checkout_record_id:{ type: String, required: true },
+  checkout_record_id: { type: String, required: true },
 });
 
 const BikeSchema: mongoose.Schema = new mongoose.Schema({
@@ -45,20 +45,20 @@ const BikeSchema: mongoose.Schema = new mongoose.Schema({
   location_long: { type: Number, required: true },
   location_lat: { type: Number, required: true },
   check_out_id: { type: String, required: true },
-  check_out_time:{ type: Number, required: true },
+  check_out_time: { type: Number, required: true },
   check_out_history: { type: [Object], required: true },
   name: { type: String, required: true },
   type: { type: String, required: true },
   size: { type: String, required: true },
 });
 
-const CheckoutHistorySchema: mongoose.Schema  = new mongoose.Schema({
+const CheckoutHistorySchema: mongoose.Schema = new mongoose.Schema({
   user_identifier: { type: String, required: true },
   bike_id: { type: String, required: true },
   checkout_timestamp: { type: Number, required: true },
   checkin_timestamp: { type: Number, required: true },
   total_minutes: { type: Number, required: true },
-  condition_on_return: { type: String, required: true },  
+  condition_on_return: { type: String, required: true },
   note: { type: String, required: true },
   rating: { type: Number, required: true },
   checkout_location: { type: [Object], required: true },
@@ -67,8 +67,10 @@ const CheckoutHistorySchema: mongoose.Schema  = new mongoose.Schema({
 
 const User: mongoose.Model<IUser> = mongoose.model("User", UserSchema);
 const Bike: mongoose.Model<IBike> = mongoose.model("Bike", BikeSchema);
-const CheckoutHistory: mongoose.Model<ICheckoutHistory> = mongoose.model("CheckoutHistory", CheckoutHistorySchema);
-
+const CheckoutHistory: mongoose.Model<ICheckoutHistory> = mongoose.model(
+  "CheckoutHistory",
+  CheckoutHistorySchema
+);
 
 // information/instructions: add a new user to database
 // @params: User object
@@ -229,21 +231,37 @@ const findBikeByID = async (id: string) => {
 // bugs: no known bugs
 const updateAnExisitngBike = async (id: string, newBike: IBike) => {
   const result = await Bike.replaceOne({ _id: new ObjectID(id) }, newBike);
-  console.log("updated!");  
+  console.log("updated!");
 };
 
 // information/instructions: check out a bike for a user and update models
 // @params: user id, bike id and timestamp
 // @return: none
 // bugs: no known bugs
-const userCheckoutABikeDB = async (user_id:string,bike_id:string,user_identifier:string,timestamp:number, checkoutRecordId:string)=>{
-  await User.updateOne({ _id: new ObjectID(user_id)},{ $set: { checked_out_bike: bike_id , checked_out_time: timestamp, checkout_record_id:checkoutRecordId} })
-  await Bike.updateOne({ _id: new ObjectID(bike_id)},{ $set: { check_out_id: user_identifier , check_out_time: timestamp} })
-  console.log("Bike checked out in DB!");  
-  return true
-
-}
-
+const userCheckoutABikeDB = async (
+  user_id: string,
+  bike_id: string,
+  user_identifier: string,
+  timestamp: number,
+  checkoutRecordId: string
+) => {
+  await User.updateOne(
+    { _id: new ObjectID(user_id) },
+    {
+      $set: {
+        checked_out_bike: bike_id,
+        checked_out_time: timestamp,
+        checkout_record_id: checkoutRecordId,
+      },
+    }
+  );
+  await Bike.updateOne(
+    { _id: new ObjectID(bike_id) },
+    { $set: { check_out_id: user_identifier, check_out_time: timestamp } }
+  );
+  console.log("Bike checked out in DB!");
+  return true;
+};
 
 // information/instructions: add a a checkoutRecord to DB
 // @params: checkout object
@@ -271,5 +289,5 @@ export {
   findBikeByID,
   updateAnExisitngBike,
   userCheckoutABikeDB,
-  addCheckoutRecordToDB
+  addCheckoutRecordToDB,
 };
