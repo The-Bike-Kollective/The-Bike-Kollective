@@ -56,17 +56,25 @@ class CheckoutHistory{
             this.id=id;
         }
 
-    calculateMinutes=(start:number,end:number)=>{
+    calculateMinutes=()=>{
 
-        let elapsedTimeMS = end-start;   //miliseconds
+        let elapsedTimeMS = Math.abs(this.checkin_timestamp - this.checkout_timestamp);   //miliseconds
         let elapsedTimeS=elapsedTimeMS/1000  //secconds
         let elapsedTimeM=Math.floor(elapsedTimeS/60)    // minutes
 
-        console.log(`Minutes clac: ${end} - ${start} = ${elapsedTimeMS}(ms)\n/60 = ${elapsedTimeS} (s) \n/60 = ${elapsedTimeM} (min)`)
+        console.log(`Minutes clac: ${this.checkin_timestamp} - ${this.checkout_timestamp} = ${elapsedTimeMS}(ms)\n/60 = ${elapsedTimeS} (s) \n/60 = ${elapsedTimeM} (min)`)
 
         this.total_minutes = elapsedTimeM
+    };
+
+    checkInUpdate=(checkin_timestamp:number, checkin_location:ILocation,note:string, rating:number, condition_on_return:boolean)=>{
+        this.checkin_timestamp=checkin_timestamp;
+        this.checkin_location=checkin_location;
+        this.note=note;
+        this.rating=rating;
+        this.condition_on_return=condition_on_return;
     }
-    
+       
 }
 
 

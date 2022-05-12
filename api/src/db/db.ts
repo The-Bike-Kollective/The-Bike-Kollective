@@ -225,6 +225,55 @@ const findBikeByID = async (id: string) => {
   return bike;
 };
 
+// information/instructions: custom update function. update value of a key in DB for bike
+// @params: bike id, key and new value
+// @return: noen
+// bugs: no known bugs
+const bikeUpdateLocationDB = async (bike_id: string,new_location_long:number,new_location_lat:number) => {
+  const result = await Bike.updateOne(
+    { _id: new ObjectID(bike_id) },
+    {$set:{ location_long: new_location_long,
+            location_lat: new_location_lat}}
+  );
+  console.log(`bikeUpdateLocationDB updated`);
+  console.log(result)
+  return true;
+};
+
+
+const bikeUpdateRatingHistoryDB = async (bike_id: string,new_value:any) => {
+  const result = await Bike.updateOne(
+    { _id: new ObjectID(bike_id) },
+    {$set:{ rating_history: new_value}}
+  );
+  console.log(`bikeUpdateRatingHistoryDB updated`);
+  console.log(result)
+  return true;
+};
+
+const bikeUpdateConditionDB = async (bike_id: string,new_value:boolean) => {
+  const result = await Bike.updateOne(
+    { _id: new ObjectID(bike_id) },
+    {$set:{ condition: new_value}}
+  );
+  console.log(`bikeUpdateConditionDB updated`);
+  console.log(result)
+  return true;
+};
+
+const bikeUpdateNotesDB = async (bike_id: string,new_value:any) => {
+  const result = await Bike.updateOne(
+    { _id: new ObjectID(bike_id) },
+    {$set:{ notes: new_value}}
+  );
+  console.log(`bikeUpdateNotesDB updated`);
+  console.log(result)
+  return true;
+};
+
+
+
+
 // information/instructions: updates and exisitng bike with a new bike object.
 // @params: bike object
 // @return: none
@@ -263,6 +312,36 @@ const userCheckoutABikeDB = async (
   return true;
 };
 
+
+// information/instructions: check in a bike for a user and update models
+// @params: user id, bike id and timestamp
+// @return: none
+// bugs: no known bugs
+const userCheckInABikeDB = async (
+  user_id: string,
+  bike_id: string,
+  bike_check_out_history:Array<string>,
+  user_checkout_history:Array<string>,
+) => {
+  await User.updateOne(
+    { _id: new ObjectID(user_id) },
+    {
+      $set: {
+        checked_out_bike: "-1",
+        checked_out_time: -1,
+        checkout_record_id: "-1",
+        checkout_history:user_checkout_history
+      },
+    }
+  );
+  await Bike.updateOne(
+    { _id: new ObjectID(bike_id) },
+    { $set: { check_out_id: "-1", check_out_time: -1, check_out_history:bike_check_out_history } }
+  );
+  console.log("Bike checked in back in DB!");
+  return true;
+};
+
 // information/instructions: add a a checkoutRecord to DB
 // @params: checkout object
 // @return: checkout object with _id
@@ -273,6 +352,28 @@ const addCheckoutRecordToDB = async (newCheckoutRecord: ICheckoutHistory) => {
   console.log(result);
   return result;
 };
+
+
+// information/instructions: retrive check out record by DB Id
+// @params: DB id as string
+// @return: array of checkout record object(s) , empty means no record with that id was found
+// bugs: no known bugs
+const findCheckoutRecordByID = async (id: string) => {
+  const record = await CheckoutHistory.find({ _id: new ObjectID(id) });
+  console.log(record);
+  return record;
+};
+
+
+// information/instructions: updates an exisitng checkout History with a new checkout object.
+// @params: checkout object
+// @return: none
+// bugs: no known bugs
+const updateAnExisitngCheckoutHistory = async (newCheckoutObject: ICheckoutHistory) => {
+  const result = await CheckoutHistory.replaceOne({ _id: new ObjectID(newCheckoutObject.id) }, newCheckoutObject);
+  console.log(`cehckoutHistory with id =${newCheckoutObject.id} updated!`);
+};
+
 
 export {
   connectDB,
@@ -290,4 +391,11 @@ export {
   updateAnExisitngBike,
   userCheckoutABikeDB,
   addCheckoutRecordToDB,
+  findCheckoutRecordByID,
+  updateAnExisitngCheckoutHistory,
+  userCheckInABikeDB,
+  bikeUpdateLocationDB,
+  bikeUpdateRatingHistoryDB,
+  bikeUpdateConditionDB,
+  bikeUpdateNotesDB
 };

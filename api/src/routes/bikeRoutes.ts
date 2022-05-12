@@ -8,6 +8,14 @@ import {
   updateAnExisitngBike,
   userCheckoutABikeDB,
   addCheckoutRecordToDB,
+  findCheckoutRecordByID,
+  updateAnExisitngCheckoutHistory,
+  userCheckInABikeDB,
+  bikeUpdateLocationDB,
+  bikeUpdateRatingHistoryDB,
+  bikeUpdateConditionDB,
+  bikeUpdateNotesDB
+
 } from "../db/db";
 import { IBike, IRating, INote } from "../models/bike";
 import { verifyUserIdentity } from "./userHelperFunctions";
@@ -119,6 +127,7 @@ router.post("/", async (req: Request, res: Response) => {
       );
   }
 });
+
 
 // information/instructions: returns all bikes in DB
 // @params: none
@@ -473,7 +482,7 @@ router.post(
       return res
         .status(409)
         .send({
-          message: "user has another checked out bike",
+          message: "user has a checked out bike",
           access_token: access_token,
         });
     }
@@ -493,7 +502,7 @@ router.post(
       req.body.location_long,
       req.body.location_lat
     );
-    const checkinLocation = createNewLocation(-999999, -999999);  // dummy location
+    const checkinLocation = createNewLocation(NaN,NaN);  // dummy location
     const checkoutRecord = createNewCheckout(
       user_identifier,
       bike_id,
@@ -501,9 +510,13 @@ router.post(
       checkoutTimestamp,
       checkinLocation
     );
-    const checkoutRecordfromDB: any = await addCheckoutRecordToDB(
-      checkoutRecord
-    );
+    const checkoutRecordfromDB:ICheckoutHistory = await addCheckoutRecordToDB(checkoutRecord);
+    console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&")
+    console.log(checkoutRecordfromDB)
+
+
+    let checkoutObject= createhistoryObjectfromDB(checkoutRecordfromDB)
+    // TODO: add error if empty
 
     // 13. check out the bike and add user identifier , time stamp and bike id to DB documents.
     userCheckoutABikeDB(
@@ -511,7 +524,7 @@ router.post(
       bike_id,
       user_identifier,
       checkoutTimestamp,
-      checkoutRecordfromDB._id
+      checkoutObject.id as string
     );
 
     // 14. return success
@@ -520,7 +533,7 @@ router.post(
       .send({
         message: "Check out complete",
         checkout_timestamp: checkoutTimestamp,
-        checkout_record_id: checkoutRecordfromDB._id,
+        checkout_details: checkoutObject,
         access_token: access_token,
       });
   }
@@ -638,7 +651,7 @@ router.delete(
     }
 
     // 7. verify if user is check out the bike
-    if (userFromDb[0]["checked_out_bike"] != bikeFromDb[0]["check_out_id"]) {
+    if (userFromDb[0]["checked_out_bike"] != bike_id) {
       return res
         .status(403)
         .send({
@@ -654,7 +667,7 @@ router.delete(
         timestamp: checkInTimestamp,
         note_body: req.body.note,
       };
-      // addNoteToNoteHistoryForABike()
+      bikeUpdateNotesDB(bike_id,[...bikeFromDb[0]["notes"],newNoteEntry])
     }
 
     // 9. update rating history andcalculate new average
@@ -663,33 +676,54 @@ router.delete(
       timestamp: checkInTimestamp,
       rating_value: req.body.rating,
     };
-    // addRatingToRatingHistoryForABike()
+    bikeUpdateRatingHistoryDB(bike_id,[...bikeFromDb[0]["rating_history"],newRatingEntry])
     // updateRatingForABike()
 
     // 10. update location
-    // updateLocationForABike()
-
+    bikeUpdateLocationDB(bike_id,req.body.location_long,req.body.location_lat)
+   
     // 11. update condition
-    // updateConditionForABike()
+    bikeUpdateConditionDB(bike_id,req.body.condition)
 
-    // 12. calculate total check out time using stored timestamp
-    const totalCheckOutTime =
-      checkInTimestamp - bikeFromDb[0]["check_out_time"];
-    // calulate minutes
+    // 12. create return location, retrive checkoutRating and updateit, calculate total time
+    const checkinLocation = createNewLocation(req.body.location_long,req.body.location_lat)
+    const checkoutRecord = await findCheckoutRecordByID(userFromDb[0]['checkout_record_id']) 
+    console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ restored checkout record")
+    console.log(checkoutRecord)
+    let checkoutObject= createhistoryObjectfromDB(checkoutRecord[0])
+    // TODO: add error if empty
+
+    checkoutObject.checkInUpdate(checkInTimestamp,checkinLocation,req.body.note,req.body.rating,req.body.condition_on_return)
+    checkoutObject.calculateMinutes()   
 
     // 13. suspend user if passed limit
     let userSuspended = false;
-    // if(minutes>limit){
+    if(checkoutObject.total_minutes>8*60){
     // suspendAUser()
-    // }
+    }
 
     // 14. add to check out history
+    updateAnExisitngCheckoutHistory(checkoutObject)
+
 
     // 15. update bike and user DB with -1
     // userCheckInABikeDB(userFromDb[0]['id'],bike_id,user_identifier)
+    userCheckInABikeDB(
+      userFromDb[0]['id'],
+      bike_id,
+      [...bikeFromDb[0]['check_out_history'],checkoutObject.id as string],
+      [...userFromDb[0]['checkout_history'],checkoutObject.id as string]
+      )
 
     // 16. send result and include message, total_time, user_suspended, access_token
-    // return res.status(200).send({ message: "Check out complete", timestamp:timestamp, access_token:access_token })
+    return res
+      .status(200)
+      .send({
+        message: "Check in complete",
+        checkout_timestamp: checkInTimestamp,
+        checkout_details: checkoutObject,
+        access_token: access_token,
+      });
   }
 );
 
@@ -899,6 +933,32 @@ const createNewLocation = (long: number, lat: number) => {
   console.log(newLocation);
 
   return newLocation;
+};
+
+// create cehcekoutHistory object from DB
+// @params: Bike data from DB
+// @return: Bike data for HTTP response
+// bugs: no known bugs
+const createhistoryObjectfromDB = (checkoutRecordDB: any) => {
+  
+  let checkoutObject = new CheckoutHistory(
+    checkoutRecordDB.user_identifier,
+    checkoutRecordDB.bike_id,
+    checkoutRecordDB.checkout_timestamp,
+    checkoutRecordDB.checkin_timestamp,
+    checkoutRecordDB.total_minutes,
+    checkoutRecordDB.condition_on_return,
+    checkoutRecordDB.note,
+    checkoutRecordDB.rating,
+    checkoutRecordDB.checkout_location,
+    checkoutRecordDB.checkin_location,
+    checkoutRecordDB._id    
+  )
+
+  console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~checkoutObject is created")
+  console.log(checkoutObject)
+  
+  return checkoutObject;
 };
 
 module.exports = router;
