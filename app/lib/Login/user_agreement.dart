@@ -13,9 +13,7 @@ import 'package:the_bike_kollective/models.dart';
 //  1. write terms and conditions
 //  2. redirect user to home page if declines (inform user w/pop-up)
 //  3. redirect user to user page if accepts (implement user info)
-//  4. implement URL retrival to obtain call_back uri
-//  5. parse uri to obtain auth code and send to back-end
-
+//  4. clean-up code and separate into different widgets
 const String pdfText = """MEMBERSHIP RULES
 Lorem ipsum dolor sit amet. Sed repudiandae voluptas et consequatur perspiciatis 
 cum quia corrupti aut illum iusto cum voluptatem maxime. Est numquam maxime est culpa 
