@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.updateAnExisitngBike = exports.findBikeByID = exports.getAllBikes = exports.addBiketoDB = exports.updateStateinDB = exports.findUserByState = exports.updateRefreshTokeninDB = exports.updateAccessTokeninDB = exports.findUserByAccessToekn = exports.findUserByID = exports.findUserByIdentifier = exports.addUsertoDB = exports.connectDB = void 0;
+exports.bikeUpdateNotesDB = exports.bikeUpdateConditionDB = exports.bikeUpdateRatingHistoryDB = exports.bikeUpdateLocationDB = exports.userCheckInABikeDB = exports.updateAnExisitngCheckoutHistory = exports.findCheckoutRecordByID = exports.addCheckoutRecordToDB = exports.userCheckoutABikeDB = exports.updateAnExisitngBike = exports.findBikeByID = exports.getAllBikes = exports.addBiketoDB = exports.updateStateinDB = exports.findUserByState = exports.updateRefreshTokeninDB = exports.updateAccessTokeninDB = exports.findUserByAccessToekn = exports.findUserByID = exports.findUserByIdentifier = exports.addUsertoDB = exports.connectDB = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const index_1 = require("../index");
 let ObjectID = require("mongodb").ObjectID;
@@ -32,13 +32,15 @@ const UserSchema = new mongoose_1.default.Schema({
     email: { type: String, required: true },
     identifier: { type: String, required: true },
     owned_biks: { type: [Number], required: true },
-    check_out_bike: { type: Number, required: true },
+    checked_out_bike: { type: String, required: true },
     checked_out_time: { type: Number, required: true },
     suspended: { type: Boolean, required: true },
     access_token: { type: String, required: true },
     refresh_token: { type: String, required: true },
     signed_waiver: { type: Boolean, required: true },
     state: { type: String, required: true },
+    checkout_history: { type: [String], required: true },
+    checkout_record_id: { type: String, required: true },
 });
 const BikeSchema = new mongoose_1.default.Schema({
     date_added: { type: Number, required: true },
@@ -53,13 +55,27 @@ const BikeSchema = new mongoose_1.default.Schema({
     location_long: { type: Number, required: true },
     location_lat: { type: Number, required: true },
     check_out_id: { type: String, required: true },
+    check_out_time: { type: Number, required: true },
     check_out_history: { type: [Object], required: true },
     name: { type: String, required: true },
     type: { type: String, required: true },
     size: { type: String, required: true },
 });
+const CheckoutHistorySchema = new mongoose_1.default.Schema({
+    user_identifier: { type: String, required: true },
+    bike_id: { type: String, required: true },
+    checkout_timestamp: { type: Number, required: true },
+    checkin_timestamp: { type: Number, required: true },
+    total_minutes: { type: Number, required: true },
+    condition_on_return: { type: String, required: true },
+    note: { type: String, required: true },
+    rating: { type: Number, required: true },
+    checkout_location: { type: [Object], required: true },
+    checkin_location: { type: [Object], required: true },
+});
 const User = mongoose_1.default.model("User", UserSchema);
 const Bike = mongoose_1.default.model("Bike", BikeSchema);
+const CheckoutHistory = mongoose_1.default.model("CheckoutHistory", CheckoutHistorySchema);
 // information/instructions: add a new user to database
 // @params: User object
 // @return: user object with _id from DB
@@ -201,6 +217,39 @@ const findBikeByID = (id) => __awaiter(void 0, void 0, void 0, function* () {
     return bike;
 });
 exports.findBikeByID = findBikeByID;
+// information/instructions: custom update function. update value of a key in DB for bike
+// @params: bike id, key and new value
+// @return: noen
+// bugs: no known bugs
+const bikeUpdateLocationDB = (bike_id, new_location_long, new_location_lat) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield Bike.updateOne({ _id: new ObjectID(bike_id) }, { $set: { location_long: new_location_long,
+            location_lat: new_location_lat } });
+    console.log(`bikeUpdateLocationDB updated`);
+    console.log(result);
+    return true;
+});
+exports.bikeUpdateLocationDB = bikeUpdateLocationDB;
+const bikeUpdateRatingHistoryDB = (bike_id, new_value) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield Bike.updateOne({ _id: new ObjectID(bike_id) }, { $set: { rating_history: new_value } });
+    console.log(`bikeUpdateRatingHistoryDB updated`);
+    console.log(result);
+    return true;
+});
+exports.bikeUpdateRatingHistoryDB = bikeUpdateRatingHistoryDB;
+const bikeUpdateConditionDB = (bike_id, new_value) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield Bike.updateOne({ _id: new ObjectID(bike_id) }, { $set: { condition: new_value } });
+    console.log(`bikeUpdateConditionDB updated`);
+    console.log(result);
+    return true;
+});
+exports.bikeUpdateConditionDB = bikeUpdateConditionDB;
+const bikeUpdateNotesDB = (bike_id, new_value) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield Bike.updateOne({ _id: new ObjectID(bike_id) }, { $set: { notes: new_value } });
+    console.log(`bikeUpdateNotesDB updated`);
+    console.log(result);
+    return true;
+});
+exports.bikeUpdateNotesDB = bikeUpdateNotesDB;
 // information/instructions: updates and exisitng bike with a new bike object.
 // @params: bike object
 // @return: none
@@ -210,4 +259,69 @@ const updateAnExisitngBike = (id, newBike) => __awaiter(void 0, void 0, void 0, 
     console.log("updated!");
 });
 exports.updateAnExisitngBike = updateAnExisitngBike;
+// information/instructions: check out a bike for a user and update models
+// @params: user id, bike id and timestamp
+// @return: none
+// bugs: no known bugs
+const userCheckoutABikeDB = (user_id, bike_id, user_identifier, timestamp, checkoutRecordId) => __awaiter(void 0, void 0, void 0, function* () {
+    yield User.updateOne({ _id: new ObjectID(user_id) }, {
+        $set: {
+            checked_out_bike: bike_id,
+            checked_out_time: timestamp,
+            checkout_record_id: checkoutRecordId,
+        },
+    });
+    yield Bike.updateOne({ _id: new ObjectID(bike_id) }, { $set: { check_out_id: user_identifier, check_out_time: timestamp } });
+    console.log("Bike checked out in DB!");
+    return true;
+});
+exports.userCheckoutABikeDB = userCheckoutABikeDB;
+// information/instructions: check in a bike for a user and update models
+// @params: user id, bike id and timestamp
+// @return: none
+// bugs: no known bugs
+const userCheckInABikeDB = (user_id, bike_id, bike_check_out_history, user_checkout_history) => __awaiter(void 0, void 0, void 0, function* () {
+    yield User.updateOne({ _id: new ObjectID(user_id) }, {
+        $set: {
+            checked_out_bike: "-1",
+            checked_out_time: -1,
+            checkout_record_id: "-1",
+            checkout_history: user_checkout_history
+        },
+    });
+    yield Bike.updateOne({ _id: new ObjectID(bike_id) }, { $set: { check_out_id: "-1", check_out_time: -1, check_out_history: bike_check_out_history } });
+    console.log("Bike checked in back in DB!");
+    return true;
+});
+exports.userCheckInABikeDB = userCheckInABikeDB;
+// information/instructions: add a a checkoutRecord to DB
+// @params: checkout object
+// @return: checkout object with _id
+// bugs: no known bugs
+const addCheckoutRecordToDB = (newCheckoutRecord) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield CheckoutHistory.create(newCheckoutRecord);
+    console.log(`Check out record ADED to DB. _id=${result._id}`);
+    console.log(result);
+    return result;
+});
+exports.addCheckoutRecordToDB = addCheckoutRecordToDB;
+// information/instructions: retrive check out record by DB Id
+// @params: DB id as string
+// @return: array of checkout record object(s) , empty means no record with that id was found
+// bugs: no known bugs
+const findCheckoutRecordByID = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const record = yield CheckoutHistory.find({ _id: new ObjectID(id) });
+    console.log(record);
+    return record;
+});
+exports.findCheckoutRecordByID = findCheckoutRecordByID;
+// information/instructions: updates an exisitng checkout History with a new checkout object.
+// @params: checkout object
+// @return: none
+// bugs: no known bugs
+const updateAnExisitngCheckoutHistory = (newCheckoutObject) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield CheckoutHistory.replaceOne({ _id: new ObjectID(newCheckoutObject.id) }, newCheckoutObject);
+    console.log(`cehckoutHistory with id =${newCheckoutObject.id} updated!`);
+});
+exports.updateAnExisitngCheckoutHistory = updateAnExisitngCheckoutHistory;
 //# sourceMappingURL=db.js.map

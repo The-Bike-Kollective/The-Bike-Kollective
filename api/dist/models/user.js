@@ -2,7 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.User = void 0;
 class User {
-    constructor(family_name, given_name, email, identifier, owned_biks, checked_out_bike, checked_out_time, suspended, access_token, refresh_token, signed_waiver, state, id) {
+    constructor(family_name, given_name, email, identifier, owned_biks, checked_out_bike, checked_out_time, checkout_record_id, suspended, access_token, refresh_token, signed_waiver, state, checkout_history, id) {
         this.id = id;
         this.family_name = family_name;
         this.given_name = given_name;
@@ -16,6 +16,8 @@ class User {
         this.refresh_token = refresh_token;
         this.signed_waiver = signed_waiver;
         this.state = state;
+        this.checkout_history = checkout_history;
+        this.checkout_record_id = checkout_record_id;
     }
 }
 exports.User = User;

@@ -48,13 +48,15 @@ const createUserObject = (user) => {
         email: user.email,
         identifier: user.identifier,
         owned_biks: user.owned_biks,
-        check_out_bike: user.check_out_bike,
+        checked_out_bike: user.checked_out_bike,
         checked_out_time: user.checked_out_time,
         suspended: user.suspended,
         access_token: user.access_token,
         refresh_token: "",
         signed_waiver: user.signed_waiver,
-        state: ""
+        state: "",
+        checkout_history: user.checkout_history,
+        checkout_record_id: user.checkout_record_id
     };
     return userObject;
 };
