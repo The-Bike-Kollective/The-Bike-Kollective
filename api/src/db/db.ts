@@ -160,8 +160,8 @@ const updateStateinDB = async (id: string, new_state: string) => {
   );
 };
 
-// information/instructions: retrive user by DB Id
-// @params: DB id as string
+// information/instructions: retrive user by state 
+// @params: state as string
 // @return: array of user object(s) , empty means to user was found
 // bugs: no known bugs
 const findUserByState = async (state: string) => {

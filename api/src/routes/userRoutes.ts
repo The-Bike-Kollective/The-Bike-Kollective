@@ -6,6 +6,7 @@ import {
 import {
   addUsertoDB,
   findUserByIdentifier,
+  updateStateinDB,
   updateAccessTokeninDB,
   updateRefreshTokeninDB,findUserByState
 } from "../db/db";
@@ -40,6 +41,47 @@ router.post("/", async (req: Request, res: Response) => {
 
     
   
+});
+
+
+// information/instructions: used for front app as final sign in process. it returns the user data assocoated with the 
+// state and set state to null
+// @params: Auth code
+// @return: user data or
+// bugs: no known bugs
+// TODO: decide on state and login design , might be changed based on frond end team design
+// TODO : refactor into correct file
+router.post("/signin", async (req: Request, res: Response) => {
+
+  const state =req.body.state
+
+  if(!state || state==""){
+    res.status(400).send({"message":"state is missing"});
+  }
+
+  console.log(`in POST /signin: state:${state}`)
+
+  findUserByState(state)
+  .then((user)=>{
+    if(user.length==0){
+      res.status(404).send({"message":"no user with this state is found"});
+    }else if(user.length>1){
+      res.status(500).send({"message":"MULTIPLE USER ERROR!"});
+    }else if(user.length==1){
+      // clear state for privacy and seecurity reasons
+      updateStateinDB(String(user[0]['_id']),"")
+      res.status(200).send(createUserObject(user[0]));
+    }else{
+      res.status(400).send({"message":"something went wrong with DB"});
+    }
+  })
+  .catch(err => {
+    res.status(400).send({"message":"something went wrong with an ERROR"});
+
+  })
+
+  
+
 });
 
 // create user object for response. replace refresh token with an empty string for security purposes.
