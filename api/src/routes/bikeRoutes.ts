@@ -443,7 +443,7 @@ router.post(
     if (userFromDb[0]["identifier"] != user_identifier) {
       return res
         .status(403)
-        .send({ message: "unauthorozrd user", access_token: access_token });
+        .send({ message: "unauthorized user", access_token: access_token });
     }
 
     // 7. get bike info from DB
@@ -653,7 +653,7 @@ router.delete(
     // 7. verify if user is check out the bike
     if (userFromDb[0]["checked_out_bike"] != bike_id) {
       return res
-        .status(403)
+        .status(409)
         .send({
           message: "User did not check out the bike.",
           access_token: access_token,
