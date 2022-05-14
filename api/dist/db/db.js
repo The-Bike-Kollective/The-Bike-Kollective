@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.bikeUpdateNotesDB = exports.bikeUpdateConditionDB = exports.bikeUpdateRatingHistoryDB = exports.bikeUpdateLocationDB = exports.userCheckInABikeDB = exports.updateAnExisitngCheckoutHistory = exports.findCheckoutRecordByID = exports.addCheckoutRecordToDB = exports.userCheckoutABikeDB = exports.updateAnExisitngBike = exports.findBikeByID = exports.getAllBikes = exports.addBiketoDB = exports.updateStateinDB = exports.findUserByState = exports.updateRefreshTokeninDB = exports.updateAccessTokeninDB = exports.findUserByAccessToekn = exports.findUserByID = exports.findUserByIdentifier = exports.addUsertoDB = exports.connectDB = void 0;
+exports.addBikeToOwnerListDB = exports.userSignedWaiverDB = exports.bikeUpdateNotesDB = exports.bikeUpdateConditionDB = exports.bikeUpdateRatingHistoryDB = exports.bikeUpdateLocationDB = exports.userCheckInABikeDB = exports.updateAnExisitngCheckoutHistory = exports.findCheckoutRecordByID = exports.addCheckoutRecordToDB = exports.userCheckoutABikeDB = exports.updateAnExisitngBike = exports.findBikeByID = exports.getAllBikes = exports.addBiketoDB = exports.updateStateinDB = exports.findUserByState = exports.updateRefreshTokeninDB = exports.updateAccessTokeninDB = exports.findUserByAccessToekn = exports.findUserByID = exports.findUserByIdentifier = exports.addUsertoDB = exports.connectDB = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const index_1 = require("../index");
 let ObjectID = require("mongodb").ObjectID;
@@ -31,7 +31,7 @@ const UserSchema = new mongoose_1.default.Schema({
     given_name: { type: String, required: true },
     email: { type: String, required: true },
     identifier: { type: String, required: true },
-    owned_biks: { type: [Number], required: true },
+    owned_bikes: { type: [String], required: true },
     checked_out_bike: { type: String, required: true },
     checked_out_time: { type: Number, required: true },
     suspended: { type: Boolean, required: true },
@@ -158,8 +158,25 @@ const updateStateinDB = (id, new_state) => __awaiter(void 0, void 0, void 0, fun
     });
 });
 exports.updateStateinDB = updateStateinDB;
-// information/instructions: retrive user by DB Id
-// @params: DB id as string
+// information/instructions: updates users state on DB
+// @params: user DB ID and new state as string
+// @return: true in success and flase in failure
+// bugs: no known bugs
+const addBikeToOwnerListDB = (id, updated_bike_list) => __awaiter(void 0, void 0, void 0, function* () {
+    User.updateOne({ _id: new ObjectID(id) }, { owned_bikes: updated_bike_list }, function (err, docs) {
+        if (err) {
+            console.log(err);
+            return false;
+        }
+        else {
+            console.log("Bike added to the owner list list");
+            return true;
+        }
+    });
+});
+exports.addBikeToOwnerListDB = addBikeToOwnerListDB;
+// information/instructions: retrive user by state 
+// @params: state as string
 // @return: array of user object(s) , empty means to user was found
 // bugs: no known bugs
 const findUserByState = (state) => __awaiter(void 0, void 0, void 0, function* () {
@@ -168,6 +185,13 @@ const findUserByState = (state) => __awaiter(void 0, void 0, void 0, function* (
     return user;
 });
 exports.findUserByState = findUserByState;
+const userSignedWaiverDB = (id) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield User.updateOne({ _id: new ObjectID(id) }, { $set: { signed_waiver: true } });
+    console.log(`userSignedWaiverDB`);
+    console.log(result);
+    return true;
+});
+exports.userSignedWaiverDB = userSignedWaiverDB;
 // information/instructions: updates users refresh token on DB
 // @params: user DB ID and new refresh token as string
 // @return: true in success and flase in failure

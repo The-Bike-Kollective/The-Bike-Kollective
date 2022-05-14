@@ -20,6 +20,7 @@ const db_1 = require("./db/db");
 const userRoutes = require("./routes/userRoutes");
 const bikeRoutes = require("./routes/bikeRoutes");
 const imageRoutes = require("./routes/imageRoutes");
+const checkoutRecordsRoutes = require("./routes/checkoutRecords");
 const userHelperFunctions_1 = require("./routes/userHelperFunctions");
 dotenv_1.default.config({ path: ".env" });
 exports.app = (0, express_1.default)();
@@ -39,6 +40,7 @@ exports.app.use(cors());
 exports.app.use("/users", userRoutes);
 exports.app.use("/bikes", bikeRoutes);
 exports.app.use("/images", imageRoutes);
+exports.app.use("/records", checkoutRecordsRoutes);
 // information/instructions: for login redirect to google service
 // @params: [Maybe] state
 // @return: redirect url

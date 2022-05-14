@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const db_1 = require("../db/db");
 const userHelperFunctions_1 = require("./userHelperFunctions");
-const checkoutHistory_1 = require("../models/checkoutHistory");
+const checkoutRecordsHelpers_1 = require("./checkoutRecordsHelpers");
 const router = express_1.default.Router();
 // information/instructions: for registering a bike by a valid user
 // @params: Auth code
@@ -26,7 +26,7 @@ const router = express_1.default.Router();
 router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     // check if access_token is provided.
     if (!req.headers.authorization) {
-        return res.status(403).json({ message: "access token is missing" });
+        return res.status(403).send({ message: "access token is missing" });
     }
     // splits "Breaer TOKEN"
     let access_token = req.headers.authorization.split(" ")[1];
@@ -37,15 +37,15 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     let userFromDb = yield (0, db_1.findUserByAccessToekn)(access_token);
     const verificationResult = yield (0, userHelperFunctions_1.verifyUserIdentity)(userFromDb, access_token);
     if (verificationResult == 404) {
-        return res.status(404).json({ message: "User not found" });
+        return res.status(404).send({ message: "User not found", access_token: access_token });
     }
     else if (verificationResult == 500) {
-        return res.status(500).json({ message: "Multiple USER ERROR" });
+        return res.status(500).send({ message: "Multiple USER ERROR", access_token: access_token });
     }
     else if (verificationResult == 401) {
         return res
             .status(401)
-            .send({ message: "unauthorized. invalid access_token or identifier" });
+            .send({ message: "unauthorized. invalid access_token or identifier", access_token: access_token });
     }
     else if (verificationResult == 200) {
         console.log("User is verified. Countiue the process");
@@ -53,7 +53,7 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         // verify bike type
         // if (!req.body instanceof Bike);
         if (!(yield verifyBikePostBody(req.body))) {
-            return res.status(400).json({ message: "invalid body" });
+            return res.status(400).send({ message: "invalid body", access_token: access_token });
         }
         const date_added = Date.now();
         const image = req.body.image;
@@ -79,7 +79,8 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         // get updated user info to return valid access token
         userFromDb = yield (0, db_1.findUserByIdentifier)(userFromDb[0]["identifier"]);
         // add bike to user owned_bike list
-        // TODO
+        const ownedBikes = userFromDb[0]["owned_bikes"];
+        yield (0, db_1.addBikeToOwnerListDB)(String(userFromDb[0]["_id"]), [...ownedBikes, String(bikeFromDB["_id"])]);
         res
             .status(201)
             .send(createBikeResponse(createBikeObjectfromDB(bikeFromDB), userFromDb[0]["access_token"]));
@@ -110,7 +111,7 @@ router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     console.log(`bike id is :${bike_id}`);
     // check if access_token is provided.
     if (!req.headers.authorization) {
-        return res.status(403).json({ message: "access token is missing" });
+        return res.status(403).send({ message: "access token is missing" });
     }
     // splits "Breaer TOKEN"
     let access_token = req.headers.authorization.split(" ")[1];
@@ -121,15 +122,15 @@ router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     let userFromDb = yield (0, db_1.findUserByAccessToekn)(access_token);
     const verificationResult = yield (0, userHelperFunctions_1.verifyUserIdentity)(userFromDb, access_token);
     if (verificationResult == 404) {
-        return res.status(404).json({ message: "User not found" });
+        return res.status(404).send({ message: "User not found", access_token: access_token });
     }
     else if (verificationResult == 500) {
-        return res.status(500).json({ message: "Multiple USER ERROR" });
+        return res.status(500).send({ message: "Multiple USER ERROR", access_token: access_token });
     }
     else if (verificationResult == 401) {
         return res
             .status(401)
-            .send({ message: "unauthorized. invalid access_token or identifier" });
+            .send({ message: "unauthorized. invalid access_token or identifier", access_token: access_token });
     }
     else if (verificationResult == 200) {
         console.log("User is verified. Countiue the process");
@@ -142,12 +143,12 @@ router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     if (bikeFromDB.length == 0) {
         return res
             .status(404)
-            .json({ message: "Bike not found", access_token: access_token });
+            .send({ message: "Bike not found", access_token: access_token });
     }
     else if (bikeFromDB.length == 0) {
         return res
             .status(500)
-            .json({ message: "Multiple BIKE ERROR", access_token: access_token });
+            .send({ message: "Multiple BIKE ERROR", access_token: access_token });
     }
     // there is 1 bike in returned list
     return res
@@ -164,7 +165,7 @@ router.put("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     console.log(`bike id is :${bike_id}`);
     // check if access_token is provided.
     if (!req.headers.authorization) {
-        return res.status(403).json({ message: "access token is missing" });
+        return res.status(403).send({ message: "access token is missing" });
     }
     // splits "Breaer TOKEN"
     let access_token = req.headers.authorization.split(" ")[1];
@@ -175,15 +176,15 @@ router.put("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     let userFromDb = yield (0, db_1.findUserByAccessToekn)(access_token);
     const verificationResult = yield (0, userHelperFunctions_1.verifyUserIdentity)(userFromDb, access_token);
     if (verificationResult == 404) {
-        return res.status(404).json({ message: "User not found" });
+        return res.status(404).send({ message: "User not found", access_token: access_token });
     }
     else if (verificationResult == 500) {
-        return res.status(500).json({ message: "Multiple USER ERROR" });
+        return res.status(500).send({ message: "Multiple USER ERROR", access_token: access_token });
     }
     else if (verificationResult == 401) {
         return res
             .status(401)
-            .send({ message: "unauthorized. invalid access_token or identifier" });
+            .send({ message: "unauthorized. invalid access_token or identifier", access_token: access_token });
     }
     else if (verificationResult == 200) {
         console.log("User is verified. Countiue the process");
@@ -196,24 +197,24 @@ router.put("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     if (bikeFromDB.length == 0) {
         return res
             .status(404)
-            .json({ message: "Bike not found", access_token: access_token });
+            .send({ message: "Bike not found", access_token: access_token });
     }
     else if (bikeFromDB.length == 0) {
         return res
             .status(500)
-            .json({ message: "Multiple BIKE ERROR", access_token: access_token });
+            .send({ message: "Multiple BIKE ERROR", access_token: access_token });
     }
     // check if the user is the actual bike owner.
     if (bikeFromDB[0]["owner_id"] != userFromDb[0]["identifier"]) {
         return res
             .status(403)
-            .json({ message: "User is not the owner", access_token: access_token });
+            .send({ message: "User is not the owner", access_token: access_token });
     }
     // check if bike is not check out and available
     if (bikeFromDB[0]["check_out_id"] != "-1") {
         return res
             .status(409)
-            .json({
+            .send({
             message: "Bike is currently check out",
             access_token: access_token,
         });
@@ -239,7 +240,7 @@ router.put("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         else {
             return res
                 .status(400)
-                .json({ message: "invalid note", access_token: access_token });
+                .send({ message: "invalid note", access_token: access_token });
         }
     }
     // params that might chnage
@@ -297,7 +298,7 @@ router.post("/:bike_id/:user_identifier", (req, res) => __awaiter(void 0, void 0
     console.log(`in Bike Checkout.Bike id is :${bike_id}\nuser identifier is: ${user_identifier}`);
     // 1. verify authorization header exists
     if (!req.headers.authorization) {
-        return res.status(403).json({ message: "access token is missing" });
+        return res.status(403).send({ message: "access token is missing" });
     }
     // splits "Breaer TOKEN"
     let access_token = req.headers.authorization.split(" ")[1];
@@ -307,7 +308,7 @@ router.post("/:bike_id/:user_identifier", (req, res) => __awaiter(void 0, void 0
     if (!(yield verifyBikeCheckOutBody(req.body))) {
         return res
             .status(400)
-            .json({ message: "invalid body", access_token: access_token });
+            .send({ message: "invalid body", access_token: access_token });
     }
     // 3. find user using access token
     let userFromDb = yield (0, db_1.findUserByAccessToekn)(access_token);
@@ -316,12 +317,12 @@ router.post("/:bike_id/:user_identifier", (req, res) => __awaiter(void 0, void 0
     if (verificationResult == 404) {
         return res
             .status(404)
-            .json({ message: "User not found", access_token: access_token });
+            .send({ message: "User not found", access_token: access_token });
     }
     else if (verificationResult == 500) {
         return res
             .status(500)
-            .json({ message: "Multiple USER ERROR", access_token: access_token });
+            .send({ message: "Multiple USER ERROR", access_token: access_token });
     }
     else if (verificationResult == 401) {
         return res
@@ -346,12 +347,12 @@ router.post("/:bike_id/:user_identifier", (req, res) => __awaiter(void 0, void 0
     if (bikeFromDb.length == 0) {
         return res
             .status(404)
-            .json({ message: "Bike not found", access_token: access_token });
+            .send({ message: "Bike not found", access_token: access_token });
     }
     else if (bikeFromDb.length > 1) {
         return res
             .status(500)
-            .json({ message: "Multiple BIKE ERROR", access_token: access_token });
+            .send({ message: "Multiple BIKE ERROR", access_token: access_token });
     }
     // 8. check if user is suspended
     if (userFromDb[0]["suspended"]) {
@@ -395,7 +396,7 @@ router.post("/:bike_id/:user_identifier", (req, res) => __awaiter(void 0, void 0
     const checkoutRecordfromDB = yield (0, db_1.addCheckoutRecordToDB)(checkoutRecord);
     console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
     console.log(checkoutRecordfromDB);
-    let checkoutObject = createhistoryObjectfromDB(checkoutRecordfromDB);
+    let checkoutObject = (0, checkoutRecordsHelpers_1.createhistoryObjectfromDB)(checkoutRecordfromDB);
     // TODO: add error if empty
     // 13. check out the bike and add user identifier , time stamp and bike id to DB documents.
     (0, db_1.userCheckoutABikeDB)(userFromDb[0]["id"], bike_id, user_identifier, checkoutTimestamp, checkoutObject.id);
@@ -439,7 +440,7 @@ router.delete("/:bike_id/:user_identifier", (req, res) => __awaiter(void 0, void
     console.log(`in Bike Checkin.Bike id is :${bike_id}\nuser identifier is: ${user_identifier}`);
     // check if access_token is provided.
     if (!req.headers.authorization) {
-        return res.status(403).json({ message: "access token is missing" });
+        return res.status(403).send({ message: "access token is missing" });
     }
     // splits "Breaer TOKEN"
     let access_token = req.headers.authorization.split(" ")[1];
@@ -449,13 +450,13 @@ router.delete("/:bike_id/:user_identifier", (req, res) => __awaiter(void 0, void
     if (!(yield verifyBikeCheckInBody(req.body))) {
         return res
             .status(400)
-            .json({ message: "invalid body", access_token: access_token });
+            .send({ message: "invalid body", access_token: access_token });
     }
     else if (!req.body.condition && req.body.note.length == 0) {
         // if damaged, note should not be empty
         return res
             .status(400)
-            .json({
+            .send({
             message: "damaged bike must have a note",
             access_token: access_token,
         });
@@ -467,12 +468,12 @@ router.delete("/:bike_id/:user_identifier", (req, res) => __awaiter(void 0, void
     if (verificationResult == 404) {
         return res
             .status(404)
-            .json({ message: "User not found", access_token: access_token });
+            .send({ message: "User not found", access_token: access_token });
     }
     else if (verificationResult == 500) {
         return res
             .status(500)
-            .json({ message: "Multiple USER ERROR", access_token: access_token });
+            .send({ message: "Multiple USER ERROR", access_token: access_token });
     }
     else if (verificationResult == 401) {
         return res
@@ -497,12 +498,12 @@ router.delete("/:bike_id/:user_identifier", (req, res) => __awaiter(void 0, void
     if (bikeFromDb.length == 0) {
         return res
             .status(404)
-            .json({ message: "Bike not found", access_token: access_token });
+            .send({ message: "Bike not found", access_token: access_token });
     }
     else if (bikeFromDb.length > 1) {
         return res
             .status(500)
-            .json({ message: "Multiple BIKE ERROR", access_token: access_token });
+            .send({ message: "Multiple BIKE ERROR", access_token: access_token });
     }
     // 7. verify if user is check out the bike
     if (userFromDb[0]["checked_out_bike"] != bike_id) {
@@ -539,7 +540,7 @@ router.delete("/:bike_id/:user_identifier", (req, res) => __awaiter(void 0, void
     const checkoutRecord = yield (0, db_1.findCheckoutRecordByID)(userFromDb[0]['checkout_record_id']);
     console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ restored checkout record");
     console.log(checkoutRecord);
-    let checkoutObject = createhistoryObjectfromDB(checkoutRecord[0]);
+    let checkoutObject = (0, checkoutRecordsHelpers_1.createhistoryObjectfromDB)(checkoutRecord[0]);
     // TODO: add error if empty
     checkoutObject.checkInUpdate(checkInTimestamp, checkinLocation, req.body.note, req.body.rating, req.body.condition_on_return);
     checkoutObject.calculateMinutes();
@@ -703,11 +704,11 @@ const createNewCheckout = (user_identifier, bike_id, checkout_location, checkout
         user_identifier: user_identifier,
         bike_id: bike_id,
         checkout_timestamp: checkout_timestamp,
-        checkin_timestamp: 0,
-        total_minutes: 0,
+        checkin_timestamp: -1,
+        total_minutes: -1,
         condition_on_return: true,
         note: " ",
-        rating: 0,
+        rating: -1,
         checkout_location: checkout_location,
         checkin_location: checkin_location,
     };
@@ -723,16 +724,6 @@ const createNewLocation = (long, lat) => {
     console.log(`newLocation created:`);
     console.log(newLocation);
     return newLocation;
-};
-// create cehcekoutHistory object from DB
-// @params: Bike data from DB
-// @return: Bike data for HTTP response
-// bugs: no known bugs
-const createhistoryObjectfromDB = (checkoutRecordDB) => {
-    let checkoutObject = new checkoutHistory_1.CheckoutHistory(checkoutRecordDB.user_identifier, checkoutRecordDB.bike_id, checkoutRecordDB.checkout_timestamp, checkoutRecordDB.checkin_timestamp, checkoutRecordDB.total_minutes, checkoutRecordDB.condition_on_return, checkoutRecordDB.note, checkoutRecordDB.rating, checkoutRecordDB.checkout_location, checkoutRecordDB.checkin_location, checkoutRecordDB._id);
-    console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~checkoutObject is created");
-    console.log(checkoutObject);
-    return checkoutObject;
 };
 module.exports = router;
 //# sourceMappingURL=bikeRoutes.js.map
