@@ -5,6 +5,8 @@ import {
   findCheckoutRecordByID
 } from "../db/db";
 import {verifyUserIdentity} from './userHelperFunctions'
+import {createhistoryObjectfromDB} from './checkoutRecordsHelpers';
+
 
 const router = express.Router();
 
@@ -57,7 +59,7 @@ router.get("/:id", async (req, res) => {
 
 
 
-    res.status(200).send({record:recordFromDB[0],access_token:access_token});
+    res.status(200).send({record:createhistoryObjectfromDB(recordFromDB[0]),access_token:access_token});
   }   
  
 });

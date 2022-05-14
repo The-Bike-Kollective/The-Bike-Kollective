@@ -26,6 +26,8 @@ import {
   ILocation,
 } from "../models/checkoutHistory";
 
+import {createhistoryObjectfromDB} from './checkoutRecordsHelpers';
+
 const router = express.Router();
 
 // information/instructions: for registering a bike by a valid user
@@ -911,11 +913,11 @@ const createNewCheckout = (
     user_identifier: user_identifier,
     bike_id: bike_id,
     checkout_timestamp: checkout_timestamp,
-    checkin_timestamp: 0,
-    total_minutes: 0,
+    checkin_timestamp: -1,
+    total_minutes: -1,
     condition_on_return: true,
     note: " ",
-    rating: 0,
+    rating: -1,
     checkout_location: checkout_location,
     checkin_location: checkin_location,
   };
@@ -938,30 +940,6 @@ const createNewLocation = (long: number, lat: number) => {
   return newLocation;
 };
 
-// create cehcekoutHistory object from DB
-// @params: Bike data from DB
-// @return: Bike data for HTTP response
-// bugs: no known bugs
-const createhistoryObjectfromDB = (checkoutRecordDB: any) => {
-  
-  let checkoutObject = new CheckoutHistory(
-    checkoutRecordDB.user_identifier,
-    checkoutRecordDB.bike_id,
-    checkoutRecordDB.checkout_timestamp,
-    checkoutRecordDB.checkin_timestamp,
-    checkoutRecordDB.total_minutes,
-    checkoutRecordDB.condition_on_return,
-    checkoutRecordDB.note,
-    checkoutRecordDB.rating,
-    checkoutRecordDB.checkout_location,
-    checkoutRecordDB.checkin_location,
-    checkoutRecordDB._id    
-  )
 
-  console.log("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~checkoutObject is created")
-  console.log(checkoutObject)
-  
-  return checkoutObject;
-};
 
 module.exports = router;
