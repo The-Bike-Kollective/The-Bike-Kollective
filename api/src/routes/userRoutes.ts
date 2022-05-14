@@ -8,7 +8,9 @@ import {
   findUserByIdentifier,
   updateStateinDB,
   updateAccessTokeninDB,
-  updateRefreshTokeninDB,findUserByState
+  updateRefreshTokeninDB,
+  findUserByState,
+  userSignedWaiverDB
 } from "../db/db";
 import { IUser } from "../models/user";
 import {verifyUserIdentity,userRegistration} from './userHelperFunctions'
@@ -45,12 +47,10 @@ router.post("/", async (req: Request, res: Response) => {
 
 
 // information/instructions: used for front app as final sign in process. it returns the user data assocoated with the 
-// state and set state to null
+// state and set state to empty string
 // @params: Auth code
-// @return: user data or
+// @return: user data or error message
 // bugs: no known bugs
-// TODO: decide on state and login design , might be changed based on frond end team design
-// TODO : refactor into correct file
 router.post("/signin", async (req: Request, res: Response) => {
 
   const state =req.body.state
@@ -78,9 +78,48 @@ router.post("/signin", async (req: Request, res: Response) => {
   .catch(err => {
     res.status(400).send({"message":"something went wrong with an ERROR"});
 
-  })
+  }) 
 
+});
+
+
+// information/instructions: sign waiver for a user
+// @params: Auth code
+// @return: user data or error message
+// bugs: no known bugs
+router.post("/waiver/:id", async (req: Request, res: Response) => {
+
+  const identifier = req.params.id;
+  console.log(`identifier is :${identifier}`);
   
+  // check if access_token is provided.
+  if (!req.headers.authorization) {
+    return res.status(403).json({ message: "access token is missing" });
+  }
+
+  // splits "Breaer TOKEN" 
+  let access_token = req.headers.authorization.split(" ")[1];
+  console.log("Access Token from header is:");
+  console.log(access_token);
+
+  // retrive user information from DB to find refresh token
+  // const userFromDb = await findUserByAccessToekn(access_token)
+  let userFromDb = await findUserByIdentifier(identifier)
+
+  const verificationResult = await verifyUserIdentity(userFromDb,access_token)
+
+  if (verificationResult==404){
+    return res.status(404).json({ message: "User not found", access_token: access_token});
+  }else if (verificationResult==500){
+    return res.status(500).json({ message: "Multiple USER ERROR" , access_token: access_token});
+  }else if (verificationResult==401){
+    return res.status(401).send({ message: "unauthorized. invalid access_token or identifier" , access_token: access_token})
+  }else if (verificationResult==200){
+    // get updated information from DB before sending to client
+    userFromDb = await findUserByIdentifier(identifier)
+    userSignedWaiverDB(String(userFromDb[0]['_id']))
+    res.status(200).send({message:"waiver is signed", access_token:userFromDb[0]['access_token']});
+  } 
 
 });
 
@@ -118,7 +157,7 @@ const createUserObject = (user: any) => {
 // TODO : clean console logs
 router.get("/:id", async (req, res) => {
   const identifier = req.params.id;
-  console.log(`id is :${identifier}`);
+  console.log(`identifier is :${identifier}`);
   
   // check if access_token is provided.
   if (!req.headers.authorization) {

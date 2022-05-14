@@ -170,6 +170,17 @@ const findUserByState = async (state: string) => {
   return user;
 };
 
+
+const userSignedWaiverDB =async (id: string) => {
+  const result = await User.updateOne(
+    { _id: new ObjectID(id) },
+    {$set:{ signed_waiver: true}}
+  );
+  console.log(`userSignedWaiverDB`);
+  console.log(result)
+  return true;
+};
+
 // information/instructions: updates users refresh token on DB
 // @params: user DB ID and new refresh token as string
 // @return: true in success and flase in failure
@@ -397,5 +408,6 @@ export {
   bikeUpdateLocationDB,
   bikeUpdateRatingHistoryDB,
   bikeUpdateConditionDB,
-  bikeUpdateNotesDB
+  bikeUpdateNotesDB,
+  userSignedWaiverDB
 };
