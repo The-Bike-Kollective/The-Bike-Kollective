@@ -72,7 +72,10 @@ exports.app.get("/profile", (req, res) => __awaiter(void 0, void 0, void 0, func
         .then((code) => {
         // user exists or registred . deep link to loading page
         //belo line is for debug. no need to send the code in this call
+        // commnet below if using flutter app and uncomment the 2 lines after. leave as is if using POSTMAN
         res.status(200).send({ auth_code: code, state: state });
+        // console.log({ auth_code: code, state: state });
+        // res.redirect('https://thebikekollective.page.link/Eit5')
     })
         .catch((err) => {
         // something went wrong. deep link to error page!
