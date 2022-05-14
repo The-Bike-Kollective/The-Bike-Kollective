@@ -20,7 +20,7 @@ const UserSchema: mongoose.Schema = new mongoose.Schema({
   given_name: { type: String, required: true },
   email: { type: String, required: true },
   identifier: { type: String, required: true },
-  owned_biks: { type: [Number], required: true },
+  owned_bikes: { type: [String], required: true },
   checked_out_bike: { type: String, required: true },
   checked_out_time: { type: Number, required: true },
   suspended: { type: Boolean, required: true },
@@ -154,6 +154,27 @@ const updateStateinDB = async (id: string, new_state: string) => {
         return false;
       } else {
         console.log("state is updated on DB");
+        return true;
+      }
+    }
+  );
+};
+
+
+// information/instructions: updates users state on DB
+// @params: user DB ID and new state as string
+// @return: true in success and flase in failure
+// bugs: no known bugs
+const addBikeToOwnerListDB = async (id: string, updated_bike_list: Array<string>) => {
+  User.updateOne(
+    { _id: new ObjectID(id) },
+    { owned_bikes: updated_bike_list },
+    function (err: any, docs: any) {
+      if (err) {
+        console.log(err);
+        return false;
+      } else {
+        console.log("Bike added to the owner list list");
         return true;
       }
     }
@@ -409,5 +430,6 @@ export {
   bikeUpdateRatingHistoryDB,
   bikeUpdateConditionDB,
   bikeUpdateNotesDB,
-  userSignedWaiverDB
+  userSignedWaiverDB,
+  addBikeToOwnerListDB
 };

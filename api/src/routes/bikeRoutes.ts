@@ -14,7 +14,8 @@ import {
   bikeUpdateLocationDB,
   bikeUpdateRatingHistoryDB,
   bikeUpdateConditionDB,
-  bikeUpdateNotesDB
+  bikeUpdateNotesDB,
+  addBikeToOwnerListDB
 
 } from "../db/db";
 import { IBike, IRating, INote } from "../models/bike";
@@ -115,7 +116,9 @@ router.post("/", async (req: Request, res: Response) => {
     userFromDb = await findUserByIdentifier(userFromDb[0]["identifier"]);
 
     // add bike to user owned_bike list
-    // TODO
+    const ownedBikes = userFromDb[0]["owned_bikes"]
+    await addBikeToOwnerListDB(String(userFromDb[0]["_id"]),[...ownedBikes,String(bikeFromDB["_id"])]);
+
 
     res
       .status(201)

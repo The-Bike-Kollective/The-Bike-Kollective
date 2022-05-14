@@ -153,7 +153,7 @@ const addNewUser = async (
     given_name: first_name,
     email: email,
     identifier: identifier,
-    owned_biks: [],
+    owned_bikes: [],
     checked_out_bike: "-1",
     checked_out_time: 0,
     suspended: false,

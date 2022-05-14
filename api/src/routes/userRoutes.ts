@@ -134,7 +134,7 @@ const createUserObject = (user: any) => {
     given_name: user.given_name,
     email: user.email,
     identifier: user.identifier,
-    owned_biks: user.owned_biks,
+    owned_bikes: user.owned_bikes,
     checked_out_bike: user.checked_out_bike,
     checked_out_time: user.checked_out_time,
     suspended: user.suspended,
