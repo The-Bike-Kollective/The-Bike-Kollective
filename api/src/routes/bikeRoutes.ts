@@ -39,7 +39,7 @@ const router = express.Router();
 router.post("/", async (req: Request, res: Response) => {
   // check if access_token is provided.
   if (!req.headers.authorization) {
-    return res.status(403).json({ message: "access token is missing" });
+    return res.status(403).send({ message: "access token is missing" });
   }
 
   // splits "Breaer TOKEN"
@@ -54,13 +54,13 @@ router.post("/", async (req: Request, res: Response) => {
   const verificationResult = await verifyUserIdentity(userFromDb, access_token);
 
   if (verificationResult == 404) {
-    return res.status(404).json({ message: "User not found" });
+    return res.status(404).send({ message: "User not found" , access_token: access_token});
   } else if (verificationResult == 500) {
-    return res.status(500).json({ message: "Multiple USER ERROR" });
+    return res.status(500).send({ message: "Multiple USER ERROR" , access_token: access_token});
   } else if (verificationResult == 401) {
     return res
       .status(401)
-      .send({ message: "unauthorized. invalid access_token or identifier" });
+      .send({ message: "unauthorized. invalid access_token or identifier" , access_token: access_token});
   } else if (verificationResult == 200) {
     console.log("User is verified. Countiue the process");
 
@@ -69,7 +69,7 @@ router.post("/", async (req: Request, res: Response) => {
     // verify bike type
     // if (!req.body instanceof Bike);
     if (!(await verifyBikePostBody(req.body))) {
-      return res.status(400).json({ message: "invalid body" });
+      return res.status(400).send({ message: "invalid body", access_token: access_token });
     }
 
     const date_added = Date.now();
@@ -124,11 +124,7 @@ router.post("/", async (req: Request, res: Response) => {
 
     res
       .status(201)
-      .send(
-        createBikeResponse(
-          createBikeObjectfromDB(bikeFromDB),
-          userFromDb[0]["access_token"]
-        )
+      .send(createBikeResponse(createBikeObjectfromDB(bikeFromDB),userFromDb[0]["access_token"])
       );
   }
 });
@@ -161,7 +157,7 @@ router.get("/:id", async (req: Request, res: Response) => {
   console.log(`bike id is :${bike_id}`);
   // check if access_token is provided.
   if (!req.headers.authorization) {
-    return res.status(403).json({ message: "access token is missing" });
+    return res.status(403).send({ message: "access token is missing" });
   }
 
   // splits "Breaer TOKEN"
@@ -176,13 +172,13 @@ router.get("/:id", async (req: Request, res: Response) => {
   const verificationResult = await verifyUserIdentity(userFromDb, access_token);
 
   if (verificationResult == 404) {
-    return res.status(404).json({ message: "User not found" });
+    return res.status(404).send({ message: "User not found" , access_token: access_token});
   } else if (verificationResult == 500) {
-    return res.status(500).json({ message: "Multiple USER ERROR" });
+    return res.status(500).send({ message: "Multiple USER ERROR" , access_token: access_token});
   } else if (verificationResult == 401) {
     return res
       .status(401)
-      .send({ message: "unauthorized. invalid access_token or identifier" });
+      .send({ message: "unauthorized. invalid access_token or identifier" , access_token: access_token});
   } else if (verificationResult == 200) {
     console.log("User is verified. Countiue the process");
   }
@@ -197,19 +193,17 @@ router.get("/:id", async (req: Request, res: Response) => {
   if (bikeFromDB.length == 0) {
     return res
       .status(404)
-      .json({ message: "Bike not found", access_token: access_token });
+      .send({ message: "Bike not found", access_token: access_token });
   } else if (bikeFromDB.length == 0) {
     return res
       .status(500)
-      .json({ message: "Multiple BIKE ERROR", access_token: access_token });
+      .send({ message: "Multiple BIKE ERROR", access_token: access_token });
   }
 
   // there is 1 bike in returned list
   return res
     .status(200)
-    .send(
-      createBikeResponse(createBikeObjectfromDB(bikeFromDB[0]), access_token)
-    );
+    .send(createBikeResponse(createBikeObjectfromDB(bikeFromDB[0]), access_token));
 });
 
 // information/instructions: to update a bike
@@ -222,7 +216,7 @@ router.put("/:id", async (req: Request, res: Response) => {
   console.log(`bike id is :${bike_id}`);
   // check if access_token is provided.
   if (!req.headers.authorization) {
-    return res.status(403).json({ message: "access token is missing" });
+    return res.status(403).send({ message: "access token is missing" });
   }
 
   // splits "Breaer TOKEN"
@@ -237,13 +231,13 @@ router.put("/:id", async (req: Request, res: Response) => {
   const verificationResult = await verifyUserIdentity(userFromDb, access_token);
 
   if (verificationResult == 404) {
-    return res.status(404).json({ message: "User not found" });
+    return res.status(404).send({ message: "User not found" , access_token: access_token});
   } else if (verificationResult == 500) {
-    return res.status(500).json({ message: "Multiple USER ERROR" });
+    return res.status(500).send({ message: "Multiple USER ERROR" , access_token: access_token});
   } else if (verificationResult == 401) {
     return res
       .status(401)
-      .send({ message: "unauthorized. invalid access_token or identifier" });
+      .send({ message: "unauthorized. invalid access_token or identifier" , access_token: access_token});
   } else if (verificationResult == 200) {
     console.log("User is verified. Countiue the process");
   }
@@ -258,25 +252,25 @@ router.put("/:id", async (req: Request, res: Response) => {
   if (bikeFromDB.length == 0) {
     return res
       .status(404)
-      .json({ message: "Bike not found", access_token: access_token });
+      .send({ message: "Bike not found", access_token: access_token });
   } else if (bikeFromDB.length == 0) {
     return res
       .status(500)
-      .json({ message: "Multiple BIKE ERROR", access_token: access_token });
+      .send({ message: "Multiple BIKE ERROR", access_token: access_token });
   }
 
   // check if the user is the actual bike owner.
   if (bikeFromDB[0]["owner_id"] != userFromDb[0]["identifier"]) {
     return res
       .status(403)
-      .json({ message: "User is not the owner", access_token: access_token });
+      .send({ message: "User is not the owner", access_token: access_token });
   }
 
   // check if bike is not check out and available
   if (bikeFromDB[0]["check_out_id"] != "-1") {
     return res
       .status(409)
-      .json({
+      .send({
         message: "Bike is currently check out",
         access_token: access_token,
       });
@@ -305,7 +299,7 @@ router.put("/:id", async (req: Request, res: Response) => {
     } else {
       return res
         .status(400)
-        .json({ message: "invalid note", access_token: access_token });
+        .send({ message: "invalid note", access_token: access_token });
     }
   }
 
@@ -398,7 +392,7 @@ router.post(
     );
     // 1. verify authorization header exists
     if (!req.headers.authorization) {
-      return res.status(403).json({ message: "access token is missing" });
+      return res.status(403).send({ message: "access token is missing" });
     }
 
     // splits "Breaer TOKEN"
@@ -410,7 +404,7 @@ router.post(
     if (!(await verifyBikeCheckOutBody(req.body))) {
       return res
         .status(400)
-        .json({ message: "invalid body", access_token: access_token });
+        .send({ message: "invalid body", access_token: access_token });
     }
 
     // 3. find user using access token
@@ -424,11 +418,11 @@ router.post(
     if (verificationResult == 404) {
       return res
         .status(404)
-        .json({ message: "User not found", access_token: access_token });
+        .send({ message: "User not found", access_token: access_token });
     } else if (verificationResult == 500) {
       return res
         .status(500)
-        .json({ message: "Multiple USER ERROR", access_token: access_token });
+        .send({ message: "Multiple USER ERROR", access_token: access_token });
     } else if (verificationResult == 401) {
       return res
         .status(401)
@@ -456,11 +450,11 @@ router.post(
     if (bikeFromDb.length == 0) {
       return res
         .status(404)
-        .json({ message: "Bike not found", access_token: access_token });
+        .send({ message: "Bike not found", access_token: access_token });
     } else if (bikeFromDb.length > 1) {
       return res
         .status(500)
-        .json({ message: "Multiple BIKE ERROR", access_token: access_token });
+        .send({ message: "Multiple BIKE ERROR", access_token: access_token });
     }
 
     // 8. check if user is suspended
@@ -580,7 +574,7 @@ router.delete(
     );
     // check if access_token is provided.
     if (!req.headers.authorization) {
-      return res.status(403).json({ message: "access token is missing" });
+      return res.status(403).send({ message: "access token is missing" });
     }
 
     // splits "Breaer TOKEN"
@@ -592,12 +586,12 @@ router.delete(
     if (!(await verifyBikeCheckInBody(req.body))) {
       return res
         .status(400)
-        .json({ message: "invalid body", access_token: access_token });
+        .send({ message: "invalid body", access_token: access_token });
     } else if (!req.body.condition && req.body.note.length == 0) {
       // if damaged, note should not be empty
       return res
         .status(400)
-        .json({
+        .send({
           message: "damaged bike must have a note",
           access_token: access_token,
         });
@@ -615,11 +609,11 @@ router.delete(
     if (verificationResult == 404) {
       return res
         .status(404)
-        .json({ message: "User not found", access_token: access_token });
+        .send({ message: "User not found", access_token: access_token });
     } else if (verificationResult == 500) {
       return res
         .status(500)
-        .json({ message: "Multiple USER ERROR", access_token: access_token });
+        .send({ message: "Multiple USER ERROR", access_token: access_token });
     } else if (verificationResult == 401) {
       return res
         .status(401)
@@ -648,11 +642,11 @@ router.delete(
     if (bikeFromDb.length == 0) {
       return res
         .status(404)
-        .json({ message: "Bike not found", access_token: access_token });
+        .send({ message: "Bike not found", access_token: access_token });
     } else if (bikeFromDb.length > 1) {
       return res
         .status(500)
-        .json({ message: "Multiple BIKE ERROR", access_token: access_token });
+        .send({ message: "Multiple BIKE ERROR", access_token: access_token });
     }
 
     // 7. verify if user is check out the bike
