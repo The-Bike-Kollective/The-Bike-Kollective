@@ -10,6 +10,8 @@ import { connectDB, addUsertoDB } from "./db/db";
 const userRoutes = require("./routes/userRoutes");
 const bikeRoutes = require("./routes/bikeRoutes");
 const imageRoutes = require("./routes/imageRoutes");
+const checkoutRecordsRoutes = require("./routes/checkoutRecords");
+
 
 import { userRegistration } from "./routes/userHelperFunctions";
 
@@ -37,6 +39,7 @@ printKeys();
 app.use("/users", userRoutes);
 app.use("/bikes", bikeRoutes);
 app.use("/images", imageRoutes);
+app.use("/records",checkoutRecordsRoutes);
 
 // information/instructions: for login redirect to google service
 // @params: [Maybe] state
