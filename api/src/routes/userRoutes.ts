@@ -176,28 +176,17 @@ router.get("/:id", async (req, res) => {
   const verificationResult = await verifyUserIdentity(userFromDb,access_token)
 
   if (verificationResult==404){
-    return res.status(404).json({ message: "User not found" });
+    return res.status(404).json({ message: "User not found" , access_token: access_token});
   }else if (verificationResult==500){
-    return res.status(500).json({ message: "Multiple USER ERROR" });
+    return res.status(500).json({ message: "Multiple USER ERROR" , access_token: access_token});
   }else if (verificationResult==401){
-    return res.status(401).send({ message: "unauthorized. invalid access_token or identifier" })
+    return res.status(401).send({ message: "unauthorized. invalid access_token or identifier" , access_token: access_token})
   }else if (verificationResult==200){
     // get updated information from DB before sending to client
     userFromDb = await findUserByIdentifier(identifier)
-    res.status(200).send(createUserObject(userFromDb[0]));
+    res.status(200).send({user:createUserObject(userFromDb[0]), access_token: access_token});
   }   
  
-});
-
-
-// For Debug purposes
-// TODO: clean in final release
-router.get("/find", async (req, res) => {
-  const identifier = req.body.identifier;
-
-  const result = await findUserByIdentifier(identifier);
-
-  res.send(createUserObject(result[0]));
 });
 
 module.exports = router;
