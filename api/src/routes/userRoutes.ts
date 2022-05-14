@@ -33,7 +33,7 @@ router.post("/", async (req: Request, res: Response) => {
     userRegistration(code, state)
     .then((response_code)=>{
       findUserByState(state).then((userInDB) => {
-        res.status(response_code).send(createUserObject(userInDB[0]));
+        res.status(response_code).send({user:createUserObject(userInDB[0]),accessToken:userInDB[0]['access_token']});
       })
     })
     .catch(err => {
@@ -70,7 +70,7 @@ router.post("/signin", async (req: Request, res: Response) => {
     }else if(user.length==1){
       // clear state for privacy and seecurity reasons
       updateStateinDB(String(user[0]['_id']),"")
-      res.status(200).send(createUserObject(user[0]));
+      res.status(200).send({user:createUserObject(user[0]),accessToken:user[0]['access_token']});
     }else{
       res.status(400).send({"message":"something went wrong with DB"});
     }
