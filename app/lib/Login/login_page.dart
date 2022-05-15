@@ -48,13 +48,8 @@ void initLink() {
 _launchURLInApp() async {
   String stateGoogle = generateRandomString(10); 
 
-  final host = 'accounts.google.com';
-  final path = '/o/oauth2/v2/auth/oauthchooseaccount?access_type=offline&';
-  final prompt = 'prompt=consent&';
-  final scope = 'scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&include_granted_scopes=true&';
-  final client_id = 'client_id=701199836944-k9grqhb7tl30mm974iv62k6ge3ha2cqs.apps.googleusercontent.com&';
-  final redirect_uri = 'redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fprofile&flowName=GeneralOAuthFlow';
-  final url = 'https://$host$path$prompt$scope&response_type=code&$client_id$redirect_uri$stateGoogle';
+  final googleLogin = "http://ec2-54-71-143-21.us-west-2.compute.amazonaws.com:5000/login";
+  final url = '$googleLogin';
 
   if (await canLaunch(url)) {
     await launch(url);
