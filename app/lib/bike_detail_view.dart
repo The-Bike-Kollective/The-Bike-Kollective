@@ -78,7 +78,7 @@ class BikeDetailTopRow extends StatelessWidget {
   Widget build(BuildContext context) {
     String bikeImageUrl = bikeData.getImageUrl();
     String bikeNameString = bikeData.getName();
-    double bikeRating = bikeData.getRating();
+    num bikeRating = bikeData.getRating();
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [

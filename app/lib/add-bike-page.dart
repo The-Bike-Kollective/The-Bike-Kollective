@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:the_bike_kollective/global_values.dart';
+import 'package:the_bike_kollective/profile_view.dart';
 import 'models.dart';
 import 'MenuDrawer.dart';
 import 'requests.dart';
-
+import 'photos.dart';
+import 'mock_data.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 
 // information/instructions: 
@@ -10,6 +15,11 @@ import 'requests.dart';
 // @return: 
 // bugs: no known bugs
 
+
+class BikeFormArgument {
+  final String imageStringBase64;
+  BikeFormArgument(this.imageStringBase64);
+}
 
 
 // information/instructions: This page view has a form that users
@@ -19,19 +29,23 @@ import 'requests.dart';
 // @return: Page with form.
 // bugs: no known bugs
 class AddBikePage extends StatelessWidget {
-  const AddBikePage({ Key? key, 
-                      required this.user }) :
-                        super(key: key);
-  final User user;
+  const AddBikePage({ Key? key, /*required this.user*/}) : 
+    super(key: key);
+  //final User user;
+  static const routeName = '/new-bike-form';
   @override
   Widget build(BuildContext context) {
+
+    final args = ModalRoute.of(context)!
+    .settings.arguments as BikeFormArgument;
+    print(args.imageStringBase64);
     return Scaffold( 
         appBar: AppBar(
           title: const Text('The Bike Kollective'),
           leading: (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
         ),
         endDrawer: const MenuDrawer(),
-        body: AddBikeForm(user: user)
+        body: AddBikeForm(user: currentUser, imageStringBase64: args.imageStringBase64)
     );
   }
 }
@@ -51,9 +65,11 @@ class AddBikePage extends StatelessWidget {
 
 class AddBikeForm extends StatefulWidget {
   const AddBikeForm({  Key? key, 
-                      required this.user }) :
+                      required this.user,
+                      required this.imageStringBase64 }) :
                         super(key: key);
   final User user;
+  final String imageStringBase64;
   @override
   State<AddBikeForm> createState() => _AddBikeFormState();
 }
@@ -90,7 +106,7 @@ class _AddBikeFormState extends State<AddBikeForm> {
               return null;
             },
             onSaved: (String? value) {
-              print("set name to bike");
+              //print("set name to bike");
               // TODO: add "name" to back end bike model
               bikeData["name"] = value;
             },
@@ -132,13 +148,28 @@ class _AddBikeFormState extends State<AddBikeForm> {
 
           ElevatedButton(
             onPressed: () {
+              print('onPressed() called');
+              print("widget.img64: " + widget.imageStringBase64);
               // Validate returns true if the form is valid, or false otherwise.
               if (_formKey.currentState!.validate()) {
+              
                 _formKey.currentState?.save();
-                sendBikeData(bikeData);
+                String testLink = 'testLink';
+                Future imageLink = getImageDownloadLink(widget.imageStringBase64);
+                imageLink.then((value) {
+                  bikeData['image'] = value;
+                  print('imageLink received (image uploaded)');
+                  
+                  createBike(bikeData);
+                  //print("sendBikeData() and createBike() completed");
+                  Navigator.pushNamed(context, ProfileView.routeName);
+                }); 
+                
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Adding bike to the database.')),
                 );
+                
+                
               }
             },
             child: const Text('Submit'),
@@ -152,27 +183,54 @@ class _AddBikeFormState extends State<AddBikeForm> {
 }
 
 
-// information/instructions: This function is called when user submits
-// data to the form. The function converts the data to JSON and updates
-// the database.
-// @params: bikeData(), data from the user is not needed, because bike
-// is updated with necessary user data inside the form widget.
-// @return: no return value. Just updates the database. 
-// bugs: no known bugs
-void sendBikeData(var bikeData) {
-  print("sendBikeData()");
-  print(bikeData);
-  // The following values are currently hardcoded, but should
-  // be from the user when they upload a photo, their location, 
-  // etc.
-  bikeData["image"] = "default_image_string";
+
+Future<Bike> createBike(bikeData) async {
+  print('createBike() called');
   bikeData['location_long'] = 25;
   bikeData['location_lat'] = -25;
-  
-  print('test');
-  createBike(bikeData);
-  //test();
-  
-}
+  // temporary fix unit backend can accept the rest of the data
+  var truncatedData = {};
+  truncatedData['image'] = bikeData['image'];
+  //truncatedData['image'] = "fake_string";
+  truncatedData['lock_combination'] =bikeData['lock_combination'];
+  truncatedData['location_long'] = bikeData['location_long'];
+  truncatedData['location_lat'] = bikeData['location_lat'];
+  // after the backend can accept the rest of the bikeData,
+  // we can assign jsonEncode(BikeData) to datastring:
 
+  ////POSSIBLY THE PROBLEM IS HERE
+  String dataString = jsonEncode(truncatedData);
+
+  //String dataString = jsonEncode(bikeData);
+  print('/bikes request body: ');
+  print(dataString);
+  print('/create bike request is made here.');
+  // final response = await http.post(
+  //   Uri.parse(globalUrl+ '/bikes'),
+  //   headers: <String, String>{
+  //     "Content-Type": "application/json; charset=UTF-8",
+  //     "Access-Control-Allow-Origin": "*",
+  //     "Authorization": "Bearer "+ authCode
+  //   },
+  //   body: dataString 
+  // );
+  
+  print("/bikes response completed");
+  //print("response.body" + response.body);
+  // if (response.statusCode == 201) {
+  //   print('Success: bike created');
+  //   } 
+  // else if (response.statusCode == 400) {
+  //   throw Exception('Failure: Bad request. Failed to add bike.');
+  // }
+  // else if (response.statusCode == 401) {
+  //   throw Exception('Failure: Unauthorized. Invalide access token.');
+  // }
+
+  //var json = jsonDecode(response.body); 
+  // print('json:');
+  // print(json);
+  //return Bike.fromJson(json); 
+  return Bike();
+}
 
