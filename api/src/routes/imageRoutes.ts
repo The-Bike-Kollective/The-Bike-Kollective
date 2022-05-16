@@ -21,7 +21,7 @@ router.post("/", async (req, res) => {
   const buffer = Buffer.from(data, "base64");
   console.log(buffer);
   const downloadURL = await uploadImage(buffer);
-  res.status(200).send({ url: downloadURL });
+  res.status(201).send({ url: downloadURL });
 });
 
 module.exports = router;
