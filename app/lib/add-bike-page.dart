@@ -205,18 +205,19 @@ Future<Bike> createBike(bikeData) async {
   print('/bikes request body: ');
   print(dataString);
   print('/create bike request is made here.');
-  // final response = await http.post(
-  //   Uri.parse(globalUrl+ '/bikes'),
-  //   headers: <String, String>{
-  //     "Content-Type": "application/json; charset=UTF-8",
-  //     "Access-Control-Allow-Origin": "*",
-  //     "Authorization": "Bearer "+ authCode
-  //   },
-  //   body: dataString 
-  // );
+  final response = await http.post(
+    Uri.parse(globalUrl+ '/bikes'),
+    headers: <String, String>{
+      "Content-Type": "application/json; charset=UTF-8",
+      "Access-Control-Allow-Origin": "*",
+      "Authorization": "Bearer "+ authCode
+    },
+    body: dataString 
+  );
   
   print("/bikes response completed");
-  //print("response.body" + response.body);
+  print('/bikes status: ' + response.statusCode.toString());
+  print("response.body" + response.body);
   // if (response.statusCode == 201) {
   //   print('Success: bike created');
   //   } 
