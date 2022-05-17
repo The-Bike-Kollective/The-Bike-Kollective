@@ -159,9 +159,8 @@ class _AddBikeFormState extends State<AddBikeForm> {
                 imageLink.then((value) {
                   bikeData['image'] = value;
                   print('imageLink received (image uploaded)');
-                  
                   createBike(bikeData);
-                  //print("sendBikeData() and createBike() completed");
+                  //print("createBike() completed");
                   Navigator.pushNamed(context, ProfileView.routeName);
                 }); 
                 
@@ -205,13 +204,14 @@ Future<Bike> createBike(bikeData) async {
   print('/bikes request body: ');
   print(dataString);
   print('/create bike request is made here.');
+  final headers = <String, String>{
+    "Content-Type": "application/json; charset=UTF-8",
+    "Access-Control-Allow-Origin": "*",
+    "Authorization": "Bearer " + authCode
+  };
   final response = await http.post(
     Uri.parse(globalUrl+ '/bikes'),
-    headers: <String, String>{
-      "Content-Type": "application/json; charset=UTF-8",
-      "Access-Control-Allow-Origin": "*",
-      "Authorization": "Bearer "+ authCode
-    },
+    headers: headers, 
     body: dataString 
   );
   

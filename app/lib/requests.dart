@@ -3,13 +3,8 @@ import 'models.dart';
 import 'dart:convert';
 import 'global_values.dart';
 
-//This is an auth code that works at the time I am writing this. 
-// It will likely not work in the future. To get a new authorization,
-// go to /login, copy the code and post to /user with that code to get a 
-// new user object with a new authcode.  
-// String authCode = "ya29.A0ARrdaM-dCnzdjhgG6vmT053AE_jcw28dwnYWbGIz1xi0O9I0BVWTt61R75ACpEJ3FOsZFNOio7WS6kefnlGQ4v1FPizRCKMw0OKBbXvJ_aVi1BDSqToFacPMrh2bbUQ2B1vtrOgM_woJGHoP9MVhjbKdoYU7";
 
-void test() async {
+void test1() async {
   print('running test');
   final response = await http.get(
     Uri.parse(globalUrl),
@@ -17,6 +12,30 @@ void test() async {
   print('Response body: ${response.body}');
   
 }
+
+void createBikeTest() async {
+  print('running create Bike test');
+  final headers = <String, String>{
+    "Content-Type": "application/json; charset=UTF-8",
+    "Access-Control-Allow-Origin": "*",
+    "Authorization": "Bearer " + authCode
+  };
+  String dataString =  '{"image":"testLink",'; 
+  dataString += '"lock_combination":321,';
+  dataString += '"location_long":25,';
+  dataString += '"location_lat":-25}';
+  print(dataString);
+  final response = await http.post(
+    Uri.parse(globalUrl+ '/bikes'),
+    headers: headers, 
+    body: dataString 
+  );
+  print(response.statusCode.toString());
+  print('Response body: ${response.body}');
+  
+}
+
+
 
 // information/instructions: Function creates a bike on the database, using
 // data from the new bike form. 

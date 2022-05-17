@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:the_bike_kollective/add-bike-page.dart';
 import 'package:the_bike_kollective/get-photo.dart';
 import 'models.dart';
 import 'mock_data.dart';
@@ -56,7 +57,6 @@ class _BikeListViewState extends State<BikeListView> {
       body: BikeListBody(bikeList: mockList),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Add your onPressed code here!
           Navigator.pushNamed(context, GetPhoto.routeName,);       
           debugPrint('add bike clicked');   
         },
