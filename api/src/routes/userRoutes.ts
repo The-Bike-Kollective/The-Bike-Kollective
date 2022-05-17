@@ -7,10 +7,10 @@ import {
   addUsertoDB,
   findUserByIdentifier,
   updateAccessTokeninDB,
-  updateRefreshTokeninDB
+  updateRefreshTokeninDB,findUserByState
 } from "../db/db";
 import { IUser } from "../models/user";
-import {verifyUserIdentity} from './userHelperFunctions'
+import {verifyUserIdentity,userRegistration} from './userHelperFunctions'
 
 const router = express.Router();
 
@@ -21,49 +21,25 @@ const router = express.Router();
 // TODO: decide on state and login design , might be changed based on frond end team design
 // TODO : refactor into correct file
 router.post("/", async (req: Request, res: Response) => {
-  try {
-    const code = req.body.auth_code;
-    const { tokens } = await get_tokens(code);
-    console.log(tokens);
-    const profileData = await getProfileInfo(tokens.access_token);
 
-    //if not add a new user
-    const profile_firstName = profileData["names"]["0"]["givenName"];
-    const profile_lastName = profileData["names"]["0"]["familyName"];
-    const profile_identifier =
-      profileData["emailAddresses"]["0"]["metadata"]["source"]["id"];
-    const profile_email = profileData["emailAddresses"]["0"]["value"];
-    const profile_access_token = tokens["access_token"];
-    const profile_refresh_token = tokens["refresh_token"];
+    const state =req.body.state
+    const code =req.body.auth_code
 
-    // TODO: Check DB for existing user
-    let userInDB = await findUserByIdentifier(profile_identifier);
-    if (userInDB.length != 0) {
-      // user exists; no sign up only sign in.
-      // update access token and refresh token, because they might have been changed by Google Oauth service
-      updateRefreshTokeninDB(String(userInDB[0]['_id']),profile_refresh_token)
-      updateAccessTokeninDB(String(userInDB[0]['_id']),profile_access_token)
+    console.log(`in POST users: code:${code}\nstate:${state}`)
 
-      // get the updated user and send it to user:
-      userInDB = await findUserByIdentifier(profile_identifier)
-      res.status(200).send(createUserObject(userInDB[0]));
-    } else {
-      // user does not exist. create a new user
-      const newUser = await addNewUser(
-        profile_firstName,
-        profile_lastName,
-        profile_identifier,
-        profile_email,
-        profile_access_token,
-        profile_refresh_token
-      );
+    userRegistration(code, state)
+    .then((response_code)=>{
+      findUserByState(state).then((userInDB) => {
+        res.status(response_code).send(createUserObject(userInDB[0]));
+      })
+    })
+    .catch(err => {
+      res.status(400).send({"message":"something went wrong"});
 
-      res.status(201).send(createUserObject(newUser));
-    }
-  } catch (e) {
-    console.log(e);
-    res.send(e);
-  }
+    })
+
+    
+  
 });
 
 // create user object for response. replace refresh token with an empty string for security purposes.
@@ -83,6 +59,8 @@ const createUserObject = (user: any) => {
     suspended: user.suspended,
     access_token: user.access_token,
     refresh_token: "",
+    signed_waiver: user.signed_waiver,
+    state: ""
   };
 
   return userObject;
@@ -128,35 +106,6 @@ router.get("/:id", async (req, res) => {
  
 });
 
-
-
-// For Debug purposes
-// TODO: clean in final release
-const addNewUser = async (
-  first_name: string,
-  family_name: string,
-  identifier: string,
-  email: string,
-  access_token: string,
-  refresh_token: string
-) => {
-  let data: IUser = {
-    family_name: family_name,
-    given_name: first_name,
-    email: email,
-    identifier: identifier,
-    owned_biks: [],
-    check_out_bike: -1,
-    checked_out_time: 0,
-    suspended: false,
-    access_token: access_token,
-    refresh_token: refresh_token,
-  };
-
-  const result = await addUsertoDB(data);
-
-  return result;
-};
 
 // For Debug purposes
 // TODO: clean in final release
