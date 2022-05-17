@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'models.dart';
+import 'mock_data.dart';
 
 // information/instructions: ProfileView is a template that will
 // conditionally render profileViewA or ProfileViewB. If property 
@@ -11,10 +12,11 @@ import 'models.dart';
 // TODO: 
 // 1. style these ugly pages
 class ProfileView extends StatefulWidget {
-  final User user;
-  const ProfileView({ Key? key, required this.user }) 
+  //final User user;
+  const ProfileView({ Key? key/*, required this.user*/ }) 
       : super(key: key);
 
+  static const routeName = '/profile-view';
   @override
   State<ProfileView> createState() => _ProfileViewState();
 }
@@ -27,9 +29,9 @@ class _ProfileViewState extends State<ProfileView> {
       appBar: AppBar(
         title: const Text('The Bike Collective')
         ),
-      body: widget.user.hasABikeCheckedOut ? 
-          ProfileViewA(user: widget.user): 
-          ProfileViewB(user: widget.user)
+      body: currentUser.hasABikeCheckedOut ? 
+          ProfileViewA(): 
+          ProfileViewB()
       );
   }
 }
@@ -45,8 +47,8 @@ class _ProfileViewState extends State<ProfileView> {
 // 2. Preload the image
 // 3. Make the buttons functional
 class ProfileViewA extends StatelessWidget {
-  final User user;
-  const ProfileViewA({ Key? key, required this.user }) 
+  //final User user;
+  const ProfileViewA({ Key? key/*, required this.user*/ })
       : super(key: key);
   @override
   Widget build(BuildContext context) {
@@ -58,12 +60,13 @@ class ProfileViewA extends StatelessWidget {
       const Text('Bike ID: [bikeId'),
       const CheckedOutBikeRow(),
       OutlinedButton(
-          onPressed: () {
-            debugPrint('Return Bike button clicked');
-          },
-          child: const Text('Return Bike'),
-        ),
-    ],);   
+        onPressed: () {
+          debugPrint('Return Bike button clicked');
+        },
+        child: const Text('Return Bike'),
+      ),
+    ],
+  );   
   }
 }
 
@@ -77,8 +80,8 @@ class ProfileViewA extends StatelessWidget {
 // 2. Preload the image
 // 3. Make the buttons functional
 class ProfileViewB extends StatelessWidget {
-  final User user;
-  const ProfileViewB({ Key? key, required this.user }) 
+  //final User user;
+  const ProfileViewB({ Key? key/*, required this.user*/ }) 
       : super(key: key);
   @override
   Widget build(BuildContext context) {

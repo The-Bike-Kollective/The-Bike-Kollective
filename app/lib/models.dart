@@ -13,12 +13,14 @@ import 'package:the_bike_kollective/profile_view.dart';
 class User {
   int userId;
   String userName;
-  User({this.userId = -1, this.userName = 'no name'});
-  // change to integer data type (0 is false, 1 is true) 
+  User({this.userId = -1, 
+        this.userName = 'no name'}); 
   
   bool hasABikeCheckedOut = false; 
+  String authorization = "ya29.A0ARrdaM-uhrlMa0YBPWe6RstI68OYRZE9tDpSFLDAW1j8dZ0mLW38qgARLkvWVK6u0iqGStSaMHF18dvek_Gw_vwSpawSvxGm68VEEP27m3VpPgVLVkQz4FDr5FNQwT-JPiDybIDavW7Fn3MUyO89JU5m0SGq";
 
-  final String authorization = "ya29.A0ARrdaM-uhrlMa0YBPWe6RstI68OYRZE9tDpSFLDAW1j8dZ0mLW38qgARLkvWVK6u0iqGStSaMHF18dvek_Gw_vwSpawSvxGm68VEEP27m3VpPgVLVkQz4FDr5FNQwT-JPiDybIDavW7Fn3MUyO89JU5m0SGq";
+  //setters
+  void SetAuthorizationString(newString) {authorization = newString;}
 
   //getters
   String getAuthorization() { return authorization;}
@@ -48,13 +50,13 @@ class Bike {
   late int dateAdded;
   late String id;
   String imageUrl;
-  double locationLat;
-  double locationLong;
+  num locationLat;
+  num locationLong;
   int lockCombination;
   String name;
   List notes = [];
   late String ownerId;
-  late double rating;
+  late num rating;
   List ratingHistory = [];
   List checkoutHistory = [];
   Bike({ this.name = "unnamed",
@@ -82,13 +84,13 @@ class Bike {
   addNote(String note) { notes.add(note); }
   setIsCheckedId(int id) { checkOutId = -1; }
   setName(String newName) { name = newName;}
-  setRating(double rating) {rating = rating;}
+  setRating(num rating) {rating = rating;}
   setImageUrl(String url) {imageUrl = imageUrl;}
   setId(String newId) {id = newId;}
 
   //getters
   String getName() => name;
-  double getRating() => rating;
+  num getRating() => rating;
   String getImageUrl() => imageUrl;
 
   //methods
@@ -137,10 +139,10 @@ class Bike {
       ownerId: json['owner_id'] as String,
       lockCombination: json['lock_combination'] as int,
       //notes: json['notes'] as List<dynamic>,
-      rating: json['rating'] as double,
+      rating: json['rating'] as num,
       //ratingHistory: json['rating_history'] as List<dynamic>,
-      locationLong: json['location_long'] as double,
-      locationLat: json['location_lat'] as double,
+      locationLong: json['location_long'] as num,
+      locationLat: json['location_lat'] as num,
       //checkOutTime: json['check_out_time'] as int,
       //checkOutHistory: json['check_out_history'] as List<dynamic>
     );
@@ -171,78 +173,4 @@ class BikeListModel {
   int getLength() => bikes.length;
 }
 
-
-// bikes for mock data
-Bike checkedOutBike = Bike(
-                        name: 'checkedOut', 
-                        imageUrl: 'assets/coolBike.jpeg'
-                      );
-
-//checkedOutBike
-
-Bike notCheckedOutBike = Bike(
-                          //checkOutId: -1, 
-                          name: 'notCheckedOut', 
-                          imageUrl: 'assets/coolBike.jpeg',
-                        );
-
-User testUser = User(userId: 99);
-BikeListModel mockList = BikeListModel();
-
-
-// information/instructions: This function fulls the mockList with
-// fake data. 
-// @params: none
-// @return: none
-// bugs: no known bugs
-// TODO: 
-// 1. Add more bikes for testing, as needed. 
-// 2. 
-// 3. 
-void fillMockList() {
-  //Instantiate Bikes for mocklist
-  Bike david =  Bike(
-                  //checkOutId: 2, 
-                  name: 'Big Red', 
-                  imageUrl: 'assets/coolBike.jpeg', 
-                );
-
-  david.setRating(5);
-
-  david.addNote('Brakes do not work.');
-  david.addNote('This bike only makes left turns.');
-  david.addNote('The front tire is flat.');
-
-
-  Bike ali =  Bike(
-                //checkOutId: 3, 
-                name: 'Bob', 
-                imageUrl: 'assets/coolBike.jpeg',
-              );
-  ali.setRating(4);
-
-  ali.addNote( 'The horn sounds wimpy.');
-  ali.addNote( 'The bike smells like garbage.');
-  ali.addNote( 'People laughed at my for riding this bike.');
-
-
-  Bike esther = Bike(
-                  //checkOutId: 4, 
-                  name: 'Thunderbolt', 
-                  imageUrl: 'assets/coolBike.jpeg',
-                
-                );
-
-  esther.setRating(5);
-
-  esther.addNote( 'Missing seat.' );
-  esther.addNote(  'Hit by a train, so it does not ride well.');
-  esther.addNote( 'Lightning tends to strike this bike.' );
-
-
-  // add bikes to mockList
-  mockList.addBike(david);
-  mockList.addBike(ali);
-  mockList.addBike(esther);
-}
 
