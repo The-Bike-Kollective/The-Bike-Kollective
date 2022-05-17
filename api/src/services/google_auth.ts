@@ -36,8 +36,11 @@ const getAuthURL = () => {
     // If you only need one scope you can pass it as a string
     scope: "https://www.googleapis.com/auth/userinfo.profile",
     include_granted_scopes: true,
+    state: "test_state",
   });
-  console.log(`auth_url: ${auth_url}`)
+
+  console.log(`auth_url :${auth_url}`);
+
   return auth_url;
 };
 
@@ -46,8 +49,12 @@ const getAuthURL = () => {
 // @return: JSON tokens
 // bugs: no known bugs
 // TODO: error handler
-const get_tokens = async (code: any) => {
-  return await oauth2Client.getToken(code);
+const get_tokens = async (code: string) => {
+  return new Promise<any>((resolve, reject) => {
+    oauth2Client.getToken(code).then((response: any) => {
+      resolve(response);
+    });
+  });
 };
 
 // NOT COMPLETE
@@ -56,7 +63,10 @@ const get_tokens = async (code: any) => {
 // @return: JSON ????
 // bugs: no known bugs
 // TODO: COMPLETE Function
-const get_renewed_access_token = async (access_token: string, refresh_token: string) => {
+const get_renewed_access_token = async (
+  access_token: string,
+  refresh_token: string
+) => {
   return new Promise((resolve) => {
     const oauth2Client = new google.auth.OAuth2(
       keys.client_id,
@@ -84,18 +94,25 @@ const get_renewed_access_token = async (access_token: string, refresh_token: str
 // TODO: error handler
 const getProfileInfo = async (access_token: any) => {
   // create a new Oauth object and set credential
-  const oauth2Client = new google.auth.OAuth2();
-  oauth2Client.setCredentials({ access_token: access_token });
-  google.options({ auth: oauth2Client });
-  const people = google.people("v1");
+  return new Promise<any>((resolve, reject) => {
+    const oauth2Client = new google.auth.OAuth2();
+    console.log(`in getProfileInfo: access token is :${access_token}`);
 
-  const res = await people.people.get({
-    resourceName: "people/me",
-    personFields: "names,emailAddresses",
+    oauth2Client.setCredentials({ access_token: access_token });
+    google.options({ auth: oauth2Client });
+    const people = google.people("v1");
+
+    people.people
+      .get({
+        resourceName: "people/me",
+        personFields: "names,emailAddresses",
+      })
+      .then((response: any) => {
+        console.log(`@@@@@@@@@@@@@@@@@@@@@@@@@@@@got response from People API`);
+        console.log(response.data);
+        resolve(response.data);
+      });
   });
-
-  console.log(res.data);
-  return res.data;
 };
 
 // https://www.googleapis.com/oauth2/v3/userinfo?access_token
@@ -104,35 +121,39 @@ const getProfileInfo = async (access_token: any) => {
 // @return: valid access token
 // bugs: no known bugs
 // TODO: error handler
-const verifyAccessToken = async (accessToken: string,refresh_token: string) => {
+const verifyAccessToken = async (
+  accessToken: string,
+  refresh_token: string
+) => {
   console.log(`in verifyAccessToken. received access token is: ${accessToken}`);
 
   return new Promise(async (resolve) => {
-  try {
-    const res = await axios.get(
-      "https://www.googleapis.com/oauth2/v3/userinfo",
-      { params: { access_token: accessToken } }
-    );
+    try {
+      const res = await axios.get(
+        "https://www.googleapis.com/oauth2/v3/userinfo",
+        { params: { access_token: accessToken } }
+      );
 
-    console.log("AXIOS response is: ");
-    console.log(res);
-    // no error if gets response, so the curretn access token is valid and can be returned. 
-    resolve(accessToken);
-  } catch (err: any) {
-    console.log("AXIOS got an ERROR ");
-    if(err.response.status==401){
-      // if 401 => token is expired and should be renewed
-    console.log("ERROR 401 => refreshing token...");
-    get_renewed_access_token(accessToken, refresh_token).then(
-      (renwed_token) => {
-        console.log('reurning renwed token...');
-        resolve(renwed_token);
+      console.log("AXIOS response is: ");
+      console.log(res);
+      // no error if gets response, so the curretn access token is valid and can be returned.
+      resolve(accessToken);
+    } catch (err: any) {
+      console.log("AXIOS got an ERROR ");
+      if (err.response.status == 401) {
+        // if 401 => token is expired and should be renewed
+        console.log("ERROR 401 => refreshing token...");
+        get_renewed_access_token(accessToken, refresh_token).then(
+          (renwed_token) => {
+            console.log("reurning renwed token...");
+            resolve(renwed_token);
+          }
+        );
       }
-    );
+      // console.log(err);
+      // return err
     }
-    // console.log(err);
-    // return err
-  }})
+  });
 };
 
 export {
