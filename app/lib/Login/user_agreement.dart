@@ -2,6 +2,9 @@ import 'package:the_bike_kollective/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:the_bike_kollective/profile_view.dart';
 import 'package:the_bike_kollective/models.dart';
+import 'package:the_bike_kollective/Login/spash_screen.dart';
+import 'package:the_bike_kollective/access_token.dart';
+import 'package:the_bike_kollective/access_token.dart';
 
 // information/instructions: user reads and either
 // 1. accepts agreement > redirected to logged in home page
@@ -14,6 +17,7 @@ import 'package:the_bike_kollective/models.dart';
 //  2. redirect user to home page if declines (inform user w/pop-up)
 //  3. redirect user to user page if accepts (implement user info)
 //  4. clean-up code and separate into different widgets
+//  5. send signedWaiver = true to update back-end if accepts signs waiver
 const String pdfText = """MEMBERSHIP RULES
 Lorem ipsum dolor sit amet. Sed repudiandae voluptas et consequatur perspiciatis 
 cum quia corrupti aut illum iusto cum voluptatem maxime. Est numquam maxime est culpa 
@@ -47,6 +51,9 @@ class _AgreementPage extends State<AgreementPage> {
 
   @override
   Widget build(BuildContext context) {
+    print("Test: access token via global variable below ");
+    print(accessToken01);
+    
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,

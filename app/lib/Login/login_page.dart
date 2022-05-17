@@ -3,20 +3,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'dart:math';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:get/get.dart';
-
-// information/instructions: this function is called by 
-// the _launchURLInApp function to generate the last
-// parameter of randomized characters
-// @params: none
-// @return: return randomized string
-// bugs: none
-// TODO: none
-String generateRandomString(int len) {
-  var r = Random();
-  const _chars =
-      'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
-  return List.generate(len, (index) => _chars[r.nextInt(_chars.length)]).join();
-}
+import 'package:the_bike_kollective/Login/helperfunctions.dart';
 
 // information/instructions: this function listens 
 // for dynamic link and redirects user to the 
@@ -46,10 +33,23 @@ void initLink() {
 // bugs: none
 // TODO: none
 _launchURLInApp() async {
-  String stateGoogle = generateRandomString(10); 
+  getRandomizedString();
+  final String sstate = getState();
 
-  final googleLogin = "http://ec2-54-71-143-21.us-west-2.compute.amazonaws.com:5000/login";
-  final url = '$googleLogin';
+  final urlState = 'state=' + sstate + '&';
+  final host = 'accounts.google.com';
+  final path = '/o/oauth2/v2/auth/oauthchooseaccount?';
+  final access_type = 'access_type=offline&';
+  final prompt = 'prompt=consent&';
+  final scope =
+      'scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&include_granted_scopes=true&';
+  final response_type = 'response_type=code&';
+  final client_id =
+      'client_id=701199836944-k9grqhb7tl30mm974iv62k6ge3ha2cqs.apps.googleusercontent.com&';
+  final redirect_uri =
+      'redirect_uri=http%3A%2F%2Fec2-54-71-143-21.us-west-2.compute.amazonaws.com%3A5000%2Fprofile&flowName=GeneralOAuthFlow';
+
+  final url = 'https://$host$path$access_type$prompt$scope$urlState$response_type$client_id$redirect_uri';
 
   if (await canLaunch(url)) {
     await launch(url);
