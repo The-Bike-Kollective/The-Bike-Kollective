@@ -140,7 +140,7 @@ class _AddBikeFormState extends State<AddBikeForm> {
             ),
             
             onSaved: (String? value) {
-              bikeData["notes"] = [value];
+              //bikeData["notes"] = [value];
              
             },
           ),
@@ -154,7 +154,7 @@ class _AddBikeFormState extends State<AddBikeForm> {
               if (_formKey.currentState!.validate()) {
               
                 _formKey.currentState?.save();
-                String testLink = 'testLink';
+                //String testLink = 'testLink';
                 Future imageLink = getImageDownloadLink(widget.imageStringBase64);
                 imageLink.then((value) {
                   bikeData['image'] = value;
@@ -188,44 +188,47 @@ Future<Bike> createBike(bikeData) async {
   print('createBike() called');
   bikeData['location_long'] = 25;
   bikeData['location_lat'] = -25;
+  bikeData['size'] = 'size 2';
+  bikeData['type'] = 'type 2';
   // temporary fix unit backend can accept the rest of the data
-  var truncatedData = {};
-  truncatedData['image'] = bikeData['image'];
-  //truncatedData['image'] = "fake_string";
-  truncatedData['lock_combination'] =bikeData['lock_combination'];
-  truncatedData['location_long'] = bikeData['location_long'];
-  truncatedData['location_lat'] = bikeData['location_lat'];
+  // var truncatedData = {};
+  // truncatedData['image'] = bikeData['image'];
+  // //truncatedData['image'] = "fake_string";
+  // truncatedData['lock_combination'] =bikeData['lock_combination'];
+  // truncatedData['location_long'] = bikeData['location_long'];
+  // truncatedData['location_lat'] = bikeData['location_lat'];
   // after the backend can accept the rest of the bikeData,
   // we can assign jsonEncode(BikeData) to datastring:
 
   ////POSSIBLY THE PROBLEM IS HERE
-  String dataString = jsonEncode(truncatedData);
+  String dataString = jsonEncode(bikeData);
 
   //String dataString = jsonEncode(bikeData);
   print('/bikes request body: ');
   print(dataString);
   print('/create bike request is made here.');
-  // final response = await http.post(
-  //   Uri.parse(globalUrl+ '/bikes'),
-  //   headers: <String, String>{
-  //     "Content-Type": "application/json; charset=UTF-8",
-  //     "Access-Control-Allow-Origin": "*",
-  //     "Authorization": "Bearer "+ authCode
-  //   },
-  //   body: dataString 
-  // );
+  final response = await http.post(
+    Uri.parse(globalUrl+ '/bikes'),
+    headers: <String, String>{
+      "Content-Type": "application/json; charset=UTF-8",
+      "Access-Control-Allow-Origin": "*",
+      "Authorization": "Bearer "+ authCode
+    },
+    body: dataString 
+  );
   
-  print("/bikes response completed");
-  //print("response.body" + response.body);
-  // if (response.statusCode == 201) {
-  //   print('Success: bike created');
-  //   } 
-  // else if (response.statusCode == 400) {
-  //   throw Exception('Failure: Bad request. Failed to add bike.');
-  // }
-  // else if (response.statusCode == 401) {
-  //   throw Exception('Failure: Unauthorized. Invalide access token.');
-  // }
+  int statusCode = response.statusCode;
+  print("/bikes response completed with status code: $statusCode");
+  print("response.body" + response.body);
+  if (response.statusCode == 201) {
+    print('Success: bike created');
+    } 
+  else if (response.statusCode == 400) {
+    throw Exception('Failure: Bad request. Failed to add bike.');
+  }
+  else if (response.statusCode == 401) {
+    throw Exception('Failure: Unauthorized. Invalide access token.');
+  }
 
   //var json = jsonDecode(response.body); 
   // print('json:');
