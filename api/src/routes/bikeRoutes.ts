@@ -138,6 +138,34 @@ router.post("/", async (req: Request, res: Response) => {
 // TODO : add pagination
 router.get("/", async (req: Request, res: Response) => {
   console.log("in get all bikes. Fetching from DB...");
+  // check if access_token is provided.
+  if (!req.headers.authorization) {
+    return res.status(403).send({ message: "access token is missing" });
+  }
+
+  // splits "Breaer TOKEN"
+  let access_token = req.headers.authorization.split(" ")[1];
+  console.log("Access Token from header is:");
+  console.log(access_token);
+
+  // retrive user information from DB to find refresh token
+  // const userFromDb = await findUserByAccessToekn(access_token)
+  let userFromDb = await findUserByAccessToekn(access_token);
+
+  const verificationResult = await verifyUserIdentity(userFromDb, access_token);
+
+  if (verificationResult == 404) {
+    return res.status(404).send({ message: "User not found" , access_token: access_token});
+  } else if (verificationResult == 500) {
+    return res.status(500).send({ message: "Multiple USER ERROR" , access_token: access_token});
+  } else if (verificationResult == 401) {
+    return res
+      .status(401)
+      .send({ message: "unauthorized. invalid access_token or identifier" , access_token: access_token});
+  } else if (verificationResult == 200) {
+    console.log("User is verified. Countiue the process");
+  }
+  
   const bikes = await getAllBikes();
   console.log("in get all bikes. Fetched!");
   const bikesToSend: any = [];
