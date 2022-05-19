@@ -15,7 +15,8 @@ import {
   bikeUpdateRatingHistoryDB,
   bikeUpdateConditionDB,
   bikeUpdateNotesDB,
-  addBikeToOwnerListDB
+  addBikeToOwnerListDB,
+  changeUserSuspensionMoodeDB
 
 } from "../db/db";
 import { IBike, IRating, INote } from "../models/bike";
@@ -532,6 +533,7 @@ router.post(
       .send({
         message: "Check out complete",
         checkout_timestamp: checkoutTimestamp,
+        lock_combination:bikeFromDb[0]["lock_combination"],
         checkout_details: checkoutObject,
         access_token: access_token,
       });
@@ -698,7 +700,8 @@ router.delete(
     // 13. suspend user if passed limit
     let userSuspended = false;
     if(checkoutObject.total_minutes>8*60){
-    // suspendAUser()
+      await changeUserSuspensionMoodeDB(userFromDb[0]['id'],true);
+      userSuspended = true
     }
 
     // 14. add to check out history
@@ -721,6 +724,7 @@ router.delete(
         message: "Check in complete",
         checkout_timestamp: checkInTimestamp,
         checkout_details: checkoutObject,
+        user_suspended:userSuspended,
         access_token: access_token,
       });
   }

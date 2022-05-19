@@ -202,6 +202,17 @@ const userSignedWaiverDB =async (id: string) => {
   return true;
 };
 
+
+const changeUserSuspensionMoodeDB =async (id: string, suspension:boolean) => {
+  const result = await User.updateOne(
+    { _id: new ObjectID(id) },
+    {$set:{ suspended: suspension}}
+  );
+  console.log(`changeUserSuspensionMoodeDB is changed to :${suspension}`);
+  console.log(result)
+  return true;
+};
+
 // information/instructions: updates users refresh token on DB
 // @params: user DB ID and new refresh token as string
 // @return: true in success and flase in failure
@@ -431,5 +442,6 @@ export {
   bikeUpdateConditionDB,
   bikeUpdateNotesDB,
   userSignedWaiverDB,
-  addBikeToOwnerListDB
+  addBikeToOwnerListDB,
+  changeUserSuspensionMoodeDB
 };
