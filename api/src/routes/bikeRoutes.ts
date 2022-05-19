@@ -140,40 +140,53 @@ router.get("/", async (req: Request, res: Response) => {
   console.log("in get all bikes. Fetching from DB...");
   // check if access_token is provided.
   if (!req.headers.authorization) {
-    return res.status(403).send({ message: "access token is missing" });
+    return res.status(403).json({ message: "access token is missing" });
   }
 
-  // splits "Breaer TOKEN"
+  // splits "Breaer TOKEN" 
   let access_token = req.headers.authorization.split(" ")[1];
   console.log("Access Token from header is:");
   console.log(access_token);
 
   // retrive user information from DB to find refresh token
-  // const userFromDb = await findUserByAccessToekn(access_token)
-  let userFromDb = await findUserByAccessToekn(access_token);
+  let userFromDb = await findUserByAccessToekn(access_token)
 
-  const verificationResult = await verifyUserIdentity(userFromDb, access_token);
+  const verificationResult = await verifyUserIdentity(userFromDb,access_token)
 
-  if (verificationResult == 404) {
-    return res.status(404).send({ message: "User not found" , access_token: access_token});
-  } else if (verificationResult == 500) {
-    return res.status(500).send({ message: "Multiple USER ERROR" , access_token: access_token});
-  } else if (verificationResult == 401) {
-    return res
-      .status(401)
-      .send({ message: "unauthorized. invalid access_token or identifier" , access_token: access_token});
-  } else if (verificationResult == 200) {
-    console.log("User is verified. Countiue the process");
-  }
-  
+  if (verificationResult==404){
+    return res.status(404).json({ message: "User not found" , access_token: access_token});
+  }else if (verificationResult==500){
+    return res.status(500).json({ message: "Multiple USER ERROR" , access_token: access_token});
+  }else if (verificationResult==401){
+    return res.status(401).send({ message: "unauthorized. invalid access_token or identifier" , access_token: access_token})
+  }else if (verificationResult==200){
+    // get updated information from DB before sending to client
+    userFromDb = await findUserByIdentifier(userFromDb[0]['identifier'])
+
   const bikes = await getAllBikes();
   console.log("in get all bikes. Fetched!");
   const bikesToSend: any = [];
   bikes.forEach((bike) => {
-    bikesToSend.push(createBikeObjectfromDB(bike));
+    // return only active and not damged bikes which are not checked out
+    if(bike.active && bike.condition && bike.check_out_id!="-1"){
+      // hide lock_combination 
+      bike['lock_combination']=-99
+      // hide checkout history
+      bike['check_out_history']=[]
+      // hide rating history 
+      bike['rating_history']=[]
+
+      bike.notes.forEach(note => {
+        // hide id is notes
+        note.id="hidden"
+      })
+
+
+      bikesToSend.push(createBikeObjectfromDB(bike));
+    }
   });
 
-  res.status(200).send(bikesToSend);
+  res.status(200).send({bikes:bikesToSend,access_token:userFromDb[0]['access_token']});}
 });
 
 // information/instructions: returns a single bike information.
@@ -186,31 +199,28 @@ router.get("/:id", async (req: Request, res: Response) => {
   console.log(`bike id is :${bike_id}`);
   // check if access_token is provided.
   if (!req.headers.authorization) {
-    return res.status(403).send({ message: "access token is missing" });
+    return res.status(403).json({ message: "access token is missing" });
   }
 
-  // splits "Breaer TOKEN"
+  // splits "Breaer TOKEN" 
   let access_token = req.headers.authorization.split(" ")[1];
   console.log("Access Token from header is:");
   console.log(access_token);
 
   // retrive user information from DB to find refresh token
-  // const userFromDb = await findUserByAccessToekn(access_token)
-  let userFromDb = await findUserByAccessToekn(access_token);
+  let userFromDb = await findUserByAccessToekn(access_token)
 
-  const verificationResult = await verifyUserIdentity(userFromDb, access_token);
+  const verificationResult = await verifyUserIdentity(userFromDb,access_token)
 
-  if (verificationResult == 404) {
-    return res.status(404).send({ message: "User not found" , access_token: access_token});
-  } else if (verificationResult == 500) {
-    return res.status(500).send({ message: "Multiple USER ERROR" , access_token: access_token});
-  } else if (verificationResult == 401) {
-    return res
-      .status(401)
-      .send({ message: "unauthorized. invalid access_token or identifier" , access_token: access_token});
-  } else if (verificationResult == 200) {
-    console.log("User is verified. Countiue the process");
-  }
+  if (verificationResult==404){
+    return res.status(404).json({ message: "User not found" , access_token: access_token});
+  }else if (verificationResult==500){
+    return res.status(500).json({ message: "Multiple USER ERROR" , access_token: access_token});
+  }else if (verificationResult==401){
+    return res.status(401).send({ message: "unauthorized. invalid access_token or identifier" , access_token: access_token})
+  }else if (verificationResult==200){
+    // get updated information from DB before sending to client
+    userFromDb = await findUserByIdentifier(userFromDb[0]['identifier'])
 
   // get bike inforamtion from DB
   const bikeFromDB = await findBikeByID(bike_id);
@@ -229,10 +239,30 @@ router.get("/:id", async (req: Request, res: Response) => {
       .send({ message: "Multiple BIKE ERROR", access_token: access_token });
   }
 
+  let bikeObject=createBikeObjectfromDB(bikeFromDB[0])
+
+  bikeObject['lock_combination']=-99
+  // hide checkout history
+  bikeObject['check_out_history']=[]
+  // hide rating history 
+  bikeObject['rating_history']=[]
+  // hiding id in notes
+  bikeObject.notes.forEach(note => {
+    // hide id is notes
+    note.id="hidden"
+  })
+  // hiding check out id and timestamp
+  if (bikeObject['check_out_id']!="-1"){
+    bikeObject['check_out_id']="hidden"
+    bikeObject['check_out_time']=-99
+  }
+
+
   // there is 1 bike in returned list
   return res
     .status(200)
-    .send(createBikeResponse(createBikeObjectfromDB(bikeFromDB[0]), access_token));
+    .send(createBikeResponse(bikeObject, access_token));
+}
 });
 
 // information/instructions: to update a bike
