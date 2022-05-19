@@ -315,6 +315,31 @@ const bikeUpdateNotesDB = async (bike_id: string,new_value:any) => {
 };
 
 
+const bikeUpdateAvergaeRatingDB = async (bike_id: string) => {
+
+  // get bike information
+  const bike = await Bike.find({ _id: new ObjectID(bike_id) });
+  let totalRating=0
+  const ratings = bike[0].rating_history
+  ratings.forEach((rating)=>{
+    totalRating+=rating.rating_value
+  })
+
+  const averageRating= totalRating/ratings.length
+
+  const result = await Bike.updateOne(
+    { _id: new ObjectID(bike_id) },
+    {$set:{ rating: averageRating.toFixed(1)}}
+  );
+  console.log(`bikeUpdateAvergaeRatingDB updated. new rating is: ${averageRating.toFixed(1)}`);
+  console.log(result)
+  return true;
+};
+
+
+
+
+
 
 
 // information/instructions: updates and exisitng bike with a new bike object.
@@ -443,5 +468,6 @@ export {
   bikeUpdateNotesDB,
   userSignedWaiverDB,
   addBikeToOwnerListDB,
-  changeUserSuspensionMoodeDB
+  changeUserSuspensionMoodeDB,
+  bikeUpdateAvergaeRatingDB
 };

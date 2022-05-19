@@ -16,7 +16,8 @@ import {
   bikeUpdateConditionDB,
   bikeUpdateNotesDB,
   addBikeToOwnerListDB,
-  changeUserSuspensionMoodeDB
+  changeUserSuspensionMoodeDB,
+  bikeUpdateAvergaeRatingDB
 
 } from "../db/db";
 import { IBike, IRating, INote } from "../models/bike";
@@ -726,7 +727,7 @@ router.delete(
         timestamp: checkInTimestamp,
         note_body: req.body.note,
       };
-      bikeUpdateNotesDB(bike_id,[...bikeFromDb[0]["notes"],newNoteEntry])
+      await bikeUpdateNotesDB(bike_id,[...bikeFromDb[0]["notes"],newNoteEntry])
     }
 
     // 9. update rating history andcalculate new average
@@ -735,14 +736,14 @@ router.delete(
       timestamp: checkInTimestamp,
       rating_value: req.body.rating,
     };
-    bikeUpdateRatingHistoryDB(bike_id,[...bikeFromDb[0]["rating_history"],newRatingEntry])
-    // updateRatingForABike()
+    await bikeUpdateRatingHistoryDB(bike_id,[...bikeFromDb[0]["rating_history"],newRatingEntry])
+    await bikeUpdateAvergaeRatingDB(bike_id);
 
     // 10. update location
-    bikeUpdateLocationDB(bike_id,req.body.location_long,req.body.location_lat)
+    await bikeUpdateLocationDB(bike_id,req.body.location_long,req.body.location_lat)
    
     // 11. update condition
-    bikeUpdateConditionDB(bike_id,req.body.condition)
+    await bikeUpdateConditionDB(bike_id,req.body.condition)
 
     // 12. create return location, retrive checkoutRating and updateit, calculate total time
     const checkinLocation = createNewLocation(req.body.location_long,req.body.location_lat)
@@ -763,12 +764,12 @@ router.delete(
     }
 
     // 14. add to check out history
-    updateAnExisitngCheckoutHistory(checkoutObject)
+    await updateAnExisitngCheckoutHistory(checkoutObject)
 
 
     // 15. update bike and user DB with -1
     // userCheckInABikeDB(userFromDb[0]['id'],bike_id,user_identifier)
-    userCheckInABikeDB(
+    await userCheckInABikeDB(
       userFromDb[0]['id'],
       bike_id,
       [...bikeFromDb[0]['check_out_history'],checkoutObject.id as string],
