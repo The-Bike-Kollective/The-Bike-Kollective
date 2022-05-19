@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:the_bike_kollective/add-bike-page.dart';
 import 'package:the_bike_kollective/bike_list_view.dart';
 import 'package:the_bike_kollective/get-photo.dart';
-import 'package:the_bike_kollective/requests.dart';
-import 'models.dart';
 import 'mock_data.dart';
-import 'dart:convert';
 
 // information/instructions: ProfileView is a template that will
 // conditionally render profileViewA or ProfileViewB. If property 
@@ -35,8 +31,8 @@ class _ProfileViewState extends State<ProfileView> {
         title: const Text('The Bike Collective')
         ),
       body: (currentUser.checkedOutBike != '-1') ? 
-          ProfileViewA(): 
-          ProfileViewB()
+          const ProfileViewA(): 
+          const ProfileViewB()
       );
   }
 }
@@ -132,7 +128,6 @@ class ProfileViewB extends StatelessWidget {
 // 1. Stub at this point. 
 // 2. Needs to be set up to take Bike(), and render using
 //    the data from the Bike.
-
 class CheckedOutBikeRow extends StatelessWidget {
   const CheckedOutBikeRow({ Key? key }) : super(key: key);
 
@@ -141,15 +136,12 @@ class CheckedOutBikeRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-       
         Image.asset('assets/coolBike.jpeg',
           width: 200,
           fit:BoxFit.cover  
         ),
         const Text('Due Back in 22 Minutes')
-
-      ],
-      
+      ],      
     );
   }
 }

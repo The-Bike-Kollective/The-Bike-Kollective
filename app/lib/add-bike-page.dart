@@ -7,8 +7,6 @@ import 'requests.dart';
 import 'mock_data.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:geolocator/geolocator.dart';
-
 
 // information/instructions: 
 // @params: 
@@ -150,16 +148,16 @@ class _AddBikeFormState extends State<AddBikeForm> {
 }
 
 
-
-Future<Bike> createBike(bikeData) async {
+// information/instructions: Creates a bike on the data base. Use 
+// must select a photo from the gallery.
+// @params: none
+// @return: 
+// bugs: no known bugs
+// TODO:
   //get permission from user to access location
-
-  // get users location to be saved as bike's current location. 
-  // Future<Position> position = determinePosition();
-  // position.then((value) {
-  //   print(value);  
-
-  // });
+  // get users location to be saved as bike's current location.
+  // add spinning wheel for pictures not yet loaded
+Future createBike(bikeData) async {
   bikeData['location_long'] = 25;
   bikeData['location_lat'] = -25;
   // We might eventually have the user choose size and types via
@@ -191,10 +189,10 @@ Future<Bike> createBike(bikeData) async {
     throw Exception('Failure (code 401): Unauthorized. Invalide access token.');
   }
 
-  return Bike();
 }
 
 
+// Taken from documentation before. May not need this. 
 
 // Future<Position> determinePosition() async {
 //   bool serviceEnabled;

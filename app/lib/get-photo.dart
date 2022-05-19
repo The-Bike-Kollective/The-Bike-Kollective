@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:the_bike_kollective/add-bike-page.dart';
-import 'photos.dart';
 import 'add-bike-page.dart';
 import 'dart:convert';
 import 'dart:io';
-import 'add-bike-page.dart';
 import 'package:image_picker/image_picker.dart';
 
-
+// information/instructions: In order to add a bike, user is directed
+// to this page first and asked to select an image from the Gallery. 
+// @params: none
+// @return: none
+// bugs: none that are known
+//no known bugs, but need to do some more testing
 class GetPhoto extends StatelessWidget {
   const GetPhoto({ Key? key }) : super(key: key);
-
   static const routeName = '/get-photo';
 
   @override
@@ -25,49 +27,19 @@ class GetPhoto extends StatelessWidget {
           OutlinedButton(
             onPressed: () async {
               debugPrint('Upload a Picture button clicked');
-              //Future<String> fileBase64 = getImageFromGalleryAsBase64();
-              
-              //Future<String> pickImage() async {
-                String imagePath,img64;
-                final pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
-                if (pickedImage != null) {
-                  imagePath = pickedImage.path;
-                  final bytes = File(imagePath).readAsBytesSync();
-                  var img64 = base64Encode(bytes);
-                  //print(img64);
-                  Navigator.pushNamed(
-                    context,
-                    AddBikePage.routeName,
-                    arguments: BikeFormArgument(img64)
-                  );
-
+              String imagePath;
+              final pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
+              if (pickedImage != null) {
+                imagePath = pickedImage.path;
+                final bytes = File(imagePath).readAsBytesSync();
+                var img64 = base64Encode(bytes);
+                //print(img64);
+                Navigator.pushNamed(
+                  context,
+                  AddBikePage.routeName,
+                  arguments: BikeFormArgument(img64)
+                );
               } 
-              
-            
-              
-
-              
-
-
-              ////////////////////
-              /// // Implementing the image picker
-  // Future<void> _openImagePicker() async {
-  //   final XFile? pickedImage =
-  //       await _picker.pickImage(source: ImageSource.gallery);
-  //   if (pickedImage != null) {
-  //     setState(() {
-  //       _image = File(pickedImage.path);
-  //     });
-  //   }
-  // }
-
-  ///
-
-
-
-
-
-
             },
             child: const Text('Upload a Picture'),
           ),

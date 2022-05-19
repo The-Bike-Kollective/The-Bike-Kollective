@@ -2,12 +2,9 @@ import 'package:the_bike_kollective/global_values.dart';
 
 import 'models.dart';
 
-
-
-
-//User testUser = User(userId: 99);
-
-
+// For now this current user is used as the user throuhout the 
+// app. 
+// TODO: how do we save the logged in user's info in a similar way?
 User currentUser = User(
   givenName: 'CurrentUser',
   accessToken: authCode,
@@ -18,7 +15,8 @@ BikeListModel mockList = BikeListModel();
 
 
 // information/instructions: This function fulls the mockList with
-// fake data. 
+// fake data. At the moment this is not being used, but I've kept it
+// here in case we need it later for testing. 
 // @params: none
 // @return: none
 // bugs: no known bugs

@@ -12,7 +12,6 @@ import 'package:the_bike_kollective/Login/user_agreement.dart';
 // TODO: The items listed in the drawer will be changed to links.
 // Suggestions: exit app, sign out, edit profile, 
 // settings (if we have any). 
-
 class MenuDrawer extends StatelessWidget {
   const MenuDrawer({ Key? key}) : super(key: key);
 

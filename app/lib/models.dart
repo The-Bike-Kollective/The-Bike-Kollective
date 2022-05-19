@@ -1,17 +1,14 @@
 import 'dart:convert';
 
-// information/instructions:This is just a stub for the model. There is only one property
-// so that the profile page can be rendered conditionally, depending
-// on whether or not the user has a bike checked out. Change the 
-// hasABikeCheckedOut property to see a different profile view. 
+// information/instructions: This is a model of the user object on
+// on the database.  
 // @params: no params
 // @return: nothing returned
 // bugs: no known bugs
 // TODO: 
 // 1. complete the model, making sure that it matches the back end, 
 // with all the same properties and datatypes.
-import 'package:the_bike_kollective/profile_view.dart';
-
+// 2. 
 class User {
   String id;
   String familyName;
@@ -62,7 +59,6 @@ class User {
   bool getSignedWaiver() {return signedWaiver;}
   List<String> getCheckedOutString() {return checkoutHistory;}
   String getCheckedOutRecordId() {return checkoutRecordId;}
-
 }
 
 
@@ -77,8 +73,6 @@ class User {
 // with all the same properties and datatypes.
 // 2. number 1 is mostly complete, but need to check on some of the 
 // attributes, like arrays and dateTime, to make sure they will correspond.
-
-
 class Bike {
   late bool active;
   List checkOutHistory = [];

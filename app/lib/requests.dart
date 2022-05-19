@@ -10,30 +10,20 @@ Map <String,String>headers = {
       "Authorization": "Bearer "+ currentUser.getAccessToken()};
 
 
+// A test to make sure the api is running. 
 void test() async {
   print('running test');
   final response = await http.get(
     Uri.parse(globalUrl),
   );
-  print('Response body: ${response.body}');
-  
+  print('Response body: ${response.body}'); 
 }
 
-// information/instructions: Function creates a bike on the database, using
-// data from the new bike form. 
-// @params: bikeData, which will be a json object that will form the 
-// body of the request.
-// @return: returns a Bike object for front end use, that will be a copy
-// of the bike written to the database.
-// bugs: Right now the returned bike will be slightly different from the 
-// bike on the database because we can currently only add the required four 
-// attributes to the databse.
-// TODO: 
-// add functionality to upload photo
-// get user location to add those coordinates to the bike object.
-
-
-
+// information/instructions: Get bike list from database first as
+// a string, then parse to Json, then convert to BikeListModel
+// @params: none
+// @return: none
+// bugs: no known bugs, but need to do some more testing
 Future<BikeListModel> getBikeList() async {
   final response = await http.get(
     Uri.parse(globalUrl+ '/bikes'),
@@ -59,36 +49,15 @@ Future<BikeListModel> getBikeList() async {
   else {
     throw Exception('Something got messed up in getBikeList()');
   } 
-  
 }
 
 
-// BikeListModel currentBikes = BikeListModel.fromDataString(response.body)
-// bikeList.then((bikeListAsString){
-      //   // split string into a list 
-      //   final bikeListAsList 
-      //     = bikeListAsString.split("},");
-      //   int listLength = bikeListAsList.length;
-      //   // remove opening bracket '[' from first item  
-      //   bikeListAsList[0] = bikeListAsList[0].substring(1);
-      //   int lastItemLength = bikeListAsList[listLength-1].length;
-      //   // remove closing bracked ']' from last item
-      //   bikeListAsList[listLength-1] 
-      //     = bikeListAsList[listLength-1].substring(0,lastItemLength-1);  
-
-      //   // print(bikeListAsList[0]);
-      //   // print(bikeListAsList[6]);
-      //   for(int i = 0; i< listLength; i+= 1) {
-      //     print(bikeListAsList[i]);
-      //   }
-
-      //});
-
-
-
-
-
-
+// information/instructions: Given a string in base64 which is the
+// image to download, the image will be uploaded to the firebase store,
+// and the link to access the image will be returned. 
+// @params: String in base64 of the image to upload
+// @return: Link to be used later to access the image.
+// bugs: no known bugs, but need to do some more testing
 Future<String> getImageDownloadLink(fileStringBase64) async {
   String requestBody = '{"image": "' + fileStringBase64 +'"}';
   
@@ -116,7 +85,6 @@ Future<String> getImageDownloadLink(fileStringBase64) async {
   else if (response.statusCode == 401) {
     throw Exception('Failure: Unauthorized.');
   } 
-  return "something is messed up";
-  //throw Exception('Failure: unknown error');
+  return "something is messed up in getImageDownloadLink().";
  
 }

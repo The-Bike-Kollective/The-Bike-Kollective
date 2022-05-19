@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:the_bike_kollective/get-photo.dart';
 import 'models.dart';
-import 'mock_data.dart';
 import 'MenuDrawer.dart';
 import 'bike_detail_view.dart';
 import 'Maps/googlemaps.dart';
@@ -38,7 +37,6 @@ class _BikeListViewState extends State<BikeListView> {
     currentList = getBikeList();
   }
   
-  
   @override
   Widget build(BuildContext context) {
     
@@ -48,7 +46,7 @@ class _BikeListViewState extends State<BikeListView> {
         title: const Text('Bikes Nearby'),
         actions: <Widget>[
             IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.map,
                 color: Colors.white,
               ),
@@ -87,7 +85,6 @@ class _BikeListViewState extends State<BikeListView> {
     );
   }
 }
-
 
 
 // information/instructions: This Widget is rendered within the 
@@ -134,11 +131,10 @@ class BikeListBody extends StatelessWidget {
 // 3. 
 class BikeListTile extends StatelessWidget {
   final Bike bikeData;
-  const BikeListTile({ Key? key, 
+   final distanceFromUser = 1;
+   const BikeListTile({ Key? key, 
     required this.bikeData,
      }) : super(key: key);
-
-  final distanceFromUser = 1;
  
   @override
   Widget build(BuildContext context) {
