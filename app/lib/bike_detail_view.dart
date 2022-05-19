@@ -82,7 +82,7 @@ class BikeDetailTopRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Image.asset(bikeImageUrl, width: 250, fit: BoxFit.cover),
+        Image.network(bikeImageUrl, width: 100, fit: BoxFit.cover),
         Column(
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.end,

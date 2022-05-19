@@ -39,7 +39,7 @@ class GetPhoto extends StatelessWidget {
                     context,
                     AddBikePage.routeName,
                     arguments: BikeFormArgument(img64)
-                );
+                  );
 
               } 
               

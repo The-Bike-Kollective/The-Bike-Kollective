@@ -1,12 +1,18 @@
+import 'package:the_bike_kollective/global_values.dart';
+
 import 'models.dart';
 
 
 
 
-User testUser = User(userId: 99);
+//User testUser = User(userId: 99);
 
 
-User currentUser = User();
+User currentUser = User(
+  givenName: 'CurrentUser',
+  accessToken: authCode,
+  
+);
 
 BikeListModel mockList = BikeListModel();
 

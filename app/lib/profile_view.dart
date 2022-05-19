@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:the_bike_kollective/add-bike-page.dart';
+import 'package:the_bike_kollective/bike_list_view.dart';
+import 'package:the_bike_kollective/get-photo.dart';
+import 'package:the_bike_kollective/requests.dart';
 import 'models.dart';
 import 'mock_data.dart';
+import 'dart:convert';
 
 // information/instructions: ProfileView is a template that will
 // conditionally render profileViewA or ProfileViewB. If property 
@@ -29,7 +34,7 @@ class _ProfileViewState extends State<ProfileView> {
       appBar: AppBar(
         title: const Text('The Bike Collective')
         ),
-      body: currentUser.hasABikeCheckedOut ? 
+      body: (currentUser.checkedOutBike != '-1') ? 
           ProfileViewA(): 
           ProfileViewB()
       );
@@ -39,6 +44,7 @@ class _ProfileViewState extends State<ProfileView> {
 
 // information/instructions: Both ProfileViewA and B are rendered by 
 // ProfileView, depending on whether the user has a bike checked out.
+// ProfileViewA is shown if the user DOES have a bike checked out.
 // @params: required User object with a property HasABikeCheckedOut.
 // @return: nothing returned
 // bugs: no known bugs
@@ -52,8 +58,9 @@ class ProfileViewA extends StatelessWidget {
       : super(key: key);
   @override
   Widget build(BuildContext context) {
+    String currentUserGivenName = currentUser.getGivenName();
     return Column(children:  [
-      const Text('Welcome, [username]!'),
+      Text('Welcome, $currentUserGivenName!'),
       const Text('You currently have a bike checked out.'),
       const Text('Bike Info:'),
       const Text('Bike Name: [bikeName'),
@@ -85,21 +92,25 @@ class ProfileViewB extends StatelessWidget {
       : super(key: key);
   @override
   Widget build(BuildContext context) {
+     String currentUserGivenName = currentUser.getGivenName();
     return Column(children: [
-        const Text('Welcome, [username]!'),
+        Text('Welcome, $currentUserGivenName!'),
         OutlinedButton(
           onPressed: () {
             debugPrint('Find a Bike button clicked');
+            //get list of bikes from backend:
+            //print(getBikeList());
             Navigator.pushNamed(
-              context, '/bike-list'
-            );
+              context, BikeListView.routeName,
+            );    
+            
           },
           child: const Text('Find a Bike'),
         ),
         OutlinedButton(
           onPressed: () {
             Navigator.pushNamed(
-              context, '/add-bike',
+              context, GetPhoto.routeName,
             );       
             debugPrint('add bike clicked');   
           },

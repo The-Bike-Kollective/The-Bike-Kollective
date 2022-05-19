@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 // information/instructions:This is just a stub for the model. There is only one property
 // so that the profile page can be rendered conditionally, depending
 // on whether or not the user has a bike checked out. Change the 
@@ -11,19 +13,55 @@
 import 'package:the_bike_kollective/profile_view.dart';
 
 class User {
-  int userId;
-  String userName;
-  User({this.userId = -1, 
-        this.userName = 'no name'}); 
-  
-  bool hasABikeCheckedOut = false; 
-  String authorization = "ya29.A0ARrdaM-uhrlMa0YBPWe6RstI68OYRZE9tDpSFLDAW1j8dZ0mLW38qgARLkvWVK6u0iqGStSaMHF18dvek_Gw_vwSpawSvxGm68VEEP27m3VpPgVLVkQz4FDr5FNQwT-JPiDybIDavW7Fn3MUyO89JU5m0SGq";
+  String id;
+  String familyName;
+  String givenName;
+  String email;
+  String identifier;
+  List<String> ownedBikes = [];
+  String checkedOutBike;
+  int checkedOutTime;
+  bool suspended;
+  String accessToken;
+  String refreshToken;
+  bool signedWaiver;
+  String state;
+  List<String> checkoutHistory = [];
+  String checkoutRecordId;
 
+  User({this.id = '-1', 
+        this.familyName = '-1',
+        this.givenName = '-1',
+        this.email = '-1',
+        this.identifier = '-1',
+        this.checkedOutBike = '-1',
+        this.checkedOutTime = -1,
+        this.suspended = false,
+        this.accessToken = '-1',
+        this.refreshToken = '-1',
+        this.signedWaiver = false,
+        this.state = '-1',
+        this.checkoutRecordId = '-1'
+  }); 
+  
   //setters
-  void SetAuthorizationString(newString) {authorization = newString;}
+  void setAccessToken(newToken) {accessToken = newToken;}
 
   //getters
-  String getAuthorization() { return authorization;}
+  String getId() {return id;}
+  String getFamilyName() {return familyName;}
+  String getGivenName() {return givenName;}
+  String getEmail() {return email;}
+  String getIdentifier() {return identifier;}
+  List<String> getOwnedBikes() {return ownedBikes;}
+  String getCheckedOutBike() {return checkedOutBike;}
+  int getCheckedOutTime() {return checkedOutTime;}
+  bool getSuspended() {return suspended;}
+  String getAccessToken() { return accessToken;}
+  String getRefreshToken() {return refreshToken;}
+  bool getSignedWaiver() {return signedWaiver;}
+  List<String> getCheckedOutString() {return checkoutHistory;}
+  String getCheckedOutRecordId() {return checkoutRecordId;}
 
 }
 
@@ -130,14 +168,14 @@ class Bike {
 
   factory Bike.fromJson(Map<String, dynamic> json) {
     return Bike(      
-      //name: json['name'] as String,
+      name: json['name'] as String,
       id: json['id'] as String,
-      dateAdded: json['date_added'] as int,
+      //dateAdded: json['date_added'] as int,
       imageUrl: json['image'] as String, 
       active: json['active'] as bool,
       condition: json['condition'] as bool,
       ownerId: json['owner_id'] as String,
-      lockCombination: json['lock_combination'] as int,
+      //lockCombination: json['lock_combination'] as int,
       //notes: json['notes'] as List<dynamic>,
       rating: json['rating'] as num,
       //ratingHistory: json['rating_history'] as List<dynamic>,
@@ -171,6 +209,30 @@ class BikeListModel {
   }
   //getters
   int getLength() => bikes.length;
-}
+
+
+  BikeListModel.fromDataString(String dataString){
+  //dataString.then((asString){
+    print(dataString);
+    final asList = dataString.split("},");    /// split string into a list 
+    int listLength = asList.length;
+    asList[0] = asList[0].substring(1);     // remove opening bracket '[' from first item  
+    int lastItemLength = asList[listLength-1].length;
+    // remove closing bracked ']' from last item
+    asList[listLength-1] = asList[listLength-1].substring(0,lastItemLength-1);  
+    // add each item from the list to bikes as a bike object
+    for(int i = 0; i< listLength; i+= 1) {
+      if(i != listLength-1) {
+        asList[i] = asList[i] + '}';
+      }
+      
+      var itemAsJson = jsonDecode(asList[i]);
+      // convert string to bike object
+      Bike newBike = Bike.fromJson(itemAsJson);
+      addBike(newBike);
+      print(asList[i]);
+    }
+  }
+}  
 
 

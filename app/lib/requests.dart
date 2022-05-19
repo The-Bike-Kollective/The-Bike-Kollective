@@ -1,13 +1,14 @@
 import 'package:http/http.dart' as http;
 import 'models.dart';
+import 'mock_data.dart';
 import 'dart:convert';
 import 'global_values.dart';
 
-//This is an auth code that works at the time I am writing this. 
-// It will likely not work in the future. To get a new authorization,
-// go to /login, copy the code and post to /user with that code to get a 
-// new user object with a new authcode.  
-// String authCode = "ya29.A0ARrdaM-dCnzdjhgG6vmT053AE_jcw28dwnYWbGIz1xi0O9I0BVWTt61R75ACpEJ3FOsZFNOio7WS6kefnlGQ4v1FPizRCKMw0OKBbXvJ_aVi1BDSqToFacPMrh2bbUQ2B1vtrOgM_woJGHoP9MVhjbKdoYU7";
+Map <String,String>headers = {
+      "Content-Type": "application/json; charset=UTF-8",
+      "Access-Control-Allow-Origin": "*",
+      "Authorization": "Bearer "+ currentUser.getAccessToken()};
+
 
 void test() async {
   print('running test');
@@ -33,30 +34,57 @@ void test() async {
 
 
 
-// Future<String> getBikeList() async {
-//   final response = await http.post(
-//     Uri.parse('http://localhost:5000/bikes'),
-//     headers: <String, String>{
-//       //'Content-Type': 'application/json; charset=UTF-8',
-//       //'Bearer-Token': 'wtf-is-this-again-and-where-do-I-get-it?'
-//     },
-//     body: newBike.toJson() 
-//   );
-
-//   if (response.statusCode == 201) {
-//     // If the server did return a 201 CREATED response,
-//     // then parse the JSON.
-//     print('Success: bike created');
-//      } 
-//   else if (response.statusCode == 400) {
-//     throw Exception('Failure: Bad request. Failed to add bike.');
-//   }
-//   else if (response.statusCode == 401) {
-//     throw Exception('Failure: Unauthorized. Invalide access token.');
-//   }
-//   return Bike.fromJson(jsonDecode(response.body)); 
+Future<BikeListModel> getBikeList() async {
+  final response = await http.get(
+    Uri.parse(globalUrl+ '/bikes'),
+    headers: headers
+  );
+  print(response.statusCode);
+  print(response.body);
+  if (response.statusCode == 200) {
+    // If the server did return a 201 CREATED response,
+    // then parse the JSON.
+    print('Success with code 200: bike list received');
+    // print(response.body);
+    BikeListModel currentBikes = BikeListModel.fromDataString(response.body);
+    return currentBikes;
+    
+  } 
+  else if (response.statusCode == 400) {
+    throw Exception('Failure with code 400: Bad request.');
+  }
+  else if (response.statusCode == 401) {
+    throw Exception('Failure with code 401: Unauthorized. Invalide access token.');
+  }
+  else {
+    throw Exception('Something got messed up in getBikeList()');
+  } 
   
-// }
+}
+
+
+// BikeListModel currentBikes = BikeListModel.fromDataString(response.body)
+// bikeList.then((bikeListAsString){
+      //   // split string into a list 
+      //   final bikeListAsList 
+      //     = bikeListAsString.split("},");
+      //   int listLength = bikeListAsList.length;
+      //   // remove opening bracket '[' from first item  
+      //   bikeListAsList[0] = bikeListAsList[0].substring(1);
+      //   int lastItemLength = bikeListAsList[listLength-1].length;
+      //   // remove closing bracked ']' from last item
+      //   bikeListAsList[listLength-1] 
+      //     = bikeListAsList[listLength-1].substring(0,lastItemLength-1);  
+
+      //   // print(bikeListAsList[0]);
+      //   // print(bikeListAsList[6]);
+      //   for(int i = 0; i< listLength; i+= 1) {
+      //     print(bikeListAsList[i]);
+      //   }
+
+      //});
+
+
 
 
 
@@ -70,21 +98,15 @@ Future<String> getImageDownloadLink(fileStringBase64) async {
     headers: <String, String>{
       "Content-Type": "application/json; charset=UTF-8",
       "Access-Control-Allow-Origin": "*",
-      "Authorization": "Bearer "+ authCode
+      "Authorization": "Bearer "+ currentUser.getAccessToken()
     },
     body: requestBody
   );
-  print('/images request body: ' + requestBody);
-  int statusCode = response.statusCode;
-  print('/images status code: $statusCode');
   if (response.statusCode == 200) {
     print('Success:');
-    print('/images response: ' + response.body);
     var json = jsonDecode(response.body);
-    
-    //print(json["url"]);
+    //TODO: Update access token.
     String downloadLink = json["url"];
-    //print(downloadLink);
     return downloadLink;
   } 
   else if (response.statusCode == 400) {

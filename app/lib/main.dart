@@ -38,9 +38,9 @@ class App extends StatelessWidget {
         routes: {
           // When navigating to the "/" route, build the FirstScreen widget.
           '/': (context) => const HomeView(),
-          ProfileView.routeName: (context) => ProfileView(),
+          ProfileView.routeName: (context) => const ProfileView(),
           // When navigating to the "/second" route, build the SecondScreen widget.
-          '/bike-list': (context) => BikeListView(bikeList: mockList),
+          BikeListView.routeName: (context) => const BikeListView(),
           // TODO: We will need to change the user to the current user at some point.
           AddBikePage.routeName: (context) => const AddBikePage(),
           // When google redirects user to agreement page
