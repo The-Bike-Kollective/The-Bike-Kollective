@@ -8,6 +8,7 @@ import 'models.dart';
 User currentUser = User(
   givenName: 'CurrentUser',
   accessToken: authCode,
+  identifier: userIdentifier
   
 );
 

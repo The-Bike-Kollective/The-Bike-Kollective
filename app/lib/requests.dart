@@ -88,3 +88,50 @@ Future<String> getImageDownloadLink(fileStringBase64) async {
   return "something is messed up in getImageDownloadLink().";
  
 }
+
+
+
+Future checkOutBike(bikeId, userId) async {
+  print('bikeId: $bikeId');
+  print('userId: $userId');
+  //Build request url
+  String requestUrl = globalUrl;
+  requestUrl += '/bikes';
+  requestUrl += '/$bikeId';
+  requestUrl += '/$userId';
+
+  print(requestUrl);
+  //Build request body
+  //TODO: get user location
+  String locationLong = '25';
+  String locationLat = '-25';
+  String requestBody;
+  requestBody = '{"location_long":$locationLong,';
+  requestBody += '"location_lat":$locationLat}';
+  print('check out bike request body:' + requestBody);
+  final response = await http.post(
+    Uri.parse(requestUrl),
+    headers: headers,
+    body: requestBody
+  );
+  print(response.statusCode);
+  print(response.body);
+  if (response.statusCode == 200) {
+    // If the server did return a 201 CREATED response,
+    // then parse the JSON.
+    print('Success with code 200: bike list received');
+    // print(response.body);
+    BikeListModel currentBikes = BikeListModel.fromDataString(response.body);
+    return currentBikes;
+    
+  } 
+  else if (response.statusCode == 400) {
+    throw Exception('Failure with code 400: Bad request.');
+  }
+  else if (response.statusCode == 401) {
+    throw Exception('Failure with code 401: Unauthorized. Invalide access token.');
+  }
+  else {
+    throw Exception('Something got messed up in getBikeList()');
+  } 
+}

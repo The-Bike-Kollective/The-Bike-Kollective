@@ -45,11 +45,11 @@ class User {
   void setAccessToken(newToken) {accessToken = newToken;}
 
   //getters
-  String getId() {return id;}
+  String getId() => id;
   String getFamilyName() {return familyName;}
   String getGivenName() {return givenName;}
   String getEmail() {return email;}
-  String getIdentifier() {return identifier;}
+  String getIdentifier() => identifier;
   List<String> getOwnedBikes() {return ownedBikes;}
   String getCheckedOutBike() {return checkedOutBike;}
   int getCheckedOutTime() {return checkedOutTime;}
@@ -124,6 +124,7 @@ class Bike {
   String getName() => name;
   num getRating() => rating;
   String getImageUrl() => imageUrl;
+  String getId() => id;
 
   //methods
   Map<String, dynamic> toJson() => {

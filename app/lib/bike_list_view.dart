@@ -34,6 +34,7 @@ class _BikeListViewState extends State<BikeListView> {
   @override
   void initState() {
     super.initState();
+    print("getBikeList() called again");
     currentList = getBikeList();
   }
   

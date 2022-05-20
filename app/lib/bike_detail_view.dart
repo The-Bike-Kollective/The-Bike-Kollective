@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:the_bike_kollective/requests.dart';
 import 'models.dart';
+import 'mock_data.dart';
 import 'MenuDrawer.dart';
 import 'bike_list_view.dart';
 import 'Maps/googlemaps.dart';
@@ -86,7 +88,17 @@ class BikeDetailTopRow extends StatelessWidget {
         Column(
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.end,
-          children: [Text(bikeNameString), RatingStars(rating: bikeRating)],
+          children: 
+            [Text(bikeNameString), 
+            RatingStars(rating: bikeRating),
+              OutlinedButton(
+                onPressed: () {
+                  debugPrint('Return Bike button clicked');
+                  checkOutBike(bikeData.getId(), currentUser.getIdentifier() );
+                },
+                child: const Text('Check Out'),
+              ),
+            ],
         )
       ],
     );
