@@ -1,29 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'dart:math';
+import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
+import 'package:get/get.dart';
+import 'package:the_bike_kollective/Login/helperfunctions.dart';
 
-// information/instructions: this function is called whenver
-//the user clicks the "Sign in With Google" button. THis is
-//linked to the Google auth link
-// @params: no params
-// @return: nothing returned
-// bugs: no known bugs
-// TODO:
-// 1. Remove email and pw (only using google login for now)
+// information/instructions: this function listens 
+// for dynamic link and redirects user to the 
+// loading page
+// @params: none
+// @return: none
+// bugs: none
+// TODO: none
+void initLink() {
+   FirebaseDynamicLinks.instance.onLink.listen((dynamicLinkData) {
+      Get.toNamed('/spash-screen');
+  }).onError((error) {
+    // Handle errors
+    bool? kDebugMode;
+    if (kDebugMode!) {
+      print(error.message);
+    }
+    }
+  );
+}
+
+// information/instructions: this function holds the
+// Google Sign-in launch URL with parameters such as
+// the client ID, requested scope, etc
+// @params: none
+// @return: none
+// bugs: none
+// TODO: none
 _launchURLInApp() async {
-  const host = 'accounts.google.com';
-  const path = '/o/oauth2/v2/auth/oauthchooseaccount?access_type=offline&';
-  const prompt = 'prompt=consent&';
-  const scope =
+  getRandomizedString();
+  final String sstate = getState();
+
+  final urlState = 'state=' + sstate + '&';
+  final host = 'accounts.google.com';
+  final path = '/o/oauth2/v2/auth/oauthchooseaccount?';
+  final access_type = 'access_type=offline&';
+  final prompt = 'prompt=consent&';
+  final scope =
       'scope=https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&include_granted_scopes=true&';
-  const client_id =
+  final response_type = 'response_type=code&';
+  final client_id =
       'client_id=701199836944-k9grqhb7tl30mm974iv62k6ge3ha2cqs.apps.googleusercontent.com&';
-  const redirect_uri =
-      'redirect_uri=http%3A%2F%2F127.0.0.1%3A5000%2Fprofile&flowName=GeneralOAuthFlow';
-  const url =
-      'https://$host$path$prompt$scope&response_type=code&$client_id$redirect_uri';
+  final redirect_uri =
+      'redirect_uri=http%3A%2F%2Fec2-54-71-143-21.us-west-2.compute.amazonaws.com%3A5000%2Fprofile&flowName=GeneralOAuthFlow';
 
+  final url = 'https://$host$path$access_type$prompt$scope$urlState$response_type$client_id$redirect_uri';
 
-if (await canLaunch(url)) {
+  if (await canLaunch(url)) {
     await launch(url);
   } else {
     throw 'could not launch $url';
@@ -31,13 +59,23 @@ if (await canLaunch(url)) {
 }
 
 // information/instructions: sign-in widget
-// @params: no params
-// @return: nothing returned
-// bugs: no known bugs
+// @params: none
+// @return: none
+// bugs: none
 // TODO:
-// 1. Remove email and pw (only using google login for now)
-class LoginPage extends StatelessWidget {
+// 1. change Signin button to Google standards (UI/UX)
+class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
+
+  @override
+  Login createState() => Login();
+}
+class Login extends State<LoginPage> {
+  @override
+  void initState() {
+    super.initState();
+    initLink();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,16 +83,19 @@ class LoginPage extends StatelessWidget {
         backgroundColor: Colors.white,
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
-          title: Text(
+          title: const Text(
             'Google Sign-in',
             style: TextStyle(color: Colors.white),
           ),
           centerTitle: true,
         ),
-        body: Center(
+        body: const Center(
             child: ElevatedButton(
           child: Text('Google Sign-in'),
           onPressed: _launchURLInApp,
-        )));
+        )
+      )
+    );
   }
 }
+
