@@ -1,10 +1,8 @@
-//these are values that the entire app has access to. This will 
-// the auth code will eventually be deleted. 
 
-String authCode = "ya29.a0ARrdaM_gWfQkdV3asAnO7rLS-RINCof4glD4oCsYngRnGxXkb_FyhBQzayNsK-P6mHmbcihIz8uhfRbNkijbd6PQ3Qt1x7QSUIbgE50j87-o0_SRZkNePNLTdL8eSrLmgw5nA2HA24n1Ih3UUbro181-HjTR5g";
+
+String authCode = "ya29.a0ARrdaM9F603XhGoRlTJmLprpk-Dg6KNzH1DiZ7-kFCJQd95LZwItTOLvrPqBst1lI0ObYubrqeRDOETFJAoTPTdZ15ffm5bQEQxxRtrI2UJNfSCXJaMrnfPTAXXVNDQrKjdLxmrfuJL_yp0acnxD5-nw9z9Rfg";
 
 String userIdentifier = "106003633980667953838";
-
 
 const String localUrlBrowser = "http://localhost:5000";
 
