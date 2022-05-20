@@ -77,8 +77,8 @@ class BikeDetailTopRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String bikeImageUrl = bikeData.getImageUrl();
-    String? bikeNameString = bikeData.getName()!;
-    double bikeRating = bikeData.getRating();
+    String bikeNameString = bikeData.getName();
+    num bikeRating = bikeData.getRating();
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -114,9 +114,9 @@ class NoteList extends StatelessWidget {
         padding: const EdgeInsets.all(10),
           child: SizedBox(
             child: ListView.builder(
-              itemCount: bikeData.notes?.length,
+              itemCount: bikeData.notes.length,
               itemBuilder: (context,i) {
-                return NoteTile(note: bikeData.notes![i]);
+                return NoteTile(note: bikeData.notes[i]);
               }
             )
           )

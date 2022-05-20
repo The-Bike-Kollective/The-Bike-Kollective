@@ -34,11 +34,13 @@ const getAuthURL = () => {
     access_type: "offline",
     prompt: "consent",
     // If you only need one scope you can pass it as a string
-    scope: "https://www.googleapis.com/auth/userinfo.email",
+    scope: "https://www.googleapis.com/auth/userinfo.profile",
     include_granted_scopes: true,
     state: "test_state",
   });
+
   console.log(`auth_url :${auth_url}`);
+
   return auth_url;
 };
 

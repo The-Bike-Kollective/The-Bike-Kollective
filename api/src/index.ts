@@ -31,6 +31,7 @@ app.use(bodyParser.json());
 const cors = require("cors");
 app.use(cors());
 
+
 // @Debug
 // TODO: clean in final release
 connectDB();

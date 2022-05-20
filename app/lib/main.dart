@@ -1,15 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:the_bike_kollective/add_bike_form.dart';
+import 'package:the_bike_kollective/add-bike-page.dart';
 import 'package:the_bike_kollective/bike_list_view.dart';
 import 'home_view.dart';
-import 'models.dart';
+//import 'models.dart';
+import 'mock_data.dart';
 import 'profile_view.dart';
 import 'bike_list_view.dart';
 import 'Login/user_agreement.dart';
+//import 'photos.dart';
+import 'get-photo.dart';
 
 void main() {
   fillMockList();
-  print(mockList.bikes[0].name);
+  //print(mockList.bikes[0].name);
+  //convertImageToBase64();
   runApp(const App());
 }
 
@@ -34,13 +38,14 @@ class App extends StatelessWidget {
         routes: {
           // When navigating to the "/" route, build the FirstScreen widget.
           '/': (context) => const HomeView(),
-          '/profile': (context) => ProfileView(user: testUser),
+          ProfileView.routeName: (context) => ProfileView(),
           // When navigating to the "/second" route, build the SecondScreen widget.
           '/bike-list': (context) => BikeListView(bikeList: mockList),
           // TODO: We will need to change the user to the current user at some point.
-          '/add-bike': (context) => AddBikePage(user: testUser),
+          AddBikePage.routeName: (context) => const AddBikePage(),
           // When google redirects user to agreement page
           '/user-agreement': (context) => AgreementPage(),
+          GetPhoto.routeName: (context) => const GetPhoto()
         }
       );
   }

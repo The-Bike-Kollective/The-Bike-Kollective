@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:the_bike_kollective/add-bike-page.dart';
+import 'package:the_bike_kollective/get-photo.dart';
 import 'models.dart';
+import 'mock_data.dart';
 import 'MenuDrawer.dart';
 import 'bike_detail_view.dart';
 import 'Maps/googlemaps.dart';
@@ -54,11 +57,8 @@ class _BikeListViewState extends State<BikeListView> {
       body: BikeListBody(bikeList: mockList),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Add your onPressed code here!
-          Navigator.pushNamed(
-              context, '/add-bike',
-            );       
-            debugPrint('add bike clicked');   
+          Navigator.pushNamed(context, GetPhoto.routeName,);       
+          debugPrint('add bike clicked');   
         },
         tooltip: buttonToolTipText,
         backgroundColor: Colors.blue,
@@ -67,6 +67,7 @@ class _BikeListViewState extends State<BikeListView> {
     );
   }
 }
+
 
 
 // information/instructions: This Widget is rendered within the 
@@ -124,8 +125,8 @@ class BikeListTile extends StatelessWidget {
  
   @override
   Widget build(BuildContext context) {
-    double bikeRating = bikeData.getRating();
-    String? bikeNameString = bikeData.getName()!;
+    num bikeRating = bikeData.getRating();
+    String bikeNameString = bikeData.getName();
     String distanceString = 'distance:' + distanceFromUser.toString();
     String bikeImageUrl = bikeData.getImageUrl();
     return 
@@ -185,7 +186,7 @@ class BikeListTile extends StatelessWidget {
 // 2. 
 // 3. 
 class RatingStars extends StatelessWidget {
-  final double rating;
+  final num rating;
   final numStarsPossible = 5;  
   const RatingStars({Key? key, this.rating = 0})
       : super(key: key);  
