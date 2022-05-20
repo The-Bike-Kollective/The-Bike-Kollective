@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:the_bike_kollective/add-bike-page.dart';
+
+import 'package:get/get.dart';
+import 'package:the_bike_kollective/add_bike_form.dart';
+
 import 'package:the_bike_kollective/bike_list_view.dart';
 import 'home_view.dart';
 //import 'models.dart';
@@ -7,14 +10,27 @@ import 'mock_data.dart';
 import 'profile_view.dart';
 import 'bike_list_view.dart';
 import 'Login/user_agreement.dart';
+
 //import 'photos.dart';
 import 'get-photo.dart';
 
-void main() {
+import 'Login/spash_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'dart:async';
+
+
+Future<void> main() async {
   fillMockList();
+
   //print(mockList.bikes[0].name);
   //convertImageToBase64();
   runApp(const App());
+
+  print(mockList.bikes[0].name);
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  runApp(MainPage());
+
 }
 
 // information/instructions: Flutter Widget, renders the MainScreen
@@ -24,10 +40,15 @@ void main() {
 // @return: nothing returned
 // bugs: no known bugs
 // TODO: Fill in themeData info.
-class App extends StatelessWidget {
-  const App({Key? key}) : super(key: key);
+
+class MainPage extends StatefulWidget {
+  App createState() => App();
+}
+
+class App extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
+
     return MaterialApp(
         title: 'The Bike Kollective',
         theme: ThemeData(
@@ -48,5 +69,8 @@ class App extends StatelessWidget {
           GetPhoto.routeName: (context) => const GetPhoto()
         }
       );
+
+   
+
   }
 }

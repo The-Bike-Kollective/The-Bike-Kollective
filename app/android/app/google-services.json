@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "432060671089",
+    "project_id": "bike-sharing-62adc",
+    "storage_bucket": "bike-sharing-62adc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:432060671089:android:6420b9266f5526843c67d0",
+        "android_client_info": {
+          "package_name": "com.example.the_bike_kollective"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "432060671089-3r782oeoon1m7p7lce5k59sjbl246r2l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDrTt1KGzE1U-Y5yN2KXz6q9qbelE1d068"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "432060671089-3r782oeoon1m7p7lce5k59sjbl246r2l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
