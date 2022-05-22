@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:the_bike_kollective/requests.dart';
 import 'models.dart';
+import 'mock_data.dart';
 import 'MenuDrawer.dart';
 import 'bike_list_view.dart';
 import 'Maps/googlemaps.dart';
@@ -77,16 +79,26 @@ class BikeDetailTopRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String bikeImageUrl = bikeData.getImageUrl();
-    String? bikeNameString = bikeData.getName()!;
-    double bikeRating = bikeData.getRating();
+    String bikeNameString = bikeData.getName();
+    num bikeRating = bikeData.getRating();
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Image.asset(bikeImageUrl, width: 250, fit: BoxFit.cover),
+        Image.network(bikeImageUrl, width: 100, fit: BoxFit.cover),
         Column(
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.end,
-          children: [Text(bikeNameString), RatingStars(rating: bikeRating)],
+          children: 
+            [Text(bikeNameString), 
+            RatingStars(rating: bikeRating),
+              OutlinedButton(
+                onPressed: () {
+                  debugPrint('Return Bike button clicked');
+                  checkOutBike(bikeData.getId(), currentUser.getIdentifier() );
+                },
+                child: const Text('Check Out'),
+              ),
+            ],
         )
       ],
     );
@@ -114,9 +126,9 @@ class NoteList extends StatelessWidget {
         padding: const EdgeInsets.all(10),
           child: SizedBox(
             child: ListView.builder(
-              itemCount: bikeData.notes?.length,
+              itemCount: bikeData.notes.length,
               itemBuilder: (context,i) {
-                return NoteTile(note: bikeData.notes![i]);
+                return NoteTile(note: bikeData.notes[i]);
               }
             )
           )

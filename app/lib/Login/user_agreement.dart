@@ -136,7 +136,7 @@ class _AgreementPage extends State<AgreementPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => ProfileView(user: testUser),),
+                                    builder: (context) => const ProfileView(),),
                               );
                               debugPrint('Agree clicked');
                             },

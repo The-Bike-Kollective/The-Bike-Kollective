@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'models.dart';
+import 'package:the_bike_kollective/bike_list_view.dart';
+import 'package:the_bike_kollective/get-photo.dart';
+import 'mock_data.dart';
 
 // information/instructions: ProfileView is a template that will
 // conditionally render profileViewA or ProfileViewB. If property 
@@ -11,10 +13,11 @@ import 'models.dart';
 // TODO: 
 // 1. style these ugly pages
 class ProfileView extends StatefulWidget {
-  final User user;
-  const ProfileView({ Key? key, required this.user }) 
+  //final User user;
+  const ProfileView({ Key? key/*, required this.user*/ }) 
       : super(key: key);
 
+  static const routeName = '/profile-view';
   @override
   State<ProfileView> createState() => _ProfileViewState();
 }
@@ -27,9 +30,9 @@ class _ProfileViewState extends State<ProfileView> {
       appBar: AppBar(
         title: const Text('The Bike Collective')
         ),
-      body: widget.user.hasABikeCheckedOut ? 
-          ProfileViewA(user: widget.user): 
-          ProfileViewB(user: widget.user)
+      body: (currentUser.checkedOutBike != '-1') ? 
+          const ProfileViewA(): 
+          const ProfileViewB()
       );
   }
 }
@@ -37,6 +40,7 @@ class _ProfileViewState extends State<ProfileView> {
 
 // information/instructions: Both ProfileViewA and B are rendered by 
 // ProfileView, depending on whether the user has a bike checked out.
+// ProfileViewA is shown if the user DOES have a bike checked out.
 // @params: required User object with a property HasABikeCheckedOut.
 // @return: nothing returned
 // bugs: no known bugs
@@ -45,25 +49,27 @@ class _ProfileViewState extends State<ProfileView> {
 // 2. Preload the image
 // 3. Make the buttons functional
 class ProfileViewA extends StatelessWidget {
-  final User user;
-  const ProfileViewA({ Key? key, required this.user }) 
+  //final User user;
+  const ProfileViewA({ Key? key/*, required this.user*/ })
       : super(key: key);
   @override
   Widget build(BuildContext context) {
+    String currentUserGivenName = currentUser.getGivenName();
     return Column(children:  [
-      const Text('Welcome, [username]!'),
+      Text('Welcome, $currentUserGivenName!'),
       const Text('You currently have a bike checked out.'),
       const Text('Bike Info:'),
       const Text('Bike Name: [bikeName'),
       const Text('Bike ID: [bikeId'),
       const CheckedOutBikeRow(),
       OutlinedButton(
-          onPressed: () {
-            debugPrint('Return Bike button clicked');
-          },
-          child: const Text('Return Bike'),
-        ),
-    ],);   
+        onPressed: () {
+          debugPrint('Return Bike button clicked');
+        },
+        child: const Text('Return Bike'),
+      ),
+    ],
+  );   
   }
 }
 
@@ -77,26 +83,30 @@ class ProfileViewA extends StatelessWidget {
 // 2. Preload the image
 // 3. Make the buttons functional
 class ProfileViewB extends StatelessWidget {
-  final User user;
-  const ProfileViewB({ Key? key, required this.user }) 
+  //final User user;
+  const ProfileViewB({ Key? key/*, required this.user*/ }) 
       : super(key: key);
   @override
   Widget build(BuildContext context) {
+     String currentUserGivenName = currentUser.getGivenName();
     return Column(children: [
-        const Text('Welcome, [username]!'),
+        Text('Welcome, $currentUserGivenName!'),
         OutlinedButton(
           onPressed: () {
             debugPrint('Find a Bike button clicked');
+            //get list of bikes from backend:
+            //print(getBikeList());
             Navigator.pushNamed(
-              context, '/bike-list'
-            );
+              context, BikeListView.routeName,
+            );    
+            
           },
           child: const Text('Find a Bike'),
         ),
         OutlinedButton(
           onPressed: () {
             Navigator.pushNamed(
-              context, '/add-bike',
+              context, GetPhoto.routeName,
             );       
             debugPrint('add bike clicked');   
           },
@@ -118,7 +128,6 @@ class ProfileViewB extends StatelessWidget {
 // 1. Stub at this point. 
 // 2. Needs to be set up to take Bike(), and render using
 //    the data from the Bike.
-
 class CheckedOutBikeRow extends StatelessWidget {
   const CheckedOutBikeRow({ Key? key }) : super(key: key);
 
@@ -127,15 +136,12 @@ class CheckedOutBikeRow extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-       
         Image.asset('assets/coolBike.jpeg',
           width: 200,
           fit:BoxFit.cover  
         ),
         const Text('Due Back in 22 Minutes')
-
-      ],
-      
+      ],      
     );
   }
 }

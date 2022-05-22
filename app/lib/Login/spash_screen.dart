@@ -17,6 +17,8 @@ import 'package:the_bike_kollective/access_token.dart';
 // TODO:
 // 1. Pass in user data to profile screen to update [username]
 class SplashScreen extends StatefulWidget {
+  const SplashScreen({Key? key}) : super(key: key);
+  static const routeName = '/splash-screen';
   @override
   _SplashScreen createState() => _SplashScreen();
 }
@@ -84,7 +86,7 @@ void postState(context) async {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: ((context) => ProfileView(user: testUser))));
+              builder: ((context) => const ProfileView())));
     }
   } else {
     // show error

@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:the_bike_kollective/get-photo.dart';
 import 'models.dart';
 import 'MenuDrawer.dart';
 import 'bike_detail_view.dart';
 import 'Maps/googlemaps.dart';
+import 'requests.dart';
 
 
 // information/instructions: Renders the bike list from the 
@@ -17,10 +19,9 @@ import 'Maps/googlemaps.dart';
 // based on which filters are used.
 
 class BikeListView extends StatefulWidget {
-  final BikeListModel bikeList;
-  const BikeListView({ Key? key, 
-    required this.bikeList }) : super(key: key);
-
+  //final BikeListModel bikeList;
+  const BikeListView({ Key? key}) : super(key: key);
+  static const routeName = '/bike-list';
   @override
   State<BikeListView> createState() => _BikeListViewState();
 }
@@ -28,15 +29,25 @@ class BikeListView extends StatefulWidget {
 // This is the state object that is called by BikeListView().
 class _BikeListViewState extends State<BikeListView> {
   String buttonToolTipText = "add a bike";
+  late Future<BikeListModel> currentList = getBikeList();
+
+  @override
+  void initState() {
+    super.initState();
+    print("getBikeList() called again");
+    currentList = getBikeList();
+  }
+  
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       appBar: AppBar(
-        leading: (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
+        leading: (ModalRoute.of(context)?.canPop ?? false) ? const BackButton() : null,
         title: const Text('Bikes Nearby'),
         actions: <Widget>[
             IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.map,
                 color: Colors.white,
               ),
@@ -51,14 +62,22 @@ class _BikeListViewState extends State<BikeListView> {
           ],
       ),
       endDrawer: const MenuDrawer(),
-      body: BikeListBody(bikeList: mockList),
+      body: FutureBuilder<BikeListModel>(
+        future: currentList,
+        builder: (context, AsyncSnapshot<BikeListModel> snapshot) {
+          if (snapshot.hasData) {
+            return BikeListBody(bikeList: snapshot.data!);
+          } else {
+            return const CircularProgressIndicator();
+          }
+        }
+        
+      ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           // Add your onPressed code here!
-          Navigator.pushNamed(
-              context, '/add-bike',
-            );       
-            debugPrint('add bike clicked');   
+          Navigator.pushNamed(context, GetPhoto.routeName,);       
+          debugPrint('add bike clicked');   
         },
         tooltip: buttonToolTipText,
         backgroundColor: Colors.blue,
@@ -83,7 +102,7 @@ class _BikeListViewState extends State<BikeListView> {
 class BikeListBody extends StatelessWidget {
   final BikeListModel bikeList;
   const BikeListBody({ Key? key,
-     required this.bikeList }) : super(key: key);
+    required this.bikeList }) : super(key: key);
   
   @override
   Widget build(BuildContext context) {
@@ -99,9 +118,6 @@ class BikeListBody extends StatelessWidget {
 }
 
 
-// displays summary vew of journal entry
-// takes JournalEntry object from models as param.
-
 // information/instructions: Displays info for one bike for the
 // BikeListView(). Each tile is clickable and should navigate to
 // the BikeDetailView for that particular bike.
@@ -116,16 +132,15 @@ class BikeListBody extends StatelessWidget {
 // 3. 
 class BikeListTile extends StatelessWidget {
   final Bike bikeData;
-  const BikeListTile({ Key? key, 
+   final distanceFromUser = 1;
+   const BikeListTile({ Key? key, 
     required this.bikeData,
      }) : super(key: key);
-
-  final distanceFromUser = 1;
  
   @override
   Widget build(BuildContext context) {
-    double bikeRating = bikeData.getRating();
-    String? bikeNameString = bikeData.getName()!;
+    num bikeRating = bikeData.getRating();
+    String bikeNameString = bikeData.getName();
     String distanceString = 'distance:' + distanceFromUser.toString();
     String bikeImageUrl = bikeData.getImageUrl();
     return 
@@ -151,7 +166,7 @@ class BikeListTile extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Image.asset(bikeImageUrl,
+                  Image.network(bikeImageUrl,
                     width: 100,
                     fit:BoxFit.cover  
                   ), 
@@ -185,7 +200,7 @@ class BikeListTile extends StatelessWidget {
 // 2. 
 // 3. 
 class RatingStars extends StatelessWidget {
-  final double rating;
+  final num rating;
   final numStarsPossible = 5;  
   const RatingStars({Key? key, this.rating = 0})
       : super(key: key);  
