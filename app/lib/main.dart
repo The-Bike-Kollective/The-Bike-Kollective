@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:the_bike_kollective/Login/login_page.dart';
 import 'package:the_bike_kollective/get-photo.dart';
 import 'add_bike_page.dart';
 import 'package:the_bike_kollective/bike_list_view.dart';
@@ -50,16 +51,13 @@ class App extends State<MainPage> {
         // When navigating to the "/" route, build the FirstScreen widget.
         '/': (context) => const HomeView(),
         ProfileView.routeName: (context) => const ProfileView(),
-        // When navigating to the "/second" route, build the SecondScreen widget.
-        '/bike-list': (context) => const BikeListView(),
-        // TODO: We will need to change the user to the current user at some point.
-        '/add-bike': (context) => const AddBikePage(),
-        // When google redirects user to splash screen
+        BikeListView.routeName: (context) => const BikeListView(),
         '/spash-screen': (context) => const SplashScreen(),
         // user is directed to agreement page if first time making account
-        '/user-agreement': (context) => AgreementPage(),
+        AgreementPage.routeName: (context) => AgreementPage(),
         GetPhoto.routeName: (context) => const GetPhoto(),
         AddBikePage.routeName: (context) => const AddBikePage(),
+        LoginPage.routeName: (context) => const LoginPage()
       },
     );
   }

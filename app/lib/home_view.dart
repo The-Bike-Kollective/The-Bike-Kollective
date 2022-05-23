@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
-import 'profile_view.dart';
-import 'package:the_bike_kollective/profile_view.dart';
+//import 'profile_view.dart';
+//import 'package:the_bike_kollective/profile_view.dart';
 import 'MenuDrawer.dart';
-import 'models.dart';
+//import 'models.dart';
 import 'Login/login_page.dart';
-import 'main.dart';
+//import 'main.dart';
 import 'Login/create_account_page.dart';
-import 'Login/user_agreement.dart';
-import 'Login/spash_screen.dart';
-import 'requests.dart';
+//import 'Login/user_agreement.dart';
+//import 'Login/spash_screen.dart';
+//import 'requests.dart';
 
 // information/instructions: Flutter Widget; This is the home view, when the
 //user first opesn the app and is not signed in.
@@ -101,4 +101,10 @@ class HomeButtonGroup extends StatelessWidget {
       ],
     );
   }
+}
+
+
+void goToLogin(goNext) {
+
+
 }

@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:the_bike_kollective/global_values.dart';
 import 'package:the_bike_kollective/profile_view.dart';
 import 'package:the_bike_kollective/models.dart';
 import 'package:the_bike_kollective/Login/post_model.dart';
@@ -7,7 +8,8 @@ import 'package:http/http.dart';
 import 'package:the_bike_kollective/Login/user_agreement.dart';
 import 'package:the_bike_kollective/Login/helperfunctions.dart';
 import 'dart:convert';
-import 'package:the_bike_kollective/access_token.dart';
+//import 'package:the_bike_kollective/access_token.dart';
+import 'package:the_bike_kollective/global_values.dart';
 
 // information/instructions: splash page shows  "loading". meanwhile front-end
 // receives auth code status from back-end after google sign-in
@@ -34,7 +36,7 @@ class _SplashScreen extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("The Bike Kollective"),
+        title: const Text("The Bike Kollective"),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -45,7 +47,7 @@ class _SplashScreen extends State<SplashScreen> {
               'Loading, please wait...',
               style: Theme.of(context).textTheme.headline6,
             ),
-            CircularProgressIndicator(
+            const CircularProgressIndicator(
               //value: controller.value,
               semanticsLabel: 'Loading...please wait',
             ),
@@ -72,21 +74,28 @@ void postState(context) async {
   if (response.statusCode == 200) {
     final res = json.decode(response.body);
     user = Customer.fromJson(res["user"]);
+    updateAccessToken(user.accessToken);
+    updateCurrentUserId(user.id);
     //if user is a new user, then direct to agreement page
     if (user.signedWaiver == false) {
-      //assign access token to global variable for front-end use
-      accessToken01 = user.accessToken;
+      //assign access token to global variable for front-end use  
       //push user to agreement page
       Navigator.push(
-          context, MaterialPageRoute(builder: ((context) => AgreementPage())));
+        context,
+        MaterialPageRoute(
+          builder: ((context) => AgreementPage())
+        )
+      );
 //need to pass through user information to end up at profile page
       //access_token: user.accessToken, test: 'Teddy bear'))));
       //if an existing user
     } else if (user.signedWaiver == true) {
       Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: ((context) => const ProfileView())));
+        context,
+        MaterialPageRoute(
+          builder: ((context) => const ProfileView())
+        )
+      );
     }
   } else {
     // show error

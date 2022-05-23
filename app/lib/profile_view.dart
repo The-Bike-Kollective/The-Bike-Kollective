@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:the_bike_kollective/access_token.dart';
 import 'package:the_bike_kollective/bike_list_view.dart';
 import 'package:the_bike_kollective/get-photo.dart';
 import 'mock_data.dart';
+import 'models.dart';
+import 'requests.dart';
 
 // information/instructions: ProfileView is a template that will
 // conditionally render profileViewA or ProfileViewB. If property 
@@ -13,7 +16,6 @@ import 'mock_data.dart';
 // TODO: 
 // 1. style these ugly pages
 class ProfileView extends StatefulWidget {
-  //final User user;
   const ProfileView({ Key? key/*, required this.user*/ }) 
       : super(key: key);
 
@@ -24,8 +26,10 @@ class ProfileView extends StatefulWidget {
 
 // This is the state class that is used by ProfileViewState.
 class _ProfileViewState extends State<ProfileView> {
+  
   @override
   Widget build(BuildContext context) {
+    
     return Scaffold(
       appBar: AppBar(
         title: const Text('The Bike Collective')

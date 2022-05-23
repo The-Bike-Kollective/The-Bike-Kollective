@@ -1,21 +1,23 @@
 import 'package:http/http.dart' as http;
-import 'package:the_bike_kollective/access_token.dart';
+//import 'package:the_bike_kollective/access_token.dart';
 import 'models.dart';
-import 'mock_data.dart';
+//import 'mock_data.dart';
 import 'dart:convert';
 import 'global_values.dart';
+
+String? currentAccessToken = getAccessToken();
 
 Map <String,String>headers = {
       "Content-Type": "application/json; charset=UTF-8",
       "Access-Control-Allow-Origin": "*",
-      "Authorization": "Bearer "+ accessToken01!};
+      "Authorization": "Bearer $currentAccessToken"};
 
 
 // A test to make sure the api is running. 
 void test() async {
   print('running test');
   final response = await http.get(
-    Uri.parse(globalUrl),
+    Uri.parse(getGlobalUrl()),
   );
   print('Response body: ${response.body}'); 
 }
@@ -26,8 +28,10 @@ void test() async {
 // @return: none
 // bugs: no known bugs, but need to do some more testing
 Future<BikeListModel> getBikeList() async {
+  print(getAccessToken()); 
+  print('getBikeList()');
   final response = await http.get(
-    Uri.parse(globalUrl+ '/bikes'),
+    Uri.parse(getGlobalUrl()+ '/bikes'),
     headers: headers
   );
   print(response.statusCode);
@@ -64,20 +68,15 @@ Future<String> getImageDownloadLink(fileStringBase64) async {
   
   final response = await http.post(
       //Uri.parse("http://10.0.2.2:5000/bikes"), // use when not using emulator
-    Uri.parse(globalUrl + '/images'),// use whn using emulator
-    headers: <String, String>{
-      "Content-Type": "application/json; charset=UTF-8",
-      "Access-Control-Allow-Origin": "*",
-      "Authorization": "Bearer "+ accessToken01!
-    },
+    Uri.parse(getGlobalUrl() + '/images'),// use whn using emulator
+    headers: headers,
     body: requestBody
   );
+  print("After getImageLink() request, response body: ");
+  print(response.body);
   if (response.statusCode == 200) {
     print('Success: Image Uploaded');
     var json = jsonDecode(response.body);
-    //TODO: Update access token.
-    print('access token: ');
-    print(accessToken01);
     String downloadLink = json["url"];
     return downloadLink;
   } 
@@ -93,12 +92,11 @@ Future<String> getImageDownloadLink(fileStringBase64) async {
 }
 
 
-// random test comment
 Future checkOutBike(bikeId, userId) async {
   print('bikeId: $bikeId');
   print('userId: $userId');
   //Build request url
-  String requestUrl = globalUrl;
+  String requestUrl = getGlobalUrl();
   requestUrl += '/bikes';
   requestUrl += '/$bikeId';
   requestUrl += '/$userId';
@@ -137,4 +135,44 @@ Future checkOutBike(bikeId, userId) async {
   else {
     throw Exception('Something got messed up in getBikeList()');
   } 
+}
+
+
+Future<User> getUser(userId) async {
+  print('getUser()');
+  print(userId);
+  User userObject;
+  String requestUrl = getGlobalUrl();
+  requestUrl += '/users/6289cdeb048f418048b5f7ab';
+  final response = await http.get(
+    Uri.parse(requestUrl),
+    headers: headers
+  );
+
+  print(response.statusCode);
+  if (response.statusCode == 200) {
+    print('Success with code 200: bike list received');
+    String responseBody = response.body;
+    var json = jsonDecode(response.body);
+    User userData = User.fromJson(json);    
+    updateAccessToken(userData.getAccessToken());
+    return userData;
+    
+  } 
+  else if (response.statusCode == 404) {
+    throw Exception('Failure: User not found');
+  }
+  else if (response.statusCode == 403) {
+    throw Exception('Failure: "The client does not have access rights to the content"');
+  }
+  else if (response.statusCode == 500) {
+    throw Exception('Failure: "Multiple USER ERROR"');
+  }
+  else if (response.statusCode == 401) {
+    throw Exception('Faulure: "unauthorized. invalid access_token or identifier"');
+  }
+  else {
+    throw Exception('Something got messed up in getBikeList()');
+  } 
+
 }

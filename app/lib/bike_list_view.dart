@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:the_bike_kollective/access_token.dart';
 import 'package:the_bike_kollective/get-photo.dart';
+import 'package:the_bike_kollective/global_values.dart';
 import 'models.dart';
 import 'MenuDrawer.dart';
 import 'bike_detail_view.dart';
@@ -29,13 +31,14 @@ class BikeListView extends StatefulWidget {
 // This is the state object that is called by BikeListView().
 class _BikeListViewState extends State<BikeListView> {
   String buttonToolTipText = "add a bike";
-  late Future<BikeListModel> currentList = getBikeList();
+  Future<BikeListModel> currentList = getBikeList();
 
   @override
   void initState() {
     super.initState();
-    print("getBikeList() called again");
-    currentList = getBikeList();
+    print('access token: ');
+    print(getAccessToken());
+    //currentList = getBikeList();
   }
   
   @override

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:the_bike_kollective/Login/access_token.dart';
-import 'package:the_bike_kollective/global_values.dart';
+//import 'package:the_bike_kollective/Login/access_token.dart';
+//import 'package:the_bike_kollective/global_values.dart';
 import 'package:the_bike_kollective/profile_view.dart';
 import 'models.dart';
 import 'MenuDrawer.dart';
@@ -8,7 +8,8 @@ import 'requests.dart';
 import 'mock_data.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'access_token.dart';
+//import 'access_token.dart';
+import 'global_values.dart';
 
 // information/instructions: 
 // @params: 
@@ -130,11 +131,13 @@ class _AddBikeFormState extends State<AddBikeForm> {
               // Validate returns true if the form is valid, or false otherwise.
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState?.save();
+                print('test before getImageLink() access Token: ');
+                  print(getAccessToken());
                 Future imageLink = getImageDownloadLink(widget.imageStringBase64);
                 imageLink.then((value) {
                   bikeData['image'] = value;
                   print('test before createBike() access Token: ');
-                  print(accessToken01);
+                  print(getAccessToken()); //NULL
                   createBike(bikeData);
                   Navigator.pushNamed(context, ProfileView.routeName);
                 }); 
@@ -164,7 +167,7 @@ class _AddBikeFormState extends State<AddBikeForm> {
 Future createBike(bikeData) async {
   print('createBike()');
   print('accessToken: ');
-  print(accessToken01);
+  print(getAccessToken());
 
   bikeData['location_long'] = 25;
   bikeData['location_lat'] = -25;
@@ -173,12 +176,13 @@ Future createBike(bikeData) async {
   // so for now I'm leaving them as hard coded values. 
   bikeData['size'] = 'size 2';
   bikeData['type'] = 'type 2';
+  String? currentAccessToken = getAccessToken();
   String dataString = jsonEncode(bikeData);
   Map <String,String>headers = {
       "Content-Type": "application/json; charset=UTF-8",
       "Access-Control-Allow-Origin": "*",
-      "Authorization": "Bearer " + accessToken01!};
-  print('createBike() request body: ' + dataString);
+      "Authorization": "Bearer $currentAccessToken"};
+  //print('createBike() request body: ' + dataString);
   final response = await http.post(
     Uri.parse(globalUrl+ '/bikes'),
     headers: headers,
@@ -190,7 +194,7 @@ Future createBike(bikeData) async {
     final body = jsonDecode(response.body);
     String newAccessToken = body['access_token'];
     print('New Access Token: ' + newAccessToken);
-    currentUser.setAccessToken(newAccessToken);
+    updateAccessToken(newAccessToken);      
   } 
   else if (response.statusCode == 400) {
     throw Exception('Failure (code 400): Bad request. Failed to add bike.');

@@ -46,19 +46,42 @@ class User {
 
   //getters
   String getId() => id;
-  String getFamilyName() {return familyName;}
-  String getGivenName() {return givenName;}
-  String getEmail() {return email;}
+  String getFamilyName() => familyName;
+  String getGivenName() => givenName;
+  String getEmail() => email;
   String getIdentifier() => identifier;
-  List<String> getOwnedBikes() {return ownedBikes;}
-  String getCheckedOutBike() {return checkedOutBike;}
-  int getCheckedOutTime() {return checkedOutTime;}
-  bool getSuspended() {return suspended;}
-  String getAccessToken() { return accessToken;}
-  String getRefreshToken() {return refreshToken;}
-  bool getSignedWaiver() {return signedWaiver;}
-  List<String> getCheckedOutString() {return checkoutHistory;}
-  String getCheckedOutRecordId() {return checkoutRecordId;}
+  List<String> getOwnedBikes() => ownedBikes;
+  String getCheckedOutBike() => checkedOutBike;
+  int getCheckedOutTime() => checkedOutTime;
+  bool getSuspended() => suspended;
+  String getAccessToken() => accessToken;
+  String getRefreshToken() => refreshToken;
+  bool getSignedWaiver() => signedWaiver;
+  List<String> getCheckedOutString() => checkoutHistory;
+  String getCheckedOutRecordId() => checkoutRecordId;
+
+
+  factory User.fromJson(Map<String, dynamic> parsedJson) {
+    return User(
+      id: parsedJson["id"],
+      familyName: parsedJson["family_name"],
+      givenName: parsedJson["given_name"],
+      email: parsedJson["email"],
+      identifier: parsedJson["identifier"],
+      //ownedBikes: List<dynamic>.from(parsedJson["owned_bikes"].map((x) => x)),
+      checkedOutBike: parsedJson["checked_out_bike"],
+      checkedOutTime: parsedJson["checked_out_time"],
+      suspended: parsedJson["suspended"],
+      accessToken: parsedJson["access_token"],
+      refreshToken: parsedJson["refresh_token"],
+      signedWaiver: parsedJson["signed_waiver"],
+      state: parsedJson["state"],
+      //checkoutHistory:
+      //    List<dynamic>.from(parsedJson["checkout_history"].map((x) => x)),
+      checkoutRecordId: parsedJson["checkout_record_id"],
+    );
+  }
+
 }
 
 

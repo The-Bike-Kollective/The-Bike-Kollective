@@ -14,3 +14,18 @@ const String cloudUrl = "http://ec2-35-164-203-209.us-west-2.compute.amazonaws.c
 const String cloudUrl2 = "http://ec2-54-71-143-21.us-west-2.compute.amazonaws.com:5000";
 
 const String globalUrl = cloudUrl2;
+
+
+//global variable where front-end can access access toke
+//for every post/get request to back-end
+String? ACCESS_TOKEN;
+String? CURRENT_USER_ID;
+bool isLoggedIn = false;
+
+bool isLoggedInGetter() => isLoggedIn;
+void setLoginStatus(bool status) {isLoggedIn = status;} 
+String? getAccessToken() => ACCESS_TOKEN;
+void updateAccessToken(String? newToken) {ACCESS_TOKEN = newToken!;}
+String? getCurrentUserId() => CURRENT_USER_ID;
+void updateCurrentUserId(newId) {CURRENT_USER_ID = newId;}
+String getGlobalUrl() => globalUrl;

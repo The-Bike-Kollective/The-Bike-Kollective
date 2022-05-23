@@ -87,7 +87,8 @@ _launchURLInApp() async {
 // 1. change Signin button to Google standards (UI/UX)
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
-
+  static const routeName = '/login';
+  
   @override
   Login createState() => Login();
 }
@@ -120,3 +121,8 @@ class Login extends State<LoginPage> {
   }
 }
 
+void goBackToLogin(context) {
+   Navigator.pushNamed(
+    context, LoginPage.routeName,
+  );       
+}

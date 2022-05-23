@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:the_bike_kollective/access_token.dart';
+import 'package:the_bike_kollective/global_values.dart';
 import 'package:the_bike_kollective/requests.dart';
 import 'models.dart';
 import 'mock_data.dart';
 import 'MenuDrawer.dart';
 import 'bike_list_view.dart';
 import 'Maps/googlemaps.dart';
+import 'requests.dart';
 
 // information/instructions: Renders a detail view of an individual
 // bike, using data from a Bike(). The view is structured as a Column().
@@ -93,8 +96,17 @@ class BikeDetailTopRow extends StatelessWidget {
             RatingStars(rating: bikeRating),
               OutlinedButton(
                 onPressed: () {
-                  debugPrint('Return Bike button clicked');
-                  checkOutBike(bikeData.getId(), currentUser.getIdentifier() );
+                  debugPrint('checkout Bike button clicked');
+                  print('userId:');
+                  print(getCurrentUserId());
+                  String? userId = getCurrentUserId();
+                  Future<User> currentUser = getUser(userId);
+                  currentUser.then((userData) {
+                    print('current checked out bike: ');
+                    print(userData.getCheckedOutBike());
+
+                  });
+                  //checkOutBike(bikeData.getId(), currentUserId );
                 },
                 child: const Text('Check Out'),
               ),
