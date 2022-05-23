@@ -36,8 +36,6 @@ const router = express.Router();
 // @params: Auth code
 // @return: bike data on success , error message on failure
 // bugs: no known bugs
-// TODO : refactor into correct file
-// TODO: add bike to user owned_bike list
 router.post("/", async (req: Request, res: Response) => {
   // check if access_token is provided.
   if (!req.headers.authorization) {
@@ -171,7 +169,7 @@ router.get("/", async (req: Request, res: Response) => {
   const bikesToSend: any = [];
   bikes.forEach((bike) => {
     // return only active and not damged bikes which are not checked out
-    if(bike.active && bike.condition && bike.check_out_id!="-1"){
+    if(bike.active && bike.condition && bike.check_out_id=="-1"){
       // hide lock_combination 
       bike['lock_combination']=-99
       // hide checkout history
