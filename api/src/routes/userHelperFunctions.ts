@@ -18,14 +18,14 @@ import { IUser } from "../models/user";
 // @return: verification codes and messages (200,400,401,500)
 // bugs: no known bugs
 // TODO: error handling
-const verifyUserIdentity = (userFromDb: any, access_token: string) => {
+const verifyUserIdentity = (userFromDb: Array<any>, access_token: string) => {
   return new Promise(async (resolve) => {
     if (userFromDb.length == 0) {
-      resolve(400);
+      return resolve(404);
     } else if (userFromDb.length > 1) {
-      resolve(500);
+      return resolve(500);
     } else if (userFromDb[0]["access_token"] != access_token) {
-      resolve(401);
+      return resolve(401);
     }
 
     const refreshTokenFromDB = userFromDb[0]["refresh_token"];
@@ -59,9 +59,9 @@ const verifyUserIdentity = (userFromDb: any, access_token: string) => {
     if (identifierFromGoogle == identifierFromDB) {
       //update accesstoken in DB
       await updateAccessTokeninDB(idFromDB, access_token);
-      resolve(200);
+      return resolve(200);
     } else {
-      resolve(400);
+      return resolve(400);
     }
   });
 };
@@ -104,7 +104,7 @@ const userRegistration = async (code: string, state: string) => {
                 state
               );
 
-              resolve(200);
+              return resolve(200);
             } else {
               // user does not exist. create a new user
               console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ new user. add to DB")
@@ -122,7 +122,7 @@ const userRegistration = async (code: string, state: string) => {
                 checkout_history
               ).then((response) => {
                 console.log("resolved. send 201")
-                resolve(201);
+                return resolve(201);
               });
             }
           });

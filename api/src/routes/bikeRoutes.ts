@@ -56,7 +56,8 @@ router.post("/", async (req: Request, res: Response) => {
   const verificationResult = await verifyUserIdentity(userFromDb, access_token);
 
   if (verificationResult == 404) {
-    return res.status(404).send({ message: "User not found" , access_token: access_token});
+    // because the search was done by access token , then here access token is invlid so 401 should be sent
+    return res.status(404).send({ message: "User not found. non existing access token" , access_token: access_token});
   } else if (verificationResult == 500) {
     return res.status(500).send({ message: "Multiple USER ERROR" , access_token: access_token});
   } else if (verificationResult == 401) {
@@ -155,7 +156,8 @@ router.get("/", async (req: Request, res: Response) => {
   const verificationResult = await verifyUserIdentity(userFromDb,access_token)
 
   if (verificationResult==404){
-    return res.status(404).json({ message: "User not found" , access_token: access_token});
+    // because the search was done by access token , then here access token is invlid so 401 should be sent
+    return res.status(404).send({ message: "User not found. non existing access token" , access_token: access_token});
   }else if (verificationResult==500){
     return res.status(500).json({ message: "Multiple USER ERROR" , access_token: access_token});
   }else if (verificationResult==401){
@@ -214,7 +216,8 @@ router.get("/:id", async (req: Request, res: Response) => {
   const verificationResult = await verifyUserIdentity(userFromDb,access_token)
 
   if (verificationResult==404){
-    return res.status(404).json({ message: "User not found" , access_token: access_token});
+    // because the search was done by access token , then here access token is invlid so 401 should be sent
+    return res.status(404).send({ message: "User not found. non existing access token" , access_token: access_token});
   }else if (verificationResult==500){
     return res.status(500).json({ message: "Multiple USER ERROR" , access_token: access_token});
   }else if (verificationResult==401){
@@ -291,7 +294,8 @@ router.put("/:id", async (req: Request, res: Response) => {
   const verificationResult = await verifyUserIdentity(userFromDb, access_token);
 
   if (verificationResult == 404) {
-    return res.status(404).send({ message: "User not found" , access_token: access_token});
+    // because the search was done by access token , then here access token is invlid so 401 should be sent
+    return res.status(404).send({ message: "User not found. non existing access token" , access_token: access_token});
   } else if (verificationResult == 500) {
     return res.status(500).send({ message: "Multiple USER ERROR" , access_token: access_token});
   } else if (verificationResult == 401) {
@@ -476,9 +480,8 @@ router.post(
       access_token
     );
     if (verificationResult == 404) {
-      return res
-        .status(404)
-        .send({ message: "User not found", access_token: access_token });
+      // because the search was done by access token , then here access token is invlid so 401 should be sent
+    return res.status(404).send({ message: "User not found. non existing access token" , access_token: access_token});
     } else if (verificationResult == 500) {
       return res
         .status(500)
@@ -668,9 +671,8 @@ router.delete(
     );
 
     if (verificationResult == 404) {
-      return res
-        .status(404)
-        .send({ message: "User not found", access_token: access_token });
+      // because the search was done by access token , then here access token is invlid so 401 should be sent
+    return res.status(404).send({ message: "User not found. non existing access token" , access_token: access_token});
     } else if (verificationResult == 500) {
       return res
         .status(500)

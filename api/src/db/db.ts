@@ -116,7 +116,6 @@ const findUserByID = async (id: string) => {
 // bugs: no known bugs
 const findUserByAccessToekn = async (access_toekn: string) => {
   const user = await User.find({ access_token: access_toekn });
-  console.log(user);
   return user;
 };
 
