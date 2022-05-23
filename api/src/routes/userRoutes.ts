@@ -1,14 +1,7 @@
 import express, { Request, Response } from "express";
 import {
-  get_tokens,
-  getProfileInfo,
-} from "../services/google_auth";
-import {
-  addUsertoDB,
   findUserByIdentifier,
   updateStateinDB,
-  updateAccessTokeninDB,
-  updateRefreshTokeninDB,
   findUserByState,
   userSignedWaiverDB
 } from "../db/db";
@@ -52,7 +45,7 @@ router.post("/", async (req: Request, res: Response) => {
 // information/instructions: used for front app as final sign in process. it returns the user data assocoated with the 
 // state and set state to empty string
 // @params: Auth code
-// @return: user data or error message
+// @return: user data+ access token or error message
 // bugs: no known bugs
 router.post("/signin", async (req: Request, res: Response) => {
 
@@ -67,7 +60,7 @@ router.post("/signin", async (req: Request, res: Response) => {
   findUserByState(state)
   .then((user)=>{
     if(user.length==0){
-      res.status(404).send({"message":"no user with this state is found"});
+      res.status(404).send({"message":"User not found. verify state"});
     }else if(user.length>1){
       res.status(500).send({"message":"MULTIPLE USER ERROR!"});
     }else if(user.length==1){
@@ -88,7 +81,7 @@ router.post("/signin", async (req: Request, res: Response) => {
 
 // information/instructions: sign waiver for a user
 // @params: Auth code
-// @return: user data or error message
+// @return: success or error message with access token
 // bugs: no known bugs
 router.post("/waiver/:id", async (req: Request, res: Response) => {
 
@@ -112,7 +105,7 @@ router.post("/waiver/:id", async (req: Request, res: Response) => {
   const verificationResult = await verifyUserIdentity(userFromDb,access_token)
 
   if (verificationResult==404){
-    return res.status(404).json({ message: "User not found", access_token: access_token});
+    return res.status(404).json({ message: "User not found. verify identifier", access_token: access_token});
   }else if (verificationResult==500){
     return res.status(500).json({ message: "Multiple USER ERROR" , access_token: access_token});
   }else if (verificationResult==401){
