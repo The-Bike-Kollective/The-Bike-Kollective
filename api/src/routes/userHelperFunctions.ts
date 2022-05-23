@@ -68,8 +68,9 @@ const verifyUserIdentity = (userFromDb: Array<any>, access_token: string) => {
 
 const userRegistration = async (code: string, state: string) => {
   return new Promise<number>((resolve, reject) => {
-    try {
-      get_tokens(code).then((tokens) => {
+    
+      get_tokens(code)
+      .then((tokens) => {
         console.log(tokens);
         console.log(`after get_token. access token is :${tokens.tokens.access_token}`);
         console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ getting profile info")
@@ -127,12 +128,13 @@ const userRegistration = async (code: string, state: string) => {
             }
           });
         });
-      });
-    } catch (err) {
+      })
+      .catch((err)=>{
+      console.log(`################### ERRORRRRRR!!!!!!!`)
       console.log(err);
       reject(400);
-    }
-  });
+    })
+});
 };
 
 // For Debug purposes

@@ -25,6 +25,11 @@ const router = express.Router();
 // TODO : refactor into correct file
 router.post("/", async (req: Request, res: Response) => {
 
+    // verify body
+    if (!(await verifyUserPostBody(req.body))) {
+      return res.status(400).send({ message: "invalid body"});
+    }
+
     const state =req.body.state
     const code =req.body.auth_code
 
@@ -37,7 +42,7 @@ router.post("/", async (req: Request, res: Response) => {
       })
     })
     .catch(err => {
-      res.status(400).send({"message":"something went wrong"});
+      res.status(400).send({"message":"Invalid Auth code"});
 
     })
 
@@ -188,6 +193,30 @@ router.get("/:id", async (req, res) => {
   }   
  
 });
+
+
+// information/instructions: verifies body data for user POST
+// @params: JSON object form req body
+// @return: true if valid, flase if not
+// bugs: no known bugs
+const verifyUserPostBody = (body: object) => {
+  return new Promise(async (resolve) => {
+    const valid_keys = ["auth_code", "state"];
+    const keys_in_body = Object.keys(body);
+
+    if (valid_keys.length != keys_in_body.length) {
+      return resolve(false);
+    }
+
+    keys_in_body.forEach((key) => {
+      if (!valid_keys.includes(key)) {
+        return resolve(false);
+      }
+    });
+
+    return resolve(true);
+  });
+};
 
 module.exports = router;
 

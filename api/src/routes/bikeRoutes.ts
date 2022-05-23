@@ -807,16 +807,16 @@ const verifyBikeCheckInBody = (body: object) => {
     const keys_in_body = Object.keys(body);
 
     if (valid_keys.length != keys_in_body.length) {
-      resolve(false);
+      return resolve(false);
     }
 
     keys_in_body.forEach((key) => {
       if (!valid_keys.includes(key)) {
-        resolve(false);
+        return resolve(false);
       }
     });
 
-    resolve(true);
+    return resolve(true);
   });
 };
 
@@ -830,16 +830,16 @@ const verifyBikeCheckOutBody = (body: object) => {
     const keys_in_body = Object.keys(body);
 
     if (valid_keys.length != keys_in_body.length) {
-      resolve(false);
+      return resolve(false);
     }
 
     keys_in_body.forEach((key) => {
       if (!valid_keys.includes(key)) {
-        resolve(false);
+        return resolve(false);
       }
     });
 
-    resolve(true);
+    return resolve(true);
   });
 };
 
@@ -861,16 +861,16 @@ const verifyBikePostBody = (body: object) => {
     const keys_in_body = Object.keys(body);
 
     if (valid_keys.length != keys_in_body.length) {
-      resolve(false);
+      return resolve(false);
     }
 
     keys_in_body.forEach((key) => {
       if (!valid_keys.includes(key)) {
-        resolve(false);
+        return resolve(false);
       }
     });
 
-    resolve(true);
+    return resolve(true);
   });
 };
 
