@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:the_bike_kollective/access_token.dart';
 import 'package:the_bike_kollective/get-photo.dart';
 import 'package:the_bike_kollective/global_values.dart';
 import 'models.dart';
@@ -21,7 +20,6 @@ import 'requests.dart';
 // based on which filters are used.
 
 class BikeListView extends StatefulWidget {
-  //final BikeListModel bikeList;
   const BikeListView({ Key? key}) : super(key: key);
   static const routeName = '/bike-list';
   @override
@@ -34,11 +32,9 @@ class _BikeListViewState extends State<BikeListView> {
   Future<BikeListModel> currentList = getBikeList();
 
   @override
+  // I'm not totally sure what this does or if we need it. 
   void initState() {
     super.initState();
-    print('access token: ');
-    print(getAccessToken());
-    //currentList = getBikeList();
   }
   
   @override
@@ -96,12 +92,6 @@ class _BikeListViewState extends State<BikeListView> {
 // @params: BikeListModel
 // @return: rendering of bikeList
 // bugs: no known bugs
-// TODO: 
-// 1. Consider whether this should be it's own class, or
-// if it can just be part of the BikeListView. I think we can 
-// can leave that decision until we see how complex bikeListView
-// needs to be. If it turns out they are both fairly small classes,
-// it might make more sense to merge them into one.
 class BikeListBody extends StatelessWidget {
   final BikeListModel bikeList;
   const BikeListBody({ Key? key,
@@ -113,7 +103,14 @@ class BikeListBody extends StatelessWidget {
       child: ListView.builder(
         itemCount: bikeList.getLength(),
         itemBuilder: (context,i) {
-          return BikeListTile(bikeData: bikeList.bikes[i]);
+          if(bikeList.bikes[i].getCheckOutId() != '-1') {
+            return Container();
+          } 
+          else 
+          {
+            return BikeListTile(bikeData: bikeList.bikes[i]);
+          }
+          
         }
       )
     );

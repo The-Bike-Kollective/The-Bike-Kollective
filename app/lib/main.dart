@@ -5,7 +5,7 @@ import 'package:the_bike_kollective/get-photo.dart';
 import 'add_bike_page.dart';
 import 'package:the_bike_kollective/bike_list_view.dart';
 import 'home_view.dart';
-import 'models.dart';
+//import 'models.dart';
 import 'mock_data.dart';
 import 'profile_view.dart';
 import 'bike_list_view.dart';

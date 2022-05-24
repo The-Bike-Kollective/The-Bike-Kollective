@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:math';
+//import 'dart:math';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:get/get.dart';
 import 'package:the_bike_kollective/Login/helperfunctions.dart';
@@ -88,7 +88,7 @@ _launchURLInApp() async {
 class LoginPage extends StatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
   static const routeName = '/login';
-  
+
   @override
   Login createState() => Login();
 }
@@ -121,8 +121,3 @@ class Login extends State<LoginPage> {
   }
 }
 
-void goBackToLogin(context) {
-   Navigator.pushNamed(
-    context, LoginPage.routeName,
-  );       
-}

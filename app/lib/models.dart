@@ -63,22 +63,22 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> parsedJson) {
     return User(
-      id: parsedJson["id"],
-      familyName: parsedJson["family_name"],
-      givenName: parsedJson["given_name"],
-      email: parsedJson["email"],
-      identifier: parsedJson["identifier"],
+      id: parsedJson['user']['id'],
+      familyName: parsedJson['user']["family_name"],
+      givenName: parsedJson['user']["given_name"],
+      email: parsedJson['user']["email"],
+      identifier: parsedJson['user']["identifier"],
       //ownedBikes: List<dynamic>.from(parsedJson["owned_bikes"].map((x) => x)),
-      checkedOutBike: parsedJson["checked_out_bike"],
-      checkedOutTime: parsedJson["checked_out_time"],
-      suspended: parsedJson["suspended"],
-      accessToken: parsedJson["access_token"],
-      refreshToken: parsedJson["refresh_token"],
-      signedWaiver: parsedJson["signed_waiver"],
-      state: parsedJson["state"],
+      checkedOutBike: parsedJson['user']["checked_out_bike"],
+      checkedOutTime: parsedJson['user']["checked_out_time"],
+      suspended: parsedJson['user']["suspended"],
+      accessToken: parsedJson['user']["access_token"],
+      refreshToken: parsedJson['user']["refresh_token"],
+      signedWaiver: parsedJson['user']["signed_waiver"],
+      state: parsedJson['user']["state"],
       //checkoutHistory:
       //    List<dynamic>.from(parsedJson["checkout_history"].map((x) => x)),
-      checkoutRecordId: parsedJson["checkout_record_id"],
+      checkoutRecordId: parsedJson['user']["checkout_record_id"],
     );
   }
 
@@ -99,7 +99,7 @@ class User {
 class Bike {
   late bool active;
   List checkOutHistory = [];
-  late int checkOutId;
+  String checkOutId;
   late int checkOutTime;
   late bool condition;
   late int dateAdded;
@@ -127,7 +127,8 @@ class Bike {
         //this.notes = L, 
         //this.ratingHistory, 
         this.checkOutTime = 1, 
-        //this.checkOutHistory, 
+        //this.checkOutHistory,
+        this.checkOutId = '-1', 
         this.id = "-1",
 
 
@@ -137,7 +138,7 @@ class Bike {
   setOwnderId(String newId) { ownerId = newId;}
   setLockCombination(int newCombo) { lockCombination = newCombo;}
   addNote(String note) { notes.add(note); }
-  setIsCheckedId(int id) { checkOutId = -1; }
+  setCheckOutId(String id) { checkOutId = '-1'; }
   setName(String newName) { name = newName;}
   setRating(num rating) {rating = rating;}
   setImageUrl(String url) {imageUrl = imageUrl;}
@@ -148,6 +149,7 @@ class Bike {
   num getRating() => rating;
   String getImageUrl() => imageUrl;
   String getId() => id;
+  String getCheckOutId() => checkOutId;
 
   //methods
   Map<String, dynamic> toJson() => {
@@ -166,6 +168,7 @@ class Bike {
         'location_lat' : locationLat,
         'check_out_time': checkOutTime,
         'check_out_history': checkOutHistory,
+        'check_out_id' : checkOutId
   };
   // example of response from request post /bikes
 //   {date_added: 1652064108174, 
@@ -199,6 +202,7 @@ class Bike {
       //ratingHistory: json['rating_history'] as List<dynamic>,
       locationLong: json['location_long'] as num,
       locationLat: json['location_lat'] as num,
+      checkOutId: json['check_out_id'] as String,
       //checkOutTime: json['check_out_time'] as int,
       //checkOutHistory: json['check_out_history'] as List<dynamic>
     );

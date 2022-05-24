@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:the_bike_kollective/access_token.dart';
+//import 'package:the_bike_kollective/access_token.dart';
 import 'package:the_bike_kollective/bike_list_view.dart';
 import 'package:the_bike_kollective/get-photo.dart';
+import 'package:the_bike_kollective/global_values.dart';
 import 'mock_data.dart';
 import 'models.dart';
 import 'requests.dart';
+import 'global_values.dart';
 
 // information/instructions: ProfileView is a template that will
 // conditionally render profileViewA or ProfileViewB. If property 
@@ -26,6 +28,8 @@ class ProfileView extends StatefulWidget {
 
 // This is the state class that is used by ProfileViewState.
 class _ProfileViewState extends State<ProfileView> {
+  Future<User> user = 
+    getUser(getCurrentUserIdentifier() );
   
   @override
   Widget build(BuildContext context) {
@@ -34,9 +38,23 @@ class _ProfileViewState extends State<ProfileView> {
       appBar: AppBar(
         title: const Text('The Bike Collective')
         ),
-      body: (currentUser.checkedOutBike != '-1') ? 
-          const ProfileViewA(): 
-          const ProfileViewB()
+      body: FutureBuilder<User>(
+        future: user,
+        builder: (context, AsyncSnapshot<User> snapshot) {
+          if(snapshot.hasData) {
+            String checkedOutBike = snapshot.data!.getCheckedOutBike();
+            return (checkedOutBike == "-1") ? 
+              const ProfileViewB() : const ProfileViewA();
+          } else {
+            return const CircularProgressIndicator();
+          }
+        }
+      )
+
+
+        // ? 
+        //   const ProfileViewA(): 
+        //   const ProfileViewB()
       );
   }
 }

@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:the_bike_kollective/access_token.dart';
 import 'package:the_bike_kollective/global_values.dart';
 import 'package:the_bike_kollective/requests.dart';
 import 'models.dart';
-import 'mock_data.dart';
 import 'MenuDrawer.dart';
 import 'bike_list_view.dart';
 import 'Maps/googlemaps.dart';
 import 'requests.dart';
+import 'profile_view.dart';
 
 // information/instructions: Renders a detail view of an individual
 // bike, using data from a Bike(). The view is structured as a Column().
@@ -32,7 +31,7 @@ class BikeDetailView extends StatelessWidget {
           leading: (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
           actions: <Widget>[
             IconButton(
-              icon: Icon(
+              icon: const Icon(
                 Icons.map,
                 color: Colors.white,
               ),
@@ -75,6 +74,9 @@ class BikeDetailView extends StatelessWidget {
 // calculated within the Bike Model itself, so that it can be
 // displayed wherever we need it. The BikeModel would have to
 // have access to the user's location somehow for that to work.
+// 3. We may have decided to generate random locations
+// for the first version. Let's confirm this and if so, implement
+// that.
 class BikeDetailTopRow extends StatelessWidget {
   final Bike bikeData;
   const BikeDetailTopRow({Key? key, required this.bikeData}) : super(key: key);
@@ -97,16 +99,9 @@ class BikeDetailTopRow extends StatelessWidget {
               OutlinedButton(
                 onPressed: () {
                   debugPrint('checkout Bike button clicked');
-                  print('userId:');
-                  print(getCurrentUserId());
-                  String? userId = getCurrentUserId();
-                  Future<User> currentUser = getUser(userId);
-                  currentUser.then((userData) {
-                    print('current checked out bike: ');
-                    print(userData.getCheckedOutBike());
-
-                  });
-                  //checkOutBike(bikeData.getId(), currentUserId );
+                 
+                  checkOutBike(bikeData.getId() );
+                  Navigator.pushNamed(context, ProfileView.routeName);
                 },
                 child: const Text('Check Out'),
               ),
@@ -125,7 +120,8 @@ class BikeDetailTopRow extends StatelessWidget {
 // TODO:
 // 1. The Note widget may add some things, like date, author, and
 // style, at which point this will need to be updated.
-// 2.
+// 2. there May Still be a bug here, but none of our bikes have
+//  any notes at the moment. I'll look into that on the next PR.
 // 3.
 class NoteList extends StatelessWidget {
   final Bike bikeData;

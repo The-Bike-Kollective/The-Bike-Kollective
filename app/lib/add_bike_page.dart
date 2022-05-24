@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-//import 'package:the_bike_kollective/Login/access_token.dart';
-//import 'package:the_bike_kollective/global_values.dart';
 import 'package:the_bike_kollective/profile_view.dart';
 import 'models.dart';
 import 'MenuDrawer.dart';
@@ -8,7 +6,6 @@ import 'requests.dart';
 import 'mock_data.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-//import 'access_token.dart';
 import 'global_values.dart';
 
 // information/instructions: 
@@ -45,7 +42,6 @@ class AddBikePage extends StatelessWidget {
   static const routeName = '/new-bike-form';
   @override
   Widget build(BuildContext context) {
-
     final args = ModalRoute.of(context)!
     .settings.arguments as BikeFormArgument;
     return Scaffold( 
@@ -67,6 +63,7 @@ class AddBikePage extends StatelessWidget {
 // @return: form for usker to fill out. When user taps submit, the
 // input is validated, converted to JSON and sent to the database.
 // bugs: no known bugs
+// TODO: include options for type and size
 class AddBikeForm extends StatefulWidget {
   const AddBikeForm({  Key? key, 
                       required this.user,
@@ -131,13 +128,9 @@ class _AddBikeFormState extends State<AddBikeForm> {
               // Validate returns true if the form is valid, or false otherwise.
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState?.save();
-                print('test before getImageLink() access Token: ');
-                  print(getAccessToken());
                 Future imageLink = getImageDownloadLink(widget.imageStringBase64);
                 imageLink.then((value) {
                   bikeData['image'] = value;
-                  print('test before createBike() access Token: ');
-                  print(getAccessToken()); //NULL
                   createBike(bikeData);
                   Navigator.pushNamed(context, ProfileView.routeName);
                 }); 
@@ -164,11 +157,8 @@ class _AddBikeFormState extends State<AddBikeForm> {
   //get permission from user to access location
   // get users location to be saved as bike's current location.
   // add spinning wheel for pictures not yet loaded
+  // return to login if token is wrong
 Future createBike(bikeData) async {
-  print('createBike()');
-  print('accessToken: ');
-  print(getAccessToken());
-
   bikeData['location_long'] = 25;
   bikeData['location_lat'] = -25;
   // We might eventually have the user choose size and types via
@@ -193,8 +183,8 @@ Future createBike(bikeData) async {
     print('Success (code 201): bike created');
     final body = jsonDecode(response.body);
     String newAccessToken = body['access_token'];
-    print('New Access Token: ' + newAccessToken);
-    updateAccessToken(newAccessToken);      
+    updateAccessToken(newAccessToken);   
+              
   } 
   else if (response.statusCode == 400) {
     throw Exception('Failure (code 400): Bad request. Failed to add bike.');
@@ -204,43 +194,3 @@ Future createBike(bikeData) async {
   }
 
 }
-
-
-// Taken from documentation before. May not need this. 
-
-// Future<Position> determinePosition() async {
-//   bool serviceEnabled;
-//   LocationPermission permission;
-
-//   // Test if location services are enabled.
-//   serviceEnabled = await Geolocator.isLocationServiceEnabled();
-//   if (!serviceEnabled) {
-//     // Location services are not enabled don't continue
-//     // accessing the position and request users of the 
-//     // App to enable the location services.
-//     return Future.error('Location services are disabled.');
-//   }
-
-//   permission = await Geolocator.checkPermission();
-//   if (permission == LocationPermission.denied) {
-//     permission = await Geolocator.requestPermission();
-//     if (permission == LocationPermission.denied) {
-//       // Permissions are denied, next time you could try
-//       // requesting permissions again (this is also where
-//       // Android's shouldShowRequestPermissionRationale 
-//       // returned true. According to Android guidelines
-//       // your App should show an explanatory UI now.
-//       return Future.error('Location permissions are denied');
-//     }
-//   }
-  
-//   if (permission == LocationPermission.deniedForever) {
-//     // Permissions are denied forever, handle appropriately. 
-//     return Future.error(
-//       'Location permissions are permanently denied, we cannot request permissions.');
-//   } 
-
-//   // When we reach here, permissions are granted and we can
-//   // continue accessing the position of the device.
-//   return await Geolocator.getCurrentPosition();
-// }

@@ -2,8 +2,8 @@ import 'package:the_bike_kollective/global_values.dart';
 import 'package:the_bike_kollective/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:the_bike_kollective/profile_view.dart';
-import 'package:the_bike_kollective/models.dart';
-import 'package:the_bike_kollective/Login/spash_screen.dart';
+//import 'package:the_bike_kollective/models.dart';
+//import 'package:the_bike_kollective/Login/spash_screen.dart';
 // import 'package:the_bike_kollective/access_token.dart';
 // import 'package:the_bike_kollective/access_token.dart';
 

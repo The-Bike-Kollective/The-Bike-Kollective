@@ -1,15 +1,15 @@
-import 'dart:async';
+//import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:the_bike_kollective/global_values.dart';
 import 'package:the_bike_kollective/profile_view.dart';
-import 'package:the_bike_kollective/models.dart';
+//import 'package:the_bike_kollective/models.dart';
 import 'package:the_bike_kollective/Login/post_model.dart';
 import 'package:http/http.dart';
 import 'package:the_bike_kollective/Login/user_agreement.dart';
 import 'package:the_bike_kollective/Login/helperfunctions.dart';
 import 'dart:convert';
 //import 'package:the_bike_kollective/access_token.dart';
-import 'package:the_bike_kollective/global_values.dart';
+//import 'package:the_bike_kollective/global_values.dart';
 
 // information/instructions: splash page shows  "loading". meanwhile front-end
 // receives auth code status from back-end after google sign-in
@@ -75,7 +75,7 @@ void postState(context) async {
     final res = json.decode(response.body);
     user = Customer.fromJson(res["user"]);
     updateAccessToken(user.accessToken);
-    updateCurrentUserId(user.id);
+    updateCurrentUserIdentifier(user.identifier);
     //if user is a new user, then direct to agreement page
     if (user.signedWaiver == false) {
       //assign access token to global variable for front-end use  
