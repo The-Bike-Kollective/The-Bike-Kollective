@@ -20,9 +20,11 @@ const router = express_1.default.Router();
 // @params: Auth code
 // @return: user data or
 // bugs: no known bugs
-// TODO: decide on state and login design , might be changed based on frond end team design
-// TODO : refactor into correct file
 router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    // verify body
+    if (!(yield verifyUserPostBody(req.body))) {
+        return res.status(400).send({ message: "invalid body" });
+    }
     const state = req.body.state;
     const code = req.body.auth_code;
     console.log(`in POST users: code:${code}\nstate:${state}`);
@@ -33,13 +35,13 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         });
     })
         .catch(err => {
-        res.status(400).send({ "message": "something went wrong" });
+        res.status(400).send({ "message": "Invalid Auth code" });
     });
 }));
 // information/instructions: used for front app as final sign in process. it returns the user data assocoated with the 
 // state and set state to empty string
 // @params: Auth code
-// @return: user data or error message
+// @return: user data+ access token or error message
 // bugs: no known bugs
 router.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const state = req.body.state;
@@ -50,7 +52,7 @@ router.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function*
     (0, db_1.findUserByState)(state)
         .then((user) => {
         if (user.length == 0) {
-            res.status(404).send({ "message": "no user with this state is found" });
+            res.status(404).send({ "message": "User not found. verify state" });
         }
         else if (user.length > 1) {
             res.status(500).send({ "message": "MULTIPLE USER ERROR!" });
@@ -70,7 +72,7 @@ router.post("/signin", (req, res) => __awaiter(void 0, void 0, void 0, function*
 }));
 // information/instructions: sign waiver for a user
 // @params: Auth code
-// @return: user data or error message
+// @return: success or error message with access token
 // bugs: no known bugs
 router.post("/waiver/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const identifier = req.params.id;
@@ -88,7 +90,7 @@ router.post("/waiver/:id", (req, res) => __awaiter(void 0, void 0, void 0, funct
     let userFromDb = yield (0, db_1.findUserByIdentifier)(identifier);
     const verificationResult = yield (0, userHelperFunctions_1.verifyUserIdentity)(userFromDb, access_token);
     if (verificationResult == 404) {
-        return res.status(404).json({ message: "User not found", access_token: access_token });
+        return res.status(404).json({ message: "User not found. verify identifier", access_token: access_token });
     }
     else if (verificationResult == 500) {
         return res.status(500).json({ message: "Multiple USER ERROR", access_token: access_token });
@@ -149,7 +151,7 @@ router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     let userFromDb = yield (0, db_1.findUserByIdentifier)(identifier);
     const verificationResult = yield (0, userHelperFunctions_1.verifyUserIdentity)(userFromDb, access_token);
     if (verificationResult == 404) {
-        return res.status(404).json({ message: "User not found", access_token: access_token });
+        return res.status(404).json({ message: "User not found. verify identifier", access_token: access_token });
     }
     else if (verificationResult == 500) {
         return res.status(500).json({ message: "Multiple USER ERROR", access_token: access_token });
@@ -163,5 +165,24 @@ router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         res.status(200).send({ user: createUserObject(userFromDb[0]), access_token: access_token });
     }
 }));
+// information/instructions: verifies body data for user POST
+// @params: JSON object form req body
+// @return: true if valid, flase if not
+// bugs: no known bugs
+const verifyUserPostBody = (body) => {
+    return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
+        const valid_keys = ["auth_code", "state"];
+        const keys_in_body = Object.keys(body);
+        if (valid_keys.length != keys_in_body.length) {
+            return resolve(false);
+        }
+        keys_in_body.forEach((key) => {
+            if (!valid_keys.includes(key)) {
+                return resolve(false);
+            }
+        });
+        return resolve(true);
+    }));
+};
 module.exports = router;
 //# sourceMappingURL=userRoutes.js.map

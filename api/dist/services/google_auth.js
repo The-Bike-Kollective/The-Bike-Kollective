@@ -54,8 +54,14 @@ exports.getAuthURL = getAuthURL;
 // TODO: error handler
 const get_tokens = (code) => __awaiter(void 0, void 0, void 0, function* () {
     return new Promise((resolve, reject) => {
-        oauth2Client.getToken(code).then((response) => {
+        oauth2Client.getToken(code)
+            .then((response) => {
             resolve(response);
+        })
+            .catch((err) => {
+            console.log(`oauth2Client.getToken Error`);
+            console.log(err);
+            reject(err);
         });
     });
 });

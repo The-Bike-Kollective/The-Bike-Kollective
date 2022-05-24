@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.addBikeToOwnerListDB = exports.userSignedWaiverDB = exports.bikeUpdateNotesDB = exports.bikeUpdateConditionDB = exports.bikeUpdateRatingHistoryDB = exports.bikeUpdateLocationDB = exports.userCheckInABikeDB = exports.updateAnExisitngCheckoutHistory = exports.findCheckoutRecordByID = exports.addCheckoutRecordToDB = exports.userCheckoutABikeDB = exports.updateAnExisitngBike = exports.findBikeByID = exports.getAllBikes = exports.addBiketoDB = exports.updateStateinDB = exports.findUserByState = exports.updateRefreshTokeninDB = exports.updateAccessTokeninDB = exports.findUserByAccessToekn = exports.findUserByID = exports.findUserByIdentifier = exports.addUsertoDB = exports.connectDB = void 0;
+exports.bikeUpdateAvergaeRatingDB = exports.changeUserSuspensionMoodeDB = exports.addBikeToOwnerListDB = exports.userSignedWaiverDB = exports.bikeUpdateNotesDB = exports.bikeUpdateConditionDB = exports.bikeUpdateRatingHistoryDB = exports.bikeUpdateLocationDB = exports.userCheckInABikeDB = exports.updateAnExisitngCheckoutHistory = exports.findCheckoutRecordByID = exports.addCheckoutRecordToDB = exports.userCheckoutABikeDB = exports.updateAnExisitngBike = exports.findBikeByID = exports.getAllBikes = exports.addBiketoDB = exports.updateStateinDB = exports.findUserByState = exports.updateRefreshTokeninDB = exports.updateAccessTokeninDB = exports.findUserByAccessToekn = exports.findUserByID = exports.findUserByIdentifier = exports.addUsertoDB = exports.connectDB = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const index_1 = require("../index");
 let ObjectID = require("mongodb").ObjectID;
@@ -120,7 +120,6 @@ exports.findUserByID = findUserByID;
 // bugs: no known bugs
 const findUserByAccessToekn = (access_toekn) => __awaiter(void 0, void 0, void 0, function* () {
     const user = yield User.find({ access_token: access_toekn });
-    console.log(user);
     return user;
 });
 exports.findUserByAccessToekn = findUserByAccessToekn;
@@ -192,6 +191,13 @@ const userSignedWaiverDB = (id) => __awaiter(void 0, void 0, void 0, function* (
     return true;
 });
 exports.userSignedWaiverDB = userSignedWaiverDB;
+const changeUserSuspensionMoodeDB = (id, suspension) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield User.updateOne({ _id: new ObjectID(id) }, { $set: { suspended: suspension } });
+    console.log(`changeUserSuspensionMoodeDB is changed to :${suspension}`);
+    console.log(result);
+    return true;
+});
+exports.changeUserSuspensionMoodeDB = changeUserSuspensionMoodeDB;
 // information/instructions: updates users refresh token on DB
 // @params: user DB ID and new refresh token as string
 // @return: true in success and flase in failure
@@ -224,9 +230,24 @@ exports.addBiketoDB = addBiketoDB;
 // @params: none
 // @return: array of bikes
 // bugs: no known bugs
-const getAllBikes = () => __awaiter(void 0, void 0, void 0, function* () {
-    const result = yield Bike.find();
-    console.log("All Bikes");
+const getAllBikes = (type, size) => __awaiter(void 0, void 0, void 0, function* () {
+    let result;
+    if (type == null && size == null) {
+        console.log("All Bikes. size and type both are null");
+        result = yield Bike.find();
+    }
+    else if (type != null && size == null) {
+        console.log("All Bikes. type is NOT null and size is null");
+        result = yield Bike.find({ type: type });
+    }
+    else if (type == null && size != null) {
+        console.log("All Bikes. type is null and size is NOT");
+        result = yield Bike.find({ size: size });
+    }
+    else {
+        console.log("All Bikes. size and type both are NOT null");
+        result = yield Bike.find({ size: size, type: type });
+    }
     console.log(result);
     return result;
 });
@@ -274,6 +295,21 @@ const bikeUpdateNotesDB = (bike_id, new_value) => __awaiter(void 0, void 0, void
     return true;
 });
 exports.bikeUpdateNotesDB = bikeUpdateNotesDB;
+const bikeUpdateAvergaeRatingDB = (bike_id) => __awaiter(void 0, void 0, void 0, function* () {
+    // get bike information
+    const bike = yield Bike.find({ _id: new ObjectID(bike_id) });
+    let totalRating = 0;
+    const ratings = bike[0].rating_history;
+    ratings.forEach((rating) => {
+        totalRating += rating.rating_value;
+    });
+    const averageRating = totalRating / ratings.length;
+    const result = yield Bike.updateOne({ _id: new ObjectID(bike_id) }, { $set: { rating: averageRating.toFixed(1) } });
+    console.log(`bikeUpdateAvergaeRatingDB updated. new rating is: ${averageRating.toFixed(1)}`);
+    console.log(result);
+    return true;
+});
+exports.bikeUpdateAvergaeRatingDB = bikeUpdateAvergaeRatingDB;
 // information/instructions: updates and exisitng bike with a new bike object.
 // @params: bike object
 // @return: none
