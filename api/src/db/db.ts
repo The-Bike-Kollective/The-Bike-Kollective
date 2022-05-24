@@ -250,9 +250,23 @@ const addBiketoDB = async (newBike: IBike) => {
 // @params: none
 // @return: array of bikes
 // bugs: no known bugs
-const getAllBikes = async () => {
-  const result = await Bike.find();
-  console.log("All Bikes");
+const getAllBikes = async (type:any, size:any) => {
+  let result
+
+  if(type == null && size == null){
+    console.log("All Bikes. size and type both are null");
+    result = await Bike.find();
+  }else if(type != null && size == null){
+    console.log("All Bikes. type is NOT null and size is null");
+    result = await Bike.find({type:type});
+  }else if(type == null && size != null){
+    console.log("All Bikes. type is null and size is NOT");
+    result = await Bike.find({size:size});
+
+  }else{
+    console.log("All Bikes. size and type both are NOT null");
+    result = await Bike.find({size:size,type:type});
+  }
   console.log(result);
   return result;
 };

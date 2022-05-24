@@ -143,6 +143,13 @@ router.get("/", async (req: Request, res: Response) => {
     return res.status(403).json({ message: "access token is missing" });
   }
 
+  let type = req.query.type || null;
+  let size = req.query.size || null;
+
+  console.log(`query type is: ${type}`)
+  console.log(`query size is: ${size}`)
+
+
   // splits "Breaer TOKEN" 
   let access_token = req.headers.authorization.split(" ")[1];
   console.log("Access Token from header is:");
@@ -164,7 +171,7 @@ router.get("/", async (req: Request, res: Response) => {
     // get updated information from DB before sending to client
     userFromDb = await findUserByIdentifier(userFromDb[0]['identifier'])
 
-  const bikes = await getAllBikes();
+  const bikes = await getAllBikes(type,size);
   console.log("in get all bikes. Fetched!");
   const bikesToSend: any = [];
   bikes.forEach((bike) => {
