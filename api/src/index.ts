@@ -10,6 +10,8 @@ import { connectDB, addUsertoDB } from "./db/db";
 const userRoutes = require("./routes/userRoutes");
 const bikeRoutes = require("./routes/bikeRoutes");
 const imageRoutes = require("./routes/imageRoutes");
+const checkoutRecordsRoutes = require("./routes/checkoutRecords");
+
 
 import { userRegistration } from "./routes/userHelperFunctions";
 
@@ -37,6 +39,7 @@ printKeys();
 app.use("/users", userRoutes);
 app.use("/bikes", bikeRoutes);
 app.use("/images", imageRoutes);
+app.use("/records",checkoutRecordsRoutes);
 
 // information/instructions: for login redirect to google service
 // @params: [Maybe] state
@@ -73,7 +76,12 @@ app.get("/profile", async (req: Request, res: Response) => {
     .then((code) => {
       // user exists or registred . deep link to loading page
       //belo line is for debug. no need to send the code in this call
+
+      // commnet below if using flutter app and uncomment the 2 lines after. leave as is if using POSTMAN
       res.status(200).send({ auth_code: code, state: state });
+      
+      // console.log({ auth_code: code, state: state });
+      // res.redirect('https://thebikekollective.page.link/Eit5')
     })
     .catch((err) => {
       // something went wrong. deep link to error page!

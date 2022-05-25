@@ -51,9 +51,15 @@ const getAuthURL = () => {
 // TODO: error handler
 const get_tokens = async (code: string) => {
   return new Promise<any>((resolve, reject) => {
-    oauth2Client.getToken(code).then((response: any) => {
+    oauth2Client.getToken(code)
+    .then((response: any) => {
       resolve(response);
-    });
+    })
+    .catch((err:any)=>{
+      console.log(`oauth2Client.getToken Error`)
+      console.log(err);
+      reject(err);
+    })
   });
 };
 
