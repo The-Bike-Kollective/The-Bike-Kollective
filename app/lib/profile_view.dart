@@ -33,7 +33,6 @@ class _ProfileViewState extends State<ProfileView> {
   
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(
         title: const Text('The Bike Collective')
@@ -41,8 +40,6 @@ class _ProfileViewState extends State<ProfileView> {
       body: FutureBuilder<User>(
         future: user,
         builder: (context, AsyncSnapshot<User> snapshot) {
-          
-          //String userGivenName = snapshot.data!.getGivenName();
           if(snapshot.hasData) {
             User userData = snapshot.data!;
             String checkedOutBike = userData.getCheckedOutBike();
@@ -57,7 +54,6 @@ class _ProfileViewState extends State<ProfileView> {
           }
         }
       )
-
       );
   }
 }
@@ -101,6 +97,8 @@ class ProfileViewA extends StatelessWidget {
                 CheckedOutBikeRow(checkedOutBike: checkedOutBike),
                 OutlinedButton(
                   onPressed: () {
+                    returnBike(bikeId);
+                    Navigator.pushNamed(context, ProfileView.routeName,);
                     debugPrint('Return Bike button clicked');
                   },
                   child: const Text('Return Bike'),
@@ -165,9 +163,7 @@ class ProfileViewB extends StatelessWidget {
 // checked out
 // bugs: no known bugs
 // TODO: 
-// 1. Stub at this point. 
-// 2. Needs to be set up to take Bike(), and render using
-//    the data from the Bike.
+// 
 class CheckedOutBikeRow extends StatelessWidget {
   final Bike checkedOutBike;
   const CheckedOutBikeRow({ Key? key,
