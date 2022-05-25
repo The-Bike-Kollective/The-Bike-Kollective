@@ -13,22 +13,21 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
-const firebase_1 = require("../services/firebase");
-const userHelperFunctions_1 = require("./userHelperFunctions");
 const db_1 = require("../db/db");
+const userHelperFunctions_1 = require("./userHelperFunctions");
+const checkoutRecordsHelpers_1 = require("./checkoutRecordsHelpers");
 const router = express_1.default.Router();
-// information/instructions: upload recived Base64 encoded image on firestore and returns the download link
-// @params: none . (base64 image in JSON body)
-// @return: direct download link as string in JSON
+// information/instructions: returns checkout record details
+// @params: checkout id
+// @return: checkout details
 // bugs: no known bugs
-router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+// TODO : clean console logs
+router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const recordID = req.params.id;
+    console.log(`recordID is: ${recordID}`);
     // check if access_token is provided.
     if (!req.headers.authorization) {
         return res.status(403).json({ message: "access token is missing" });
-    }
-    // verify body
-    if (!(yield verifyUploadImagePostBody(req.body))) {
-        return res.status(400).send({ message: "invalid body" });
     }
     // splits "Breaer TOKEN" 
     let access_token = req.headers.authorization.split(" ")[1];
@@ -49,35 +48,20 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     else if (verificationResult == 200) {
         // get updated information from DB before sending to client
         userFromDb = yield (0, db_1.findUserByIdentifier)(userFromDb[0]['identifier']);
-        if (!req.body.image) {
-            return res.status(400).json({ message: "invalid body" });
+        const recordFromDB = yield (0, db_1.findCheckoutRecordByID)(recordID);
+        // check if only 1 record is found
+        if (recordFromDB.length == 0) {
+            return res.status(404).json({ message: "no record was found", access_token: access_token });
         }
-        const data = req.body.image;
-        console.log("data is: ");
-        const buffer = Buffer.from(data, "base64");
-        console.log(buffer);
-        const downloadURL = yield (0, firebase_1.uploadImage)(buffer);
-        res.status(201).send({ url: downloadURL, access_token: access_token });
+        else if (recordFromDB.length > 1) {
+            return res.status(500).json({ message: "MULTIPLE RECORD ERROR", access_token: access_token });
+        }
+        // check if user ownes the record
+        if (recordFromDB[0]['user_identifier'] != userFromDb[0]['identifier']) {
+            return res.status(403).send({ message: "User does not have access to the record", access_token: access_token });
+        }
+        res.status(200).send({ record: (0, checkoutRecordsHelpers_1.createhistoryObjectfromDB)(recordFromDB[0]), access_token: access_token });
     }
 }));
-// information/instructions: verifies body data for image POST
-// @params: JSON object form req body
-// @return: true if valid, flase if not
-// bugs: no known bugs
-const verifyUploadImagePostBody = (body) => {
-    return new Promise((resolve) => __awaiter(void 0, void 0, void 0, function* () {
-        const valid_keys = ["image"];
-        const keys_in_body = Object.keys(body);
-        if (valid_keys.length != keys_in_body.length) {
-            return resolve(false);
-        }
-        keys_in_body.forEach((key) => {
-            if (!valid_keys.includes(key)) {
-                return resolve(false);
-            }
-        });
-        return resolve(true);
-    }));
-};
 module.exports = router;
-//# sourceMappingURL=imageRoutes.js.map
+//# sourceMappingURL=checkoutRecords.js.map

@@ -20,6 +20,7 @@ const db_1 = require("./db/db");
 const userRoutes = require("./routes/userRoutes");
 const bikeRoutes = require("./routes/bikeRoutes");
 const imageRoutes = require("./routes/imageRoutes");
+const checkoutRecordsRoutes = require("./routes/checkoutRecords");
 const userHelperFunctions_1 = require("./routes/userHelperFunctions");
 dotenv_1.default.config({ path: ".env" });
 exports.app = (0, express_1.default)();
@@ -39,6 +40,7 @@ exports.app.use(cors());
 exports.app.use("/users", userRoutes);
 exports.app.use("/bikes", bikeRoutes);
 exports.app.use("/images", imageRoutes);
+exports.app.use("/records", checkoutRecordsRoutes);
 // information/instructions: for login redirect to google service
 // @params: [Maybe] state
 // @return: redirect url
@@ -70,7 +72,10 @@ exports.app.get("/profile", (req, res) => __awaiter(void 0, void 0, void 0, func
         .then((code) => {
         // user exists or registred . deep link to loading page
         //belo line is for debug. no need to send the code in this call
+        // commnet below if using flutter app and uncomment the 2 lines after. leave as is if using POSTMAN
         res.status(200).send({ auth_code: code, state: state });
+        // console.log({ auth_code: code, state: state });
+        // res.redirect('https://thebikekollective.page.link/Eit5')
     })
         .catch((err) => {
         // something went wrong. deep link to error page!

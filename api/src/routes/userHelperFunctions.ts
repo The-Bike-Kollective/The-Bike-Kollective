@@ -18,14 +18,14 @@ import { IUser } from "../models/user";
 // @return: verification codes and messages (200,400,401,500)
 // bugs: no known bugs
 // TODO: error handling
-const verifyUserIdentity = (userFromDb: any, access_token: string) => {
+const verifyUserIdentity = (userFromDb: Array<any>, access_token: string) => {
   return new Promise(async (resolve) => {
     if (userFromDb.length == 0) {
-      resolve(400);
+      return resolve(404);
     } else if (userFromDb.length > 1) {
-      resolve(500);
+      return resolve(500);
     } else if (userFromDb[0]["access_token"] != access_token) {
-      resolve(401);
+      return resolve(401);
     }
 
     const refreshTokenFromDB = userFromDb[0]["refresh_token"];
@@ -59,23 +59,24 @@ const verifyUserIdentity = (userFromDb: any, access_token: string) => {
     if (identifierFromGoogle == identifierFromDB) {
       //update accesstoken in DB
       await updateAccessTokeninDB(idFromDB, access_token);
-      resolve(200);
+      return resolve(200);
     } else {
-      resolve(400);
+      return resolve(400);
     }
   });
 };
 
 const userRegistration = async (code: string, state: string) => {
   return new Promise<number>((resolve, reject) => {
-    try {
-      get_tokens(code).then((tokens) => {
+    
+      get_tokens(code)
+      .then((tokens) => {
         console.log(tokens);
         console.log(`after get_token. access token is :${tokens.tokens.access_token}`);
         console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ getting profile info")
         getProfileInfo(tokens.tokens.access_token).then((profileData) => {
         console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ got profile info")
-          //if not add a new user
+          //if not, add a new user
           const profile_firstName = profileData["names"]["0"]["givenName"];
           const profile_lastName = profileData["names"]["0"]["familyName"];
           const profile_identifier =
@@ -83,6 +84,7 @@ const userRegistration = async (code: string, state: string) => {
           const profile_email = profileData["emailAddresses"]["0"]["value"];
           const profile_access_token = tokens.tokens["access_token"];
           const profile_refresh_token = tokens.tokens["refresh_token"];
+          const checkout_history= new Array<string>();
 
           // TODO: Check DB for existing user
           findUserByIdentifier(profile_identifier).then((userInDB) => {
@@ -103,7 +105,7 @@ const userRegistration = async (code: string, state: string) => {
                 state
               );
 
-              resolve(200);
+              return resolve(200);
             } else {
               // user does not exist. create a new user
               console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$ new user. add to DB")
@@ -117,20 +119,22 @@ const userRegistration = async (code: string, state: string) => {
                 profile_access_token,
                 profile_refresh_token,
                 false,
-                state
+                state,
+                checkout_history
               ).then((response) => {
                 console.log("resolved. send 201")
-                resolve(201);
+                return resolve(201);
               });
             }
           });
         });
-      });
-    } catch (err) {
+      })
+      .catch((err)=>{
+      console.log(`################### ERRORRRRRR!!!!!!!`)
       console.log(err);
       reject(400);
-    }
-  });
+    })
+});
 };
 
 // For Debug purposes
@@ -143,21 +147,24 @@ const addNewUser = async (
   access_token: string,
   refresh_token: string,
   signed_waiver: boolean,
-  state: string
+  state: string,
+  checkout_history:Array<string>
 ) => {
   let data: IUser = {
     family_name: family_name,
     given_name: first_name,
     email: email,
     identifier: identifier,
-    owned_biks: [],
-    check_out_bike: -1,
+    owned_bikes: [],
+    checked_out_bike: "-1",
     checked_out_time: 0,
     suspended: false,
     access_token: access_token,
     refresh_token: refresh_token,
     signed_waiver: signed_waiver,
     state: state,
+    checkout_history: checkout_history,
+    checkout_record_id:"-1"
   };
 
   console.log('in addNewUser ')

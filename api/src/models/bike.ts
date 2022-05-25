@@ -11,12 +11,12 @@ interface IRating{
     rating_value:number
 }
 
-interface ICheckOut{
-    id:string,
-    check_out_time:number
-    check_in_time: number,
-    damaged_on_return:boolean,
-}
+// interface ICheckOut{
+//     id:string,
+//     check_out_time:number
+//     check_in_time: number,
+//     damaged_on_return:boolean,
+// }
 
 interface IBike {
     id?: string;
@@ -33,7 +33,7 @@ interface IBike {
     location_lat:number;
     check_out_id:string;
     check_out_time:number;
-    check_out_history:Array<ICheckOut>;
+    check_out_history:Array<string>;
     name: string;
     type:string;
     size:string;
@@ -55,7 +55,7 @@ class Bike {
     location_lat:number;
     check_out_id:string;
     check_out_time:number;
-    check_out_history:Array<ICheckOut>;
+    check_out_history:Array<string>;
     name: string;
     type:string;
     size:string;
@@ -75,7 +75,7 @@ class Bike {
     location_lat:number,
     check_out_id:string,
     check_out_time:number,
-    check_out_history:Array<ICheckOut>,
+    check_out_history:Array<string>,
     name: string,
     type: string,
     size: string,
@@ -104,4 +104,4 @@ class Bike {
 }
 
 
-export {Bike, IBike, IRating, ICheckOut,INote}
+export {Bike, IBike, IRating, INote}
