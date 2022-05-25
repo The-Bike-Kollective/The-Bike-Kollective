@@ -41,20 +41,23 @@ class _ProfileViewState extends State<ProfileView> {
       body: FutureBuilder<User>(
         future: user,
         builder: (context, AsyncSnapshot<User> snapshot) {
+          
+          //String userGivenName = snapshot.data!.getGivenName();
           if(snapshot.hasData) {
-            String checkedOutBike = snapshot.data!.getCheckedOutBike();
+            User userData = snapshot.data!;
+            String checkedOutBike = userData.getCheckedOutBike();
             return (checkedOutBike == "-1") ? 
-              const ProfileViewB() : const ProfileViewA();
+              const ProfileViewB() : 
+              ProfileViewA(
+                bikeId: userData.getCheckedOutBike(),
+                userGivenName: userData.getGivenName()
+              );
           } else {
             return const CircularProgressIndicator();
           }
         }
       )
 
-
-        // ? 
-        //   const ProfileViewA(): 
-        //   const ProfileViewB()
       );
   }
 }
@@ -71,27 +74,44 @@ class _ProfileViewState extends State<ProfileView> {
 // 2. Preload the image
 // 3. Make the buttons functional
 class ProfileViewA extends StatelessWidget {
-  //final User user;
-  const ProfileViewA({ Key? key/*, required this.user*/ })
-      : super(key: key);
+  final String bikeId;
+  final String userGivenName;
+  const ProfileViewA({ Key? key, 
+    required this.bikeId,
+    required this.userGivenName })
+    : super(key: key);
+  
   @override
   Widget build(BuildContext context) {
-    String currentUserGivenName = currentUser.getGivenName();
-    return Column(children:  [
-      Text('Welcome, $currentUserGivenName!'),
-      const Text('You currently have a bike checked out.'),
-      const Text('Bike Info:'),
-      const Text('Bike Name: [bikeName'),
-      const Text('Bike ID: [bikeId'),
-      const CheckedOutBikeRow(),
-      OutlinedButton(
-        onPressed: () {
-          debugPrint('Return Bike button clicked');
-        },
-        child: const Text('Return Bike'),
-      ),
-    ],
-  );   
+    final Future<Bike> bikeData = getBike(bikeId);
+    return FutureBuilder<Bike>(
+      future: bikeData,
+      builder: (context, AsyncSnapshot<Bike> snapshot) {
+        if (snapshot.hasData) {
+            Bike checkedOutBike = snapshot.data!;
+            String bikeName = snapshot.data!.getName();
+            String bikeId = snapshot.data!.getId();
+            return Column(
+              children:  [
+                Text('Welcome, $userGivenName!'),
+                const Text('You currently have a bike checked out.'),
+                const Text('Bike Info:'),
+                Text('Bike Name: $bikeName'),
+                Text('Bike ID: $bikeId'),
+                CheckedOutBikeRow(checkedOutBike: checkedOutBike),
+                OutlinedButton(
+                  onPressed: () {
+                    debugPrint('Return Bike button clicked');
+                  },
+                  child: const Text('Return Bike'),
+                ),
+              ],
+            );   
+          } else {
+            return const CircularProgressIndicator();
+          }
+      }
+    );
   }
 }
 
@@ -116,8 +136,6 @@ class ProfileViewB extends StatelessWidget {
         OutlinedButton(
           onPressed: () {
             debugPrint('Find a Bike button clicked');
-            //get list of bikes from backend:
-            //print(getBikeList());
             Navigator.pushNamed(
               context, BikeListView.routeName,
             );    
@@ -151,17 +169,21 @@ class ProfileViewB extends StatelessWidget {
 // 2. Needs to be set up to take Bike(), and render using
 //    the data from the Bike.
 class CheckedOutBikeRow extends StatelessWidget {
-  const CheckedOutBikeRow({ Key? key }) : super(key: key);
+  final Bike checkedOutBike;
+  const CheckedOutBikeRow({ Key? key,
+     required this.checkedOutBike}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    String imageUrl = checkedOutBike.getImageUrl();
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Image.asset('assets/coolBike.jpeg',
+        Image.network(imageUrl,
           width: 200,
           fit:BoxFit.cover  
         ),
+        // TODO: calculate how much time is left.
         const Text('Due Back in 22 Minutes')
       ],      
     );

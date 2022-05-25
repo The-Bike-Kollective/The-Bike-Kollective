@@ -190,6 +190,49 @@ Future<User> getUser(userId) async {
 
 }
 
+
+
+
+//getBike function (modeled after getUser)
+
+Future<Bike> getBike(String bikeId) async {
+  String requestUrl = getGlobalUrl();
+  requestUrl += '/bikes/$bikeId';
+  final response = await http.get(
+    Uri.parse(requestUrl),
+    headers: getHeaders()
+  );
+  String responseBody = response.body;
+  var json = jsonDecode(responseBody);
+  if (response.statusCode == 200) {
+    print('Success: bike received');
+    Bike bikeData = Bike.fromJson(json);   
+    updateAccessToken(bikeData.getAccessToken());
+    return bikeData;
+    
+  } 
+  else if (response.statusCode == 404) {
+    throw Exception('Failure: ' + json['message']);
+  }
+  else if (response.statusCode == 403) {
+    throw Exception('Failure: ' + json['message']);
+  }
+  else if (response.statusCode == 500) {
+    throw Exception('Failure: ' + json['message']);
+  }
+  else if (response.statusCode == 401) {
+    throw Exception('Failure: ' + json['message']);
+  }
+  else {
+    throw Exception('Failure: ' + json['message']);
+  } 
+
+}
+
+
+
+
+
 // This is under construction still. 
 Future returnBike() async {
   String? requestUrl = getGlobalUrl();

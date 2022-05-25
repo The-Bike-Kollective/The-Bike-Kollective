@@ -18,10 +18,14 @@ const String globalUrl = cloudUrl2;
 
 //global variable where front-end can access access toke
 //for every post/get request to back-end
+
 String? ACCESS_TOKEN;
 String? CURRENT_USER_IDENTIFIER;
 bool isLoggedIn = false;
+String? CHECKED_OUT_BIKE;
 
+void setCheckedOutBike(String bikeId) {CHECKED_OUT_BIKE = bikeId;}
+String? getCheckedOutBike() => CHECKED_OUT_BIKE;
 bool isLoggedInGetter() => isLoggedIn;
 void setLoginStatus(bool status) {isLoggedIn = status;} 
 String? getAccessToken() => ACCESS_TOKEN;

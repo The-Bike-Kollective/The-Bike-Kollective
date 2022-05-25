@@ -114,6 +114,7 @@ class Bike {
   late num rating;
   List ratingHistory = [];
   List checkoutHistory = [];
+  String accessToken;
   Bike({ this.name = "unnamed",
         this.imageUrl = "no_image",
         this.locationLat = -1.0,
@@ -130,6 +131,7 @@ class Bike {
         //this.checkOutHistory,
         this.checkOutId = '-1', 
         this.id = "-1",
+        this.accessToken = "-1"
 
 
   });
@@ -150,6 +152,7 @@ class Bike {
   String getImageUrl() => imageUrl;
   String getId() => id;
   String getCheckOutId() => checkOutId;
+  String getAccessToken() => accessToken;
 
   //methods
   Map<String, dynamic> toJson() => {
@@ -189,21 +192,22 @@ class Bike {
 
   factory Bike.fromJson(Map<String, dynamic> json) {
     return Bike(      
-      name: json['name'] as String,
-      id: json['id'] as String,
+      name: json['bike']['name'] as String,
+      id: json['bike']['id'] as String,
       //dateAdded: json['date_added'] as int,
-      imageUrl: json['image'] as String, 
-      active: json['active'] as bool,
-      condition: json['condition'] as bool,
-      ownerId: json['owner_id'] as String,
+      imageUrl: json['bike']['image'] as String, 
+      active: json['bike']['active'] as bool,
+      condition: json['bike']['condition'] as bool,
+      ownerId: json['bike']['owner_id'] as String,
       //lockCombination: json['lock_combination'] as int,
       //notes: json['notes'] as List<dynamic>,
-      rating: json['rating'] as num,
+      rating: json['bike']['rating'] as num,
       //ratingHistory: json['rating_history'] as List<dynamic>,
-      locationLong: json['location_long'] as num,
-      locationLat: json['location_lat'] as num,
-      checkOutId: json['check_out_id'] as String,
+      locationLong: json['bike']['location_long'] as num,
+      locationLat: json['bike']['location_lat'] as num,
+      checkOutId: json['bike']['check_out_id'] as String,
       //checkOutTime: json['check_out_time'] as int,
+      accessToken: json['access_token'] as String
       //checkOutHistory: json['check_out_history'] as List<dynamic>
     );
   }
