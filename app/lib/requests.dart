@@ -192,7 +192,6 @@ Future<User> getUser(userId) async {
 
 
 //getBike function (modeled after getUser)
-
 Future<Bike> getBike(String bikeId) async {
   String requestUrl = getGlobalUrl();
   requestUrl += '/bikes/$bikeId';
@@ -228,17 +227,10 @@ Future<Bike> getBike(String bikeId) async {
 }
 
 
-
-
-
 // This is under construction still. 
-Future returnBike() async {
+Future returnBike(String bikeId) async {
   String? requestUrl = getGlobalUrl();
-  String? bikeId;
-  Future<User> thisUser = getUser(getCurrentUserIdentifier() );
-  thisUser.then((data) {
-    bikeId = data.getCheckedOutBike();
-  });
+  
   requestUrl += '/$bikeId/';
   requestUrl += getCurrentUserIdentifier().toString();
   
@@ -247,7 +239,12 @@ Future returnBike() async {
   requestBody += '"note": "this was a nice bike!",';
   requestBody += '"rating":5,';   
   requestBody += '"condition": true}';
-    
+
+  print('requestUrl: ');
+  print(requestUrl);
+  print('requestBody:');
+  print(requestBody);
+
   final response = await http.delete(
     Uri.parse(requestUrl),
     headers: getHeaders(),
@@ -255,7 +252,6 @@ Future returnBike() async {
   );
 
   print(response.body);
- // DELETE /bikes/:bike_id/:user_identifier
-
+ 
   throw Exception('Error');
 }
