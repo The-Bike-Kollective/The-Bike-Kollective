@@ -191,8 +191,6 @@ Future<User> getUser(userId) async {
 }
 
 
-
-
 //getBike function (modeled after getUser)
 
 Future<Bike> getBike(String bikeId) async {
