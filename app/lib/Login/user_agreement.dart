@@ -1,10 +1,11 @@
+import 'package:the_bike_kollective/global_values.dart';
 import 'package:the_bike_kollective/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:the_bike_kollective/profile_view.dart';
-import 'package:the_bike_kollective/models.dart';
-import 'package:the_bike_kollective/Login/spash_screen.dart';
-import 'package:the_bike_kollective/access_token.dart';
-import 'package:the_bike_kollective/access_token.dart';
+//import 'package:the_bike_kollective/models.dart';
+//import 'package:the_bike_kollective/Login/spash_screen.dart';
+// import 'package:the_bike_kollective/access_token.dart';
+// import 'package:the_bike_kollective/access_token.dart';
 
 // information/instructions: user reads and either
 // 1. accepts agreement > redirected to logged in home page
@@ -33,7 +34,7 @@ deserunt ducimus. Id delectus omnis aut atque sapiente ea eius corrupti.""";
 
 class AgreementPage extends StatefulWidget {
   //const AgreementPage({Key? key}) : super(key: key);
-
+  static const routeName = '/agreement';
   @override
   _AgreementPage createState() => _AgreementPage();
 }
@@ -52,7 +53,7 @@ class _AgreementPage extends State<AgreementPage> {
   @override
   Widget build(BuildContext context) {
     print("Test: access token via global variable below ");
-    print(accessToken01);
+    print(getAccessToken());
     
     return Scaffold(
       key: scaffoldKey,
@@ -136,7 +137,7 @@ class _AgreementPage extends State<AgreementPage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => ProfileView(user: testUser),),
+                                    builder: (context) => const ProfileView(),),
                               );
                               debugPrint('Agree clicked');
                             },
