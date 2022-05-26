@@ -47,8 +47,29 @@ _launchURLInApp() async {
   final response_type = 'response_type=code&';
   final client_id =
       'client_id=701199836944-k9grqhb7tl30mm974iv62k6ge3ha2cqs.apps.googleusercontent.com&';
-  final redirect_uri =
-      'redirect_uri=http%3A%2F%2Fec2-54-71-143-21.us-west-2.compute.amazonaws.com%3A5000%2Fprofile&flowName=GeneralOAuthFlow';
+  //Original Code:========================================================
+  // final redirect_uri =
+  //     'redirect_uri=http%3A%2F%2Fec2-54-71-143-21.us-west-2.compute.amazonaws.com%3A5000%2Fprofile&flowName=GeneralOAuthFlow';
+  // //End of original Code: +++++++++++++++++++++++++++++++++++++++++++++++
+
+  //Updated Code:
+  // String numbers = 'ec2-35-166-192-222';
+  // String ending = '.us-west-2.compute.amazonaws.com%3A5000%2Fprofile&flowName=GeneralOAuthFlow';
+
+  // String redirect_uri ='redirect_uri=http%3A%2F%2F'; 
+  // redirect_uri += numbers;
+  // redirect_uri += ending;
+
+
+ final redirect_uri ='redirect_uri=http%3A%2F%2Fec2-35-166-192-222.us-west-2.compute.amazonaws.com%3A5000%2Fprofile&flowName=GeneralOAuthFlow';
+
+  //ec2-54-71-143-21.us-west-2.compute.amazonaws.com%3A5000%2Fprofile&flowName=GeneralOAuthFlow';
+
+// const String cloudUrl2 = "http://ec2-54-71-143-21.us-west-2.compute.amazonaws.com:5000";
+
+// const String cloudUrl3 = "http://ec2-35-166-192-222.us-west-2.compute.amazonaws.com:5000";
+
+// END of UPDATED Code: +++++++++++++++++++++++++++++++++++++++
 
   final url = 'https://$host$path$access_type$prompt$scope$urlState$response_type$client_id$redirect_uri';
   

@@ -41,7 +41,7 @@ class AgreementPage extends StatefulWidget {
 
 class _AgreementPage extends State<AgreementPage> {
   final scaffoldKey = GlobalKey<ScaffoldState>();
-  GlobalKey<FormState> globalFormKey = new GlobalKey<FormState>();
+  GlobalKey<FormState> globalFormKey = GlobalKey<FormState>();
 
   // This function is triggered when the button is clicked
   //saving for future
@@ -52,7 +52,7 @@ class _AgreementPage extends State<AgreementPage> {
 
   @override
   Widget build(BuildContext context) {
-    print("Test: access token via global variable below ");
+    print("Test inside AgreementPage build(): access token via global variable below ");
     print(getAccessToken());
     
     return Scaffold(
@@ -84,7 +84,7 @@ class _AgreementPage extends State<AgreementPage> {
                     key: globalFormKey,
                     child: Column(
                       children: <Widget>[
-                        SizedBox(
+                        const SizedBox(
                           height: 25,
                         ),
                         Text(
@@ -93,7 +93,7 @@ class _AgreementPage extends State<AgreementPage> {
                         ),
                         // ignore: prefer_const_constructors
 
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         //ignore: unnecessary_new
@@ -102,49 +102,45 @@ class _AgreementPage extends State<AgreementPage> {
                             padding: const EdgeInsets.all(10),
                             decoration: BoxDecoration(
                                 border: Border.all(color: Colors.black)),
-                            child: SingleChildScrollView(
+                            child: const SingleChildScrollView(
                                 scrollDirection: Axis.vertical,
                                 child: Center(
                                   child: Text(
                                     pdfText,
-                                    style: const TextStyle(fontSize: 20),
+                                    style: TextStyle(fontSize: 20),
                                   ),
                                 ))),
 
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
 
-                        Container(
-                          child: RaisedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const HomeView()),
-                              );
-                              debugPrint('Cancel clicked');
-                            },
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[Text('Cancel')],
-                            ),
+                        RaisedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const HomeView()),
+                            );
+                            debugPrint('Cancel clicked');
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[Text('Cancel')],
                           ),
                         ),
-                        Container(
-                          child: RaisedButton(
-                            onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => const ProfileView(),),
-                              );
-                              debugPrint('Agree clicked');
-                            },
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: <Widget>[Text('Agree')],
-                            ),
+                        RaisedButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const ProfileView(),),
+                            );
+                            debugPrint('Agree clicked');
+                          },
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: const <Widget>[Text('Agree')],
                           ),
                         ),
                       ],

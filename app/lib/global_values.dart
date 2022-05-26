@@ -9,11 +9,13 @@ const String localUrlBrowser = "http://localhost:5000";
 const String localUrlEmulator = "https://10.0.2.2:5000";
 
 //this will hold the url to the cloud db. 
-const String cloudUrl = "http://ec2-35-164-203-209.us-west-2.compute.amazonaws.com:5000";
+const String cloudUrl1 = "http://ec2-35-164-203-209.us-west-2.compute.amazonaws.com:5000";
 
 const String cloudUrl2 = "http://ec2-54-71-143-21.us-west-2.compute.amazonaws.com:5000";
 
-const String globalUrl = cloudUrl2;
+const String cloudUrl3 = "http://ec2-35-166-192-222.us-west-2.compute.amazonaws.com:5000";
+
+const String globalUrl = cloudUrl3;
 
 
 //global variable where front-end can access access toke
