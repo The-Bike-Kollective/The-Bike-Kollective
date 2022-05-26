@@ -5,19 +5,17 @@ import 'models.dart';
 import 'dart:convert';
 import 'global_values.dart';
 
-// String? currentAccessToken = getAccessToken();
-// String? currentUserIdentifier =  getCurrentUserIdentifier();
 
-
+// get headers for requests.
 Map<String,String> getHeaders() {
   String? currentAccessToken = getAccessToken();
+ 
   Map <String,String>headers = {
       "Content-Type": "application/json; charset=UTF-8",
       "Access-Control-Allow-Origin": "*",
       "Authorization": "Bearer $currentAccessToken"};
   return headers;
 }
-
 
 
 // A test to make sure the api is running. 
@@ -35,20 +33,32 @@ void test() async {
 // @return: none
 // bugs: no known bugs, but need to do some more testing
 Future<BikeListModel> getBikeList() async {
-  print(getAccessToken()); 
   print('getBikeList()');
+
   final response = await http.get(
     Uri.parse(getGlobalUrl()+ '/bikes'),
     headers: getHeaders()
   );
-  print(response.statusCode);
-  print(response.body);
+  print('status code' + response.statusCode.toString() );
+  //Map<String, dynamic> bikeList = jsonDecode(response.body);
   if (response.statusCode == 200) {
-    // If the server did return a 201 CREATED response,
-    // then parse the JSON.
     print('Success with code 200: bike list received');
-    // print(response.body);
-    BikeListModel currentBikes = BikeListModel.fromDataString(response.body);
+    print('response body' + response.body);
+    
+    final decodedJson = jsonDecode(response.body);
+    
+    print('decoded json: ');
+    print(decodedJson['bikes'].toString() );    
+    BikeListModel currentBikes = BikeListModel();
+    Bike newBike;
+    var newBikeJson;
+    num numBikes = decodedJson['bikes'].length;
+    for(int i = 0; i < numBikes; i += 1) {
+      newBikeJson = decodedJson['bikes'][i];
+      newBike = Bike.fromBikeList(newBikeJson);
+      print(newBike);
+      currentBikes.addBike(newBike);
+    }
     return currentBikes;
     
   } 
@@ -81,7 +91,7 @@ Future<String> getImageDownloadLink(fileStringBase64) async {
   );
   print("After getImageLink() request, response body: ");
   print(response.body);
-  if (response.statusCode == 200) {
+  if (response.statusCode == 201) {
     print('Success: Image Uploaded');
     var json = jsonDecode(response.body);
     String downloadLink = json["url"];
@@ -97,6 +107,7 @@ Future<String> getImageDownloadLink(fileStringBase64) async {
   return "something is messed up in getImageDownloadLink().";
  
 }
+
 
 // information/instructions: This function is called when
 // the checkout button on the bike detail view is called.
@@ -155,14 +166,18 @@ Future checkOutBike(bikeId) async {
 // bugs: No known bugs
 // TODO: 
 Future<User> getUser(userId) async {
+  print("getUser()");
   String requestUrl = getGlobalUrl();
   String? currentUserIdentifier =  getCurrentUserIdentifier();
   requestUrl += '/users/$currentUserIdentifier';
+  print('getUser() requestUrl: ' + requestUrl);
+
   final response = await http.get(
     Uri.parse(requestUrl),
     headers: getHeaders()
   );
-  print(response.statusCode);
+  print('getUser() response.statusCode: ' + response.statusCode.toString());
+  print('getUser() reponse.body: ' + response.body);
   if (response.statusCode == 200) {
     print('Success with code 200: user info received');
     String responseBody = response.body;

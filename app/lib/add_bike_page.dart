@@ -106,7 +106,6 @@ class _AddBikeFormState extends State<AddBikeForm> {
               bikeData["name"] = value;
             },
           ),  
-          
           TextFormField(
             decoration: const InputDecoration(
               icon: Icon(Icons.lock),
@@ -159,25 +158,31 @@ class _AddBikeFormState extends State<AddBikeForm> {
   // add spinning wheel for pictures not yet loaded
   // return to login if token is wrong
 Future createBike(bikeData) async {
+  print('createBike()');
+  //TODO: create function to generate random location near OSU.
   bikeData['location_long'] = 25;
   bikeData['location_lat'] = -25;
-  // We might eventually have the user choose size and types via
-  // dropdown menus. I think Ali wanted to do something with this,
-  // so for now I'm leaving them as hard coded values. 
+  //TODO: Users choose size and type.
   bikeData['size'] = 'size 2';
   bikeData['type'] = 'type 2';
   String? currentAccessToken = getAccessToken();
-  String dataString = jsonEncode(bikeData);
+  String requestBody = jsonEncode(bikeData);
+  String requestUrl = getGlobalUrl();
+  String? accessToken = getAccessToken();
+  requestUrl += '/bikes';
   Map <String,String>headers = {
       "Content-Type": "application/json; charset=UTF-8",
       "Access-Control-Allow-Origin": "*",
-      "Authorization": "Bearer $currentAccessToken"};
-  //print('createBike() request body: ' + dataString);
+      "Authorization": "Bearer $accessToken"};
+  // for debugging (delete later)
+  print('request url' + requestUrl);
+  print('request body:' + requestBody);
   final response = await http.post(
-    Uri.parse(globalUrl+ '/bikes'),
+    Uri.parse(requestUrl),
     headers: headers,
-    body: dataString 
+    body: requestBody 
   );
+  // for debugging (delete later)
   print("status code: " + response.statusCode.toString());
   if (response.statusCode == 201) {
     print('Success (code 201): bike created');

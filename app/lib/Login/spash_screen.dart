@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:the_bike_kollective/global_values.dart';
 import 'package:the_bike_kollective/profile_view.dart';
-//import 'package:the_bike_kollective/models.dart';
+import 'package:the_bike_kollective/models.dart';
 import 'package:the_bike_kollective/Login/post_model.dart';
 import 'package:http/http.dart';
 import 'package:the_bike_kollective/Login/user_agreement.dart';
@@ -61,10 +61,13 @@ void postState(context) async {
   Customer user;
   final String state = getState();
 
+  
+  String requestUrl = getGlobalUrl();
+  requestUrl += '/users/signin';
+
   //post request with state
   var response = await post(
-      Uri.parse(
-          "http://ec2-54-71-143-21.us-west-2.compute.amazonaws.com:5000/users/signin"),
+      Uri.parse(requestUrl),
       body: {"state": state});
 
   //response from back-end with user data
@@ -74,6 +77,7 @@ void postState(context) async {
   if (response.statusCode == 200) {
     final res = json.decode(response.body);
     user = Customer.fromJson(res["user"]);
+    print('token: ' + user.accessToken.toString());
     updateAccessToken(user.accessToken);
     updateCurrentUserIdentifier(user.identifier);
     //if user is a new user, then direct to agreement page

@@ -49,6 +49,7 @@ dependencies:
   google_maps_flutter_web: ^0.3.2+1
   firebase_dynamic_links: ^4.2.2
   firebase_core: ^1.16.0
+  json_serializable: ^6.2.0
 
 
 

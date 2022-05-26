@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:json_annotation/json_annotation.dart';
 
 // information/instructions: This is a model of the user object on
 // on the database.  
@@ -190,26 +191,49 @@ class Bike {
 //    id: 62787f6cfdbef47fca400805}
 
 
-  factory Bike.fromJson(Map<String, dynamic> json) {
+  factory Bike.fromBikeList(Map<String, dynamic> json) {
     return Bike(      
-      name: json['bike']['name'] as String,
-      id: json['bike']['id'] as String,
-      //dateAdded: json['date_added'] as int,
-      imageUrl: json['bike']['image'] as String, 
-      active: json['bike']['active'] as bool,
-      condition: json['bike']['condition'] as bool,
-      ownerId: json['bike']['owner_id'] as String,
-      //lockCombination: json['lock_combination'] as int,
+      name: json['name'] as String,
+      id: json['id'] as String,
+      dateAdded: json['date_added'] as int,
+      imageUrl: json['image'] as String, 
+      active: json['active'] as bool,
+      condition: json['condition'] as bool,
+      ownerId: json['owner_id'] as String,
+      lockCombination: json['lock_combination'] as int,
       //notes: json['notes'] as List<dynamic>,
-      rating: json['bike']['rating'] as num,
+      rating: json['rating'] as num,
       //ratingHistory: json['rating_history'] as List<dynamic>,
-      locationLong: json['bike']['location_long'] as num,
-      locationLat: json['bike']['location_lat'] as num,
-      checkOutId: json['bike']['check_out_id'] as String,
-      //checkOutTime: json['check_out_time'] as int,
-      accessToken: json['access_token'] as String
+      locationLong: json['location_long'] as num,
+      locationLat: json['location_lat'] as num,
+      checkOutId: json['check_out_id'] as String,
+      checkOutTime: json['check_out_time'] as int,
+      //accessToken: json['access_token'] as String
       //checkOutHistory: json['check_out_history'] as List<dynamic>
     );
+
+  }
+
+    factory Bike.fromJson(Map<String, dynamic> json) {
+      return Bike(      
+        name: json['bike']['name'] as String,
+        id: json['bike']['id'] as String,
+        dateAdded: json['bike']['date_added'] as int,
+        imageUrl: json['bike']['image'] as String, 
+        active: json['bike']['active'] as bool,
+        condition: json['bike']['condition'] as bool,
+        ownerId: json['bike']['owner_id'] as String,
+        lockCombination: json['bike']['lock_combination'] as int,
+        //notes: json['notes'] as List<dynamic>,
+        rating: json['bike']['rating'] as num,
+        //ratingHistory: json['rating_history'] as List<dynamic>,
+        locationLong: json['bike']['location_long'] as num,
+        locationLat: json['bike']['location_lat'] as num,
+        checkOutId: json['bike']['check_out_id'] as String,
+        checkOutTime: json['bike']['check_out_time'] as int,
+        accessToken: json['access_token'] as String
+        //checkOutHistory: json['check_out_history'] as List<dynamic>
+      );
   }
     
 }
@@ -227,38 +251,58 @@ class Bike {
 // 2. 
 // 3. 
 class BikeListModel {
-  BikeListModel();
+  BikeListModel({bikes}); 
   List<Bike> bikes = [];
-   
-  addBike(Bike newBike) {
+  
+  // methods
+  void addBike(Bike newBike) {
     bikes.add(newBike);
   }
   //getters
   int getLength() => bikes.length;
+  List<Bike> getBikes() => bikes;
 
-
-  BikeListModel.fromDataString(String dataString){
-  //dataString.then((asString){
-    print(dataString);
-    final asList = dataString.split("},");    /// split string into a list 
-    int listLength = asList.length;
-    asList[0] = asList[0].substring(1);     // remove opening bracket '[' from first item  
-    int lastItemLength = asList[listLength-1].length;
-    // remove closing bracked ']' from last item
-    asList[listLength-1] = asList[listLength-1].substring(0,lastItemLength-1);  
-    // add each item from the list to bikes as a bike object
-    for(int i = 0; i< listLength; i+= 1) {
-      if(i != listLength-1) {
-        asList[i] = asList[i] + '}';
-      }
-      
-      var itemAsJson = jsonDecode(asList[i]);
-      // convert string to bike object
-      Bike newBike = Bike.fromJson(itemAsJson);
-      addBike(newBike);
-      print(asList[i]);
-    }
+  factory BikeListModel.fromJson(Map<String, dynamic> json){
+    return BikeListModel(
+      bikes: json['bikes'] as List,
+    );
   }
-}  
+
+  // factory BikeListModel.withBikeList(List<String> initialList) {
+  //   var newBike;
+  //   for(num i=0; i<initialList.length; i += 1) {
+  //     newBike = Bike.fromJson(newBike);
+  //     bikes.add(newBike);
+  //   }
+
+  // }
+  
+}
+    //print('decoding json');
+    //Map<String, dynamic> json = jsonDecode(data);
+    //print(json['bikes'][0]);
+    //return BikeListModel();
+    //dataString.then((asString){
+    // print(dataString);
+    // final asList = dataString.split("},");    /// split string into a list 
+    // int listLength = asList.length;
+    // asList[0] = asList[0].substring(1);     // remove opening bracket '[' from first item  
+    // int lastItemLength = asList[listLength-1].length;
+    // // remove closing bracked ']' from last item
+    // asList[listLength-1] = asList[listLength-1].substring(0,lastItemLength-1);  
+    // // add each item from the list to bikes as a bike object
+    // for(int i = 0; i< listLength; i+= 1) {
+    //   if(i != listLength-1) {
+    //     asList[i] = asList[i] + '}';
+    //   }
+      
+     // var itemAsJson = jsonDecode(asList[i]);
+      // convert string to bike object
+      //Bike newBike = Bike.fromJson(itemAsJson);
+      //addBike(newBike);
+      //print(asList[i]);
+//     }
+//   }
+// }  
 
 
