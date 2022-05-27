@@ -2,6 +2,7 @@ import 'package:the_bike_kollective/global_values.dart';
 import 'package:the_bike_kollective/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:the_bike_kollective/profile_view.dart';
+import 'package:the_bike_kollective/requests.dart';
 //import 'package:the_bike_kollective/models.dart';
 //import 'package:the_bike_kollective/Login/spash_screen.dart';
 // import 'package:the_bike_kollective/access_token.dart';
@@ -33,7 +34,8 @@ libero. Et dicta esse ea repellendus officiis id excepturi temporibus in
 deserunt ducimus. Id delectus omnis aut atque sapiente ea eius corrupti.""";
 
 class AgreementPage extends StatefulWidget {
-  //const AgreementPage({Key? key}) : super(key: key);
+  const AgreementPage({Key? key}) : super(key: key);
+  
   static const routeName = '/agreement';
   @override
   _AgreementPage createState() => _AgreementPage();
@@ -126,11 +128,14 @@ class _AgreementPage extends State<AgreementPage> {
                           },
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[Text('Cancel')],
+                            children: const <Widget>[Text('Cancel')],
                           ),
                         ),
                         RaisedButton(
-                          onPressed: () {
+                          onPressed: () async {
+                            //update User Here:
+                            signWaiver();
+                            
                             Navigator.push(
                               context,
                               MaterialPageRoute(
