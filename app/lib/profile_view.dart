@@ -7,6 +7,7 @@ import 'mock_data.dart';
 import 'models.dart';
 import 'requests.dart';
 import 'global_values.dart';
+import 'package:the_bike_kollective/login_functions.dart';
 
 // information/instructions: ProfileView is a template that will
 // conditionally render profileViewA or ProfileViewB. If property 
@@ -97,7 +98,7 @@ class ProfileViewA extends StatelessWidget {
                 CheckedOutBikeRow(checkedOutBike: checkedOutBike),
                 OutlinedButton(
                   onPressed: () {
-                    returnBike(bikeId);
+                    checkInBike(bikeId);
                     Navigator.pushNamed(context, ProfileView.routeName,);
                     debugPrint('Return Bike button clicked');
                   },
