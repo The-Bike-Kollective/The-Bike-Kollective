@@ -281,11 +281,14 @@ Future<User> getUser(userId) async {
 Future<Bike> getBike(String bikeId) async {
   String requestUrl = getGlobalUrl();
   requestUrl += '/bikes/$bikeId';
+  print('getBike() requestUrl: $requestUrl');
   final response = await http.get(
     Uri.parse(requestUrl),
     headers: getHeaders()
   );
   String responseBody = response.body;
+  
+  print('getBike() response body: $responseBody');
   var json = jsonDecode(responseBody);
   if (response.statusCode == 200) {
     print('Success: bike received');

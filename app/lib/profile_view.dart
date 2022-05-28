@@ -45,7 +45,7 @@ class _ProfileViewState extends State<ProfileView> {
             User userData = snapshot.data!;
             String checkedOutBike = userData.getCheckedOutBike();
             return (checkedOutBike == "-1") ? 
-              const ProfileViewB() : 
+              ProfileViewB(user: userData) : 
               ProfileViewA(
                 bikeId: userData.getCheckedOutBike(),
                 userGivenName: userData.getGivenName()
@@ -81,13 +81,17 @@ class ProfileViewA extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Future<Bike> bikeData = getBike(bikeId);
+    
     return FutureBuilder<Bike>(
       future: bikeData,
       builder: (context, AsyncSnapshot<Bike> snapshot) {
         if (snapshot.hasData) {
             Bike checkedOutBike = snapshot.data!;
-            String bikeName = snapshot.data!.getName();
-            String bikeId = snapshot.data!.getId();
+            String bikeName = checkedOutBike.getName();
+            String bikeId = checkedOutBike.getId();
+            int lockCombination = checkedOutBike.getLockCombination();
+            print('lock combo: $lockCombination');
+             print('bikeName: $bikeName');
             return Column(
               children:  [
                 Text('Welcome, $userGivenName!'),
@@ -95,6 +99,7 @@ class ProfileViewA extends StatelessWidget {
                 const Text('Bike Info:'),
                 Text('Bike Name: $bikeName'),
                 Text('Bike ID: $bikeId'),
+                Text('Lock Combination: $lockCombination'),
                 CheckedOutBikeRow(checkedOutBike: checkedOutBike),
                 OutlinedButton(
                   onPressed: () {
@@ -124,12 +129,12 @@ class ProfileViewA extends StatelessWidget {
 // 2. Preload the image
 // 3. Make the buttons functional
 class ProfileViewB extends StatelessWidget {
-  //final User user;
-  const ProfileViewB({ Key? key/*, required this.user*/ }) 
+  final User user;
+  const ProfileViewB({ Key? key, required this.user }) 
       : super(key: key);
   @override
   Widget build(BuildContext context) {
-     String currentUserGivenName = currentUser.getGivenName();
+    String currentUserGivenName = user.getGivenName();
     return Column(children: [
         Text('Welcome, $currentUserGivenName!'),
         OutlinedButton(

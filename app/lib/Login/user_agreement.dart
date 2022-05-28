@@ -132,7 +132,7 @@ class _AgreementPage extends State<AgreementPage> {
                           ),
                         ),
                         RaisedButton(
-                          onPressed: () async {
+                          onPressed: () {
                             //update User Here:
                             signWaiver();
                             
