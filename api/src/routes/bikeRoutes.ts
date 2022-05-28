@@ -250,7 +250,10 @@ router.get("/:id", async (req: Request, res: Response) => {
 
   let bikeObject=createBikeObjectfromDB(bikeFromDB[0])
 
-  bikeObject['lock_combination']=-99
+  //hide lock combination if requestor has not check out the bike
+  if(bikeObject['check_out_id']!=userFromDb[0]['identifier']){
+    bikeObject['lock_combination']=-99
+  }
   // hide checkout history
   bikeObject['check_out_history']=[]
   // hide rating history 

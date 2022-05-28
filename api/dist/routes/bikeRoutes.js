@@ -190,7 +190,10 @@ router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 .send({ message: "Multiple BIKE ERROR", access_token: access_token });
         }
         let bikeObject = createBikeObjectfromDB(bikeFromDB[0]);
-        bikeObject['lock_combination'] = -99;
+        //hide lock combination if requestor has not check out the bike
+        if (bikeObject['check_out_id'] != userFromDb[0]['identifier']) {
+            bikeObject['lock_combination'] = -99;
+        }
         // hide checkout history
         bikeObject['check_out_history'] = [];
         // hide rating history 
