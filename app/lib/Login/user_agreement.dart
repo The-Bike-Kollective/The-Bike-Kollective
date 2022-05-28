@@ -100,18 +100,20 @@ class _AgreementPage extends State<AgreementPage> {
                         ),
                         //ignore: unnecessary_new
                         Container(
-                            height: 150,
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black)),
-                            child: const SingleChildScrollView(
-                                scrollDirection: Axis.vertical,
-                                child: Center(
-                                  child: Text(
-                                    pdfText,
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                ))),
+                          height: 150,
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black)),
+                          child: const SingleChildScrollView(
+                              scrollDirection: Axis.vertical,
+                              child: Center(
+                                child: Text(
+                                  pdfText,
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              )
+                            )
+                        ),
 
                         const SizedBox(
                           height: 20,

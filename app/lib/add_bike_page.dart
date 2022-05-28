@@ -4,9 +4,10 @@ import 'models.dart';
 import 'MenuDrawer.dart';
 import 'requests.dart';
 import 'mock_data.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'global_values.dart';
+// import 'package:http/http.dart' as http;
+// import 'dart:convert';
+// import 'global_values.dart';
+import 'package:checkbox_formfield/checkbox_formfield.dart';
 
 // information/instructions: 
 // @params: 
@@ -81,6 +82,9 @@ class _AddBikeFormState extends State<AddBikeForm> {
   // and allows validation of the form.
   final _formKey = GlobalKey<FormState>();
   var bikeData = {};
+  bool? isChecked = false;
+  String releaseOfInterestFormText =
+    'If, God forbid, your bike is damaged, stolen, or goes missing, it sucks to be you. By checking this box, you are agreeing not to sue us.';
 
   @override
   Widget build(BuildContext context) {
@@ -89,6 +93,7 @@ class _AddBikeFormState extends State<AddBikeForm> {
       key: _formKey,
       child: Column(
         children: <Widget>[
+          // Bike Name Field
           TextFormField(
             // The validator receives the text that the user has entered.
             decoration: const InputDecoration(
@@ -106,11 +111,19 @@ class _AddBikeFormState extends State<AddBikeForm> {
               bikeData["name"] = value;
             },
           ),  
+          
+          // ADD DROPDOWNS HERE:
+
+          // Type Drop Down 
+          // Size Drop Down
+
+
+          // Lock Combination Field
           TextFormField(
             decoration: const InputDecoration(
               icon: Icon(Icons.lock),
               hintText: '[Enter the lock combination.]',
-              labelText: 'Lock Combintation',
+              labelText: 'Lock Combination',
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -122,6 +135,82 @@ class _AddBikeFormState extends State<AddBikeForm> {
               bikeData["lock_combination"] = int.parse(value!);
             },
           ),
+          
+          // Release Form
+          Text("Release of Interest",
+           style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 1.5)
+          ),
+
+          Container(
+            //height: 150,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.black),
+            ),
+            child: Text(releaseOfInterestFormText,
+              style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 1.25),
+            ),
+          ),
+            
+
+
+
+
+
+
+
+
+
+
+
+          //############################################################3
+
+          // CheckBox Agree to Release Form
+          CheckboxListTileFormField(
+            title: const Text('I Agree'),
+            onSaved: (bool? value) {
+              print(value);
+            },
+            validator: (bool? value) {
+              if (value == false ) {
+                return 'Required';
+              }
+              return null;
+            },
+            // onChanged: (value) {
+            //   if (value) {
+            //     print("ListTile Checked :)");
+            //   } else {
+            //     print("ListTile Not Checked :(");
+            //   }
+            // },
+            contentPadding: EdgeInsets.all(1),
+          ),
+                  // CheckboxIconFormField(
+                  //   context: context,
+                  //   initialValue: isChecked!,
+                  //   enabled: true,
+                  //   iconSize: 32,
+                  //   onSaved: (bool? value) {
+                  //     isChecked = value;
+                  //   },
+                  //   onChanged: (value) {
+                  //     if (value) {
+                  //       print("Icon Checked :)");
+                  //     } else {
+                  //       print("Icon Not Checked :(");
+                  //     }
+                  //   },
+                  // ),
+
+
+
+
+
+
+
+
+/////************************************************************************** */
           ElevatedButton(
             onPressed: () {
               // Validate returns true if the form is valid, or false otherwise.
