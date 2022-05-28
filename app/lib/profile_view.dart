@@ -99,7 +99,7 @@ class ProfileViewA extends StatelessWidget {
                 const Text('Bike Info:'),
                 Text('Bike Name: $bikeName'),
                 Text('Bike ID: $bikeId'),
-                Text('Lock Combination: $lockCombination'),
+                Text('Lock Combination: $CHECKED_OUT_BIKE_COMBO'),
                 CheckedOutBikeRow(checkedOutBike: checkedOutBike),
                 OutlinedButton(
                   onPressed: () {

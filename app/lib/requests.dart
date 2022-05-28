@@ -179,11 +179,14 @@ Future checkOutBike(bikeId) async {
   var responseJson = jsonDecode(response.body);
   
   if (response.statusCode == 201) {
-    print("success: ");
+    print("checkOutBike() success: ");
     print(responseJson['message']);
     // update access token
     String newAccessToken = responseJson['access_token'];
-    updateAccessToken(newAccessToken);    
+    updateAccessToken(newAccessToken); 
+    int newCombo = responseJson['lock_combination'];
+    print('new combo: $newCombo');
+    setCheckedOutBikeCombo(newCombo);  
   } 
 
   String message;
