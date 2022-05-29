@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:the_bike_kollective/Maps/maps_from_list.dart';
 import 'package:the_bike_kollective/global_values.dart';
 import 'package:the_bike_kollective/requests.dart';
 import 'models.dart';
@@ -7,6 +8,7 @@ import 'bike_list_view.dart';
 import 'Maps/googlemaps.dart';
 import 'requests.dart';
 import 'profile_view.dart';
+import 'package:the_bike_kollective/Maps/mapwidgets/bike_modal_bottom.dart';
 
 // information/instructions: Renders a detail view of an individual
 // bike, using data from a Bike(). The view is structured as a Column().
@@ -32,17 +34,35 @@ class BikeDetailView extends StatelessWidget {
           actions: <Widget>[
             IconButton(
               icon: const Icon(
-                Icons.map,
+                Icons.alt_route_rounded,
                 color: Colors.white,
               ),
               onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const MapsView()),
-                );
+                //_openBikeInfoDialog(bikeData);
+                  final result = showModalBottomSheet(
+                    context: context,
+                    backgroundColor: Colors.transparent,
+                    // isScrollControlled: true,
+                    builder: (_) {
+                      return BikeTrackDialog(
+                        bikeData: bikeData,
+                        onTrack: () {
+                          print("IN ON TRACK");
+                          // print(bikeData.lockCombination);
+                          print("BIKE DATWA");
+                          print(bikeData.name);
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MapsViewFromList(
+                                    destinationBike: bikeData)),
+                          );
+                        },
+                      );
                 debugPrint('Find Bike Near Me Clicked');
               },
-            )
+            );
+            })
           ],
         ),
         endDrawer: const MenuDrawer(),

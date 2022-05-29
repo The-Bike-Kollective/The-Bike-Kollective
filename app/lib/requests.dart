@@ -39,7 +39,7 @@ void test() async {
 // @return: none
 // bugs: no known bugs, but need to do some more testing
 Future<BikeListModel> getBikeList() async {
-  print('getBikeList()');
+  //print('getBikeList()');
   final response = await http.get(
     Uri.parse(getGlobalUrl()+ '/bikes'),
     headers: getHeaders()
@@ -47,10 +47,10 @@ Future<BikeListModel> getBikeList() async {
   print('status code' + response.statusCode.toString() );
   if (response.statusCode == 200) {
     print('Success with code 200: bike list received');
-    print('response body' + response.body);
+    //print('response body' + response.body);
     final responseJson = jsonDecode(response.body);
-    print('response json: ');
-    print(responseJson['bikes'].toString() );    
+   // print('response json: ');
+    //print(responseJson['bikes'].toString() );    
     BikeListModel currentBikes = BikeListModel();
     Bike newBike;
     var newBikeJson;
@@ -58,7 +58,7 @@ Future<BikeListModel> getBikeList() async {
     for(int i = 0; i < numBikes; i += 1) {
       newBikeJson = responseJson['bikes'][i];
       newBike = Bike.fromBikeList(newBikeJson);
-      print(newBike);
+      //print(newBike);
       currentBikes.addBike(newBike);
     }
     // update access token
@@ -289,7 +289,7 @@ Future<Bike> getBike(String bikeId) async {
   String responseBody = response.body;
   var json = jsonDecode(responseBody);
   if (response.statusCode == 200) {
-    print('Success: bike received');
+    //print('Success: bike received');
     Bike bikeData = Bike.fromJson(json);
     //update access token   
     updateAccessToken(bikeData.getAccessToken());
@@ -409,8 +409,8 @@ Future createBike(bikeData) async {
 
   print('createBike()');
   //TODO: create function to generate random location near OSU.
-  bikeData['location_long'] = 25;
-  bikeData['location_lat'] = -25;
+  //bikeData['location_long'] = 25;
+  //bikeData['location_lat'] = -25;
   //TODO: Users choose size and type.
   bikeData['size'] = 'size 2';
   bikeData['type'] = 'type 2';
