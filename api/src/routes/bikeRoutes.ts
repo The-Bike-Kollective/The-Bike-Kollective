@@ -768,7 +768,7 @@ router.delete(
 
     // 13. suspend user if passed limit
     let userSuspended = false;
-    if(checkoutObject.total_minutes>8*60){
+    if(checkoutObject.total_minutes>24*60){
       await changeUserSuspensionMoodeDB(userFromDb[0]['id'],true);
       userSuspended = true
     }
