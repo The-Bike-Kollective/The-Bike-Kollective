@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:firebase_dynamic_links/firebase_dynamic_links.dart';
 import 'package:get/get.dart';
 import 'package:the_bike_kollective/Login/helperfunctions.dart';
+import 'global_values.dart';
 
 
 
@@ -51,6 +52,9 @@ launchURLInApp() async {
       'client_id=701199836944-k9grqhb7tl30mm974iv62k6ge3ha2cqs.apps.googleusercontent.com&';
   
  final redirect_uri ='redirect_uri=http%3A%2F%2Fec2-35-166-192-222.us-west-2.compute.amazonaws.com%3A5000%2Fprofile&flowName=GeneralOAuthFlow';
+
+// use for backup server
+//String redirect_uri = backUpServerRedirectUri;
 
 
   final url = 'https://$host$path$access_type$prompt$scope$urlState$response_type$client_id$redirect_uri';

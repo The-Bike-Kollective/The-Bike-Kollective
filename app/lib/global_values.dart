@@ -17,7 +17,16 @@ const String cloudUrl2 =
 const String cloudUrl3 =
     "http://ec2-35-166-192-222.us-west-2.compute.amazonaws.com:5000";
 
+
+const String backUpServer = "http://ec2-34-213-186-200.us-west-2.compute.amazonaws.com:5000";
+
+//used in login functions if using the backup server
+final backUpServerRedirectUri ='redirect_uri=http%3A%2F%2Fec2-34-213-186-200.us-west-2.compute.amazonaws.com%3A5000%2Fprofile&flowName=GeneralOAuthFlow';
+
+
+
 const String globalUrl = cloudUrl3;
+
 
 //group API
 const String googleAPIKey = "AIzaSyD-HlsqR99_XmX5NM0Cy-1nEsau-FSwkgk";
