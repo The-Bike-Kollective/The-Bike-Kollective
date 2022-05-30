@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.bikeUpdateAvergaeRatingDB = exports.changeUserSuspensionMoodeDB = exports.addBikeToOwnerListDB = exports.userSignedWaiverDB = exports.bikeUpdateNotesDB = exports.bikeUpdateConditionDB = exports.bikeUpdateRatingHistoryDB = exports.bikeUpdateLocationDB = exports.userCheckInABikeDB = exports.updateAnExisitngCheckoutHistory = exports.findCheckoutRecordByID = exports.addCheckoutRecordToDB = exports.userCheckoutABikeDB = exports.updateAnExisitngBike = exports.findBikeByID = exports.getAllBikes = exports.addBiketoDB = exports.updateStateinDB = exports.findUserByState = exports.updateRefreshTokeninDB = exports.updateAccessTokeninDB = exports.findUserByAccessToekn = exports.findUserByID = exports.findUserByIdentifier = exports.addUsertoDB = exports.connectDB = void 0;
+exports.bikeUpdateActivenessDB = exports.bikeUpdateAvergaeRatingDB = exports.changeUserSuspensionMoodeDB = exports.addBikeToOwnerListDB = exports.userSignedWaiverDB = exports.bikeUpdateNotesDB = exports.bikeUpdateConditionDB = exports.bikeUpdateRatingHistoryDB = exports.bikeUpdateLocationDB = exports.userCheckInABikeDB = exports.updateAnExisitngCheckoutHistory = exports.findCheckoutRecordByID = exports.addCheckoutRecordToDB = exports.userCheckoutABikeDB = exports.updateAnExisitngBike = exports.findBikeByID = exports.getAllBikes = exports.addBiketoDB = exports.updateStateinDB = exports.findUserByState = exports.updateRefreshTokeninDB = exports.updateAccessTokeninDB = exports.findUserByAccessToekn = exports.findUserByID = exports.findUserByIdentifier = exports.addUsertoDB = exports.connectDB = void 0;
 const mongoose_1 = __importDefault(require("mongoose"));
 const index_1 = require("../index");
 let ObjectID = require("mongodb").ObjectID;
@@ -288,6 +288,13 @@ const bikeUpdateConditionDB = (bike_id, new_value) => __awaiter(void 0, void 0, 
     return true;
 });
 exports.bikeUpdateConditionDB = bikeUpdateConditionDB;
+const bikeUpdateActivenessDB = (bike_id, new_value) => __awaiter(void 0, void 0, void 0, function* () {
+    const result = yield Bike.updateOne({ _id: new ObjectID(bike_id) }, { $set: { active: new_value } });
+    console.log(`bikeUpdateActivenessDB updated`);
+    console.log(result);
+    return true;
+});
+exports.bikeUpdateActivenessDB = bikeUpdateActivenessDB;
 const bikeUpdateNotesDB = (bike_id, new_value) => __awaiter(void 0, void 0, void 0, function* () {
     const result = yield Bike.updateOne({ _id: new ObjectID(bike_id) }, { $set: { notes: new_value } });
     console.log(`bikeUpdateNotesDB updated`);
