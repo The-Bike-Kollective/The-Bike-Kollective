@@ -154,6 +154,7 @@ class Bike {
   String getId() => id;
   String getCheckOutId() => checkOutId;
   String getAccessToken() => accessToken;
+  int getLockCombination() => lockCombination;
 
   //methods
   Map<String, dynamic> toJson() => {

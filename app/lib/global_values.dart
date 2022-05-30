@@ -54,27 +54,31 @@ those within Oregon State University and alumni, unless provided by David, Ali a
 
 String? ACCESS_TOKEN;
 String? CURRENT_USER_IDENTIFIER;
-bool isLoggedIn = false;
-String? CHECKED_OUT_BIKE;
+int? CHECKED_OUT_BIKE_COMBO;
 
-void setCheckedOutBike(String bikeId) {
-  CHECKED_OUT_BIKE = bikeId;
-}
+// void setCheckedOutBike(String bikeId) {
+//   CHECKED_OUT_BIKE = bikeId;
+// }
 
-String? getCheckedOutBike() => CHECKED_OUT_BIKE;
-bool isLoggedInGetter() => isLoggedIn;
-void setLoginStatus(bool status) {
-  isLoggedIn = status;
-}
+//String? getCheckedOutBike() => CHECKED_OUT_BIKE;
+//bool isLoggedInGetter() => isLoggedIn;
+// void setLoginStatus(bool status) {
+//   isLoggedIn = status;
+// }
+//bool isLoggedIn = false;
+//String? CHECKED_OUT_BIKE;
 
+//void setCheckedOutBike(String bikeId) {CHECKED_OUT_BIKE = bikeId;}
+//String? getCheckedOutBike() => CHECKED_OUT_BIKE;
+//bool isLoggedInGetter() => isLoggedIn;
+//void setLoginStatus(bool status) {isLoggedIn = status;} 
+int? getCheckedOutBikeCombo() => CHECKED_OUT_BIKE_COMBO;
+void setCheckedOutBikeCombo(int newCombo) { CHECKED_OUT_BIKE_COMBO = newCombo;}
 String? getAccessToken() => ACCESS_TOKEN;
-void updateAccessToken(String? newToken) {
-  ACCESS_TOKEN = newToken!;
-}
-
+void updateAccessToken(String? newToken) {ACCESS_TOKEN = newToken!;}
 String? getCurrentUserIdentifier() => CURRENT_USER_IDENTIFIER;
-void updateCurrentUserIdentifier(newId) {
-  CURRENT_USER_IDENTIFIER = newId;
-}
-
+void updateCurrentUserIdentifier(newId) {CURRENT_USER_IDENTIFIER= newId;}
 String getGlobalUrl() => globalUrl;
+
+
+

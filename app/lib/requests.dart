@@ -101,7 +101,6 @@ Future<BikeListModel> getBikeList() async {
 // bugs: no known bugs, but need to do some more testing
 Future<String> getImageDownloadLink(fileStringBase64) async {
   String requestBody = '{"image": "' + fileStringBase64 +'"}';
-  
   final response = await http.post(
       //Uri.parse("http://10.0.2.2:5000/bikes"), // use when not using emulator
     Uri.parse(getGlobalUrl() + '/images'),// use whn using emulator
@@ -180,11 +179,14 @@ Future checkOutBike(bikeId) async {
   var responseJson = jsonDecode(response.body);
   
   if (response.statusCode == 201) {
-    print("success: ");
+    print("checkOutBike() success: ");
     print(responseJson['message']);
     // update access token
     String newAccessToken = responseJson['access_token'];
-    updateAccessToken(newAccessToken);    
+    updateAccessToken(newAccessToken); 
+    int newCombo = responseJson['lock_combination'];
+    print('new combo: $newCombo');
+    setCheckedOutBikeCombo(newCombo);  
   } 
 
   String message;
@@ -282,11 +284,14 @@ Future<User> getUser(userId) async {
 Future<Bike> getBike(String bikeId) async {
   String requestUrl = getGlobalUrl();
   requestUrl += '/bikes/$bikeId';
+  print('getBike() requestUrl: $requestUrl');
   final response = await http.get(
     Uri.parse(requestUrl),
     headers: getHeaders()
   );
   String responseBody = response.body;
+  
+  print('getBike() response body: $responseBody');
   var json = jsonDecode(responseBody);
   if (response.statusCode == 200) {
     //print('Success: bike received');
@@ -499,4 +504,61 @@ void postState(context) async {
     // show error
     print("Try Again");
   }
+}
+
+
+
+Future signWaiver() async {
+  print("signWaiver()");
+  String requestUrl = getGlobalUrl();
+  String? currentUserIdentifier =  getCurrentUserIdentifier();
+  requestUrl += '/users/waiver/$currentUserIdentifier';
+  print('signWaiver() requestUrl: ' + requestUrl);
+
+  final response = await http.post(
+    Uri.parse(requestUrl),
+    headers: getHeaders()
+  );
+  var responseJson = jsonDecode(response.body);
+  print('signWaiver() response.statusCode: ' + response.statusCode.toString());
+  print('signWaiver() reponse.body: ' + response.body);
+  if (response.statusCode == 200) {
+    print(responseJson['message']);
+    //User userData = User.fromJson(responseJson);    
+    // update access token
+    updateAccessToken(responseJson['access_token']);
+    //return userData;
+    return;
+  } 
+
+  String message = "Error while signing waiver.";
+  switch(response.statusCode) {
+    case 404: { 
+      launchURLInApp();
+      message = responseJson['message'];
+      break;
+    }
+    case 401: {
+      launchURLInApp();
+      message = responseJson['message'];
+      break;
+    }
+    case 403: {
+      launchURLInApp();
+      message = responseJson['message'];
+      break;
+    }
+    
+    case 500: {
+       message = responseJson['message'];
+      break;
+    }
+
+    default: {
+      throw Exception(message);
+    }
+
+  }
+ 
+
 }

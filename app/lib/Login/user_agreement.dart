@@ -2,7 +2,8 @@ import 'package:the_bike_kollective/global_values.dart';
 import 'package:the_bike_kollective/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:the_bike_kollective/profile_view.dart';
-import 'package:the_bike_kollective/global_values.dart';
+//import 'package:the_bike_kollective/global_values.dart';
+import 'package:the_bike_kollective/requests.dart';
 //import 'package:the_bike_kollective/models.dart';
 //import 'package:the_bike_kollective/Login/spash_screen.dart';
 // import 'package:the_bike_kollective/access_token.dart';
@@ -23,7 +24,8 @@ import 'package:the_bike_kollective/global_values.dart';
 const String pdfText = userAgreement;
 
 class AgreementPage extends StatefulWidget {
-  //const AgreementPage({Key? key}) : super(key: key);
+  const AgreementPage({Key? key}) : super(key: key);
+  
   static const routeName = '/agreement';
   @override
   _AgreementPage createState() => _AgreementPage();
@@ -88,18 +90,20 @@ class _AgreementPage extends State<AgreementPage> {
                         ),
                         //ignore: unnecessary_new
                         Container(
-                            height: 150,
-                            padding: const EdgeInsets.all(10),
-                            decoration: BoxDecoration(
-                                border: Border.all(color: Colors.black)),
-                            child: const SingleChildScrollView(
-                                scrollDirection: Axis.vertical,
-                                child: Center(
-                                  child: Text(
-                                    pdfText,
-                                    style: TextStyle(fontSize: 20),
-                                  ),
-                                ))),
+                          height: 150,
+                          padding: const EdgeInsets.all(10),
+                          decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black)),
+                          child: const SingleChildScrollView(
+                              scrollDirection: Axis.vertical,
+                              child: Center(
+                                child: Text(
+                                  pdfText,
+                                  style: TextStyle(fontSize: 20),
+                                ),
+                              )
+                            )
+                        ),
 
                         const SizedBox(
                           height: 20,
@@ -116,11 +120,14 @@ class _AgreementPage extends State<AgreementPage> {
                           },
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[Text('Cancel')],
+                            children: const <Widget>[Text('Cancel')],
                           ),
                         ),
                         RaisedButton(
                           onPressed: () {
+                            //update User Here:
+                            signWaiver();
+                            
                             Navigator.push(
                               context,
                               MaterialPageRoute(

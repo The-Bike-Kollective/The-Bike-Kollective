@@ -13,13 +13,19 @@ import 'Login/user_agreement.dart';
 import 'Login/spash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'dart:async';
+import 'Maps/map_functions.dart';
 
 Future<void> main() async {
-  fillMockList();
-  print(mockList.bikes[0].name);
+  for(int i = 0; i < 10; i+=1) {
+    print(generateCoordinates());
+  }
+  
+  
+  // fillMockList();
+  // print(mockList.bikes[0].name);
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(MainPage());
+  runApp(const MainPage());
 }
 
 // information/instructions: Flutter Widget, renders the MainScreen

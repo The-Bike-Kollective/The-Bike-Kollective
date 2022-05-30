@@ -53,6 +53,7 @@ dependencies:
   firebase_core: ^1.16.0
   json_serializable: ^6.2.0
   json_annotation: ^4.5.0
+  checkbox_formfield: ^0.2.0
 
 
 
@@ -60,8 +61,8 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   build_runner: ^2.1.11
-  json_serializable: ^6.2.0
- 
+  
+  # json_serializable: ^6.2.0
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
