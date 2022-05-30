@@ -1,6 +1,3 @@
-import 'dart:convert';
-import 'package:json_annotation/json_annotation.dart';
-
 // information/instructions: This is a model of the user object on
 // on the database.  
 // @params: no params
@@ -86,17 +83,12 @@ class User {
 }
 
 
-// information/instructions:This is just a stub for the model. It is here
-// so the bike views can be rendered conditionally, depending
-// whether the property checkOut is true or false.  
+// information/instructions: Bike model 
 // @params: no params
 // @return: nothing returned
 // bugs: no known bugs
 // TODO: 
-// 1. complete the model, making sure that it matches the back end, 
-// with all the same properties and datatypes.
-// 2. number 1 is mostly complete, but need to check on some of the 
-// attributes, like arrays and dateTime, to make sure they will correspond.
+// 1. Figure out what to do with date/time.
 class Bike {
   late bool active;
   List checkOutHistory = [];
@@ -110,9 +102,9 @@ class Bike {
   num locationLong;
   int lockCombination;
   String name;
-  List notes = [];
+  List<dynamic> notes = [];
   late String ownerId;
-  late num rating;
+  num rating;
   List ratingHistory = [];
   List checkoutHistory = [];
   String accessToken;
@@ -121,18 +113,18 @@ class Bike {
         this.locationLat = -1.0,
         this.locationLong = -1.0,
         this.lockCombination = -1,
-        this.rating = -1, 
+        this.rating = -1.0, 
         this.dateAdded = -1, 
         this.active = true, 
         this.condition = true, 
         this.ownerId = "-1", 
-        //this.notes = L, 
+        required this.notes , 
         //this.ratingHistory, 
         this.checkOutTime = 1, 
         //this.checkOutHistory,
         this.checkOutId = '-1', 
         this.id = "-1",
-        this.accessToken = "-1"
+        this.accessToken = "-1", 
 
 
   });
@@ -143,54 +135,40 @@ class Bike {
   addNote(String note) { notes.add(note); }
   setCheckOutId(String id) { checkOutId = '-1'; }
   setName(String newName) { name = newName;}
-  setRating(num rating) {rating = rating;}
+  setRating(double rating) {rating = rating;}
   setImageUrl(String url) {imageUrl = imageUrl;}
   setId(String newId) {id = newId;}
 
   //getters
   String getName() => name;
-  num getRating() => rating;
   String getImageUrl() => imageUrl;
   String getId() => id;
   String getCheckOutId() => checkOutId;
   String getAccessToken() => accessToken;
   int getLockCombination() => lockCombination;
+  num getAverageRating() => rating;
+  List getNotes() => notes;
+  
 
   //methods
   Map<String, dynamic> toJson() => {
-        'name': name,
-        'id': id,
-        'dateAdded': dateAdded,
-        'image': imageUrl, 
-        'active': active,
-        'condition': condition,
-        'owner_id': ownerId,
-        'lock_combination': lockCombination,
-        'notes': notes,
-        'rating': rating,
-        'rating_history': ratingHistory,
-        'location_long': locationLong,
-        'location_lat' : locationLat,
-        'check_out_time': checkOutTime,
-        'check_out_history': checkOutHistory,
-        'check_out_id' : checkOutId
+    'name': name,
+    'id': id,
+    'dateAdded': dateAdded,
+    'image': imageUrl, 
+    'active': active,
+    'condition': condition,
+    'owner_id': ownerId,
+    'lock_combination': lockCombination,
+    'notes': notes,
+    'rating': rating,
+    'rating_history': ratingHistory,
+    'location_long': locationLong,
+    'location_lat' : locationLat,
+    'check_out_time': checkOutTime,
+    'check_out_history': checkOutHistory,
+    'check_out_id' : checkOutId
   };
-  // example of response from request post /bikes
-//   {date_added: 1652064108174, 
-//    image: default_image_string, 
-//    active: true, 
-//    condition: true, 
-//    owner_id: 6276bb56da39b8d8d54b7477, 
-//    lock_combination: 223344, 
-//    notes: [], 
-//    rating: 0, 
-//    rating_history: [], 
-//    location_long: 25,
-//    location_lat: -25, 
-//    check_out_id: -1, 
-//    check_out_history: [], 
-//    id: 62787f6cfdbef47fca400805}
-
 
   factory Bike.fromBikeList(Map<String, dynamic> json) {
     return Bike(      
@@ -202,8 +180,8 @@ class Bike {
       condition: json['condition'] as bool,
       ownerId: json['owner_id'] as String,
       lockCombination: json['lock_combination'] as int,
-      //notes: json['notes'] as List<dynamic>,
-      rating: json['rating'] as num,
+      notes: (json['notes'] != null) ? json['notes'] : [],
+      rating: double.parse(json['rating'].toString()),// as double,
       //ratingHistory: json['rating_history'] as List<dynamic>,
       locationLong: json['location_long'] as num,
       locationLat: json['location_lat'] as num,
@@ -215,28 +193,28 @@ class Bike {
 
   }
 
-    factory Bike.fromJson(Map<String, dynamic> json) {
-      return Bike(      
-        name: json['bike']['name'] as String,
-        id: json['bike']['id'] as String,
-        dateAdded: json['bike']['date_added'] as int,
-        imageUrl: json['bike']['image'] as String, 
-        active: json['bike']['active'] as bool,
-        condition: json['bike']['condition'] as bool,
-        ownerId: json['bike']['owner_id'] as String,
-        lockCombination: json['bike']['lock_combination'] as int,
-        //notes: json['notes'] as List<dynamic>,
-        rating: json['bike']['rating'] as num,
-        //ratingHistory: json['rating_history'] as List<dynamic>,
-        locationLong: json['bike']['location_long'] as num,
-        locationLat: json['bike']['location_lat'] as num,
-        checkOutId: json['bike']['check_out_id'] as String,
-        checkOutTime: json['bike']['check_out_time'] as int,
-        accessToken: json['access_token'] as String
-        //checkOutHistory: json['check_out_history'] as List<dynamic>
-      );
-  }
-    
+  factory Bike.fromJson(Map<String, dynamic> json) {
+    return Bike(      
+      name: json['bike']['name'] as String,
+      id: json['bike']['id'] as String,
+      dateAdded: json['bike']['date_added'] as int,
+      imageUrl: json['bike']['image'] as String, 
+      active: json['bike']['active'] as bool,
+      condition: json['bike']['condition'] as bool,
+      ownerId: json['bike']['owner_id'] as String,
+      lockCombination: json['bike']['lock_combination'] as int,
+      // problem with next line
+      notes: (json['notes'] != null) ? json['notes'] : [],
+      rating: json['bike']['rating'],// as double,
+      //ratingHistory: json['rating_history'] as List<dynamic>,
+      locationLong: json['bike']['location_long'] as num,
+      locationLat: json['bike']['location_lat'] as num,
+      checkOutId: json['bike']['check_out_id'] as String,
+      checkOutTime: json['bike']['check_out_time'] as int,
+      accessToken: json['access_token'] as String
+      //checkOutHistory: json['check_out_history'] as List<dynamic>
+    );
+  }    
 }
 
 // information/instructions: The BikeListView() widget takes 
@@ -267,43 +245,5 @@ class BikeListModel {
     return BikeListModel(
       bikes: json['bikes'] as List,
     );
-  }
-
-  // factory BikeListModel.withBikeList(List<String> initialList) {
-  //   var newBike;
-  //   for(num i=0; i<initialList.length; i += 1) {
-  //     newBike = Bike.fromJson(newBike);
-  //     bikes.add(newBike);
-  //   }
-
-  // }
-  
+  } 
 }
-    //print('decoding json');
-    //Map<String, dynamic> json = jsonDecode(data);
-    //print(json['bikes'][0]);
-    //return BikeListModel();
-    //dataString.then((asString){
-    // print(dataString);
-    // final asList = dataString.split("},");    /// split string into a list 
-    // int listLength = asList.length;
-    // asList[0] = asList[0].substring(1);     // remove opening bracket '[' from first item  
-    // int lastItemLength = asList[listLength-1].length;
-    // // remove closing bracked ']' from last item
-    // asList[listLength-1] = asList[listLength-1].substring(0,lastItemLength-1);  
-    // // add each item from the list to bikes as a bike object
-    // for(int i = 0; i< listLength; i+= 1) {
-    //   if(i != listLength-1) {
-    //     asList[i] = asList[i] + '}';
-    //   }
-      
-     // var itemAsJson = jsonDecode(asList[i]);
-      // convert string to bike object
-      //Bike newBike = Bike.fromJson(itemAsJson);
-      //addBike(newBike);
-      //print(asList[i]);
-//     }
-//   }
-// }  
-
-

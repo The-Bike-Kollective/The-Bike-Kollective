@@ -51,7 +51,6 @@ those within Oregon State University and alumni, unless provided by David, Ali a
 
 //global variable where front-end can access access toke
 //for every post/get request to back-end
-
 String? ACCESS_TOKEN;
 String? CURRENT_USER_IDENTIFIER;
 int? CHECKED_OUT_BIKE_COMBO;
@@ -67,11 +66,10 @@ int? CHECKED_OUT_BIKE_COMBO;
 // }
 //bool isLoggedIn = false;
 //String? CHECKED_OUT_BIKE;
+String? CHECKED_OUT_BIKE;
 
-//void setCheckedOutBike(String bikeId) {CHECKED_OUT_BIKE = bikeId;}
-//String? getCheckedOutBike() => CHECKED_OUT_BIKE;
-//bool isLoggedInGetter() => isLoggedIn;
-//void setLoginStatus(bool status) {isLoggedIn = status;} 
+void setCheckedOutBike(String bikeId) {CHECKED_OUT_BIKE = bikeId;}
+String? getCheckedOutBike() => CHECKED_OUT_BIKE;
 int? getCheckedOutBikeCombo() => CHECKED_OUT_BIKE_COMBO;
 void setCheckedOutBikeCombo(int newCombo) { CHECKED_OUT_BIKE_COMBO = newCombo;}
 String? getAccessToken() => ACCESS_TOKEN;
@@ -79,6 +77,3 @@ void updateAccessToken(String? newToken) {ACCESS_TOKEN = newToken!;}
 String? getCurrentUserIdentifier() => CURRENT_USER_IDENTIFIER;
 void updateCurrentUserIdentifier(newId) {CURRENT_USER_IDENTIFIER= newId;}
 String getGlobalUrl() => globalUrl;
-
-
-

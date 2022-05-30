@@ -54,6 +54,8 @@ dependencies:
   json_serializable: ^6.2.0
   json_annotation: ^4.5.0
   checkbox_formfield: ^0.2.0
+  shared_preferences: ^2.0.15
+  flutter_rating_bar: ^4.0.1
 
 
 

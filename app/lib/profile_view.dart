@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
 //import 'package:the_bike_kollective/access_token.dart';
 import 'package:the_bike_kollective/bike_list_view.dart';
+import 'package:the_bike_kollective/return-bike-form.dart';
 import 'package:the_bike_kollective/get-photo.dart';
 import 'package:the_bike_kollective/global_values.dart';
-import 'mock_data.dart';
 import 'models.dart';
 import 'requests.dart';
 import 'global_values.dart';
-import 'package:the_bike_kollective/login_functions.dart';
+
 
 // information/instructions: ProfileView is a template that will
 // conditionally render profileViewA or ProfileViewB. If property 
@@ -29,6 +29,12 @@ class ProfileView extends StatefulWidget {
 
 // This is the state class that is used by ProfileViewState.
 class _ProfileViewState extends State<ProfileView> {
+  
+  @override
+  void initState() {
+    super.initState();
+  }
+
   Future<User> user = 
     getUser(getCurrentUserIdentifier() );
   
@@ -48,7 +54,7 @@ class _ProfileViewState extends State<ProfileView> {
               ProfileViewB(user: userData) : 
               ProfileViewA(
                 bikeId: userData.getCheckedOutBike(),
-                userGivenName: userData.getGivenName()
+                userGivenName: userData.getGivenName(),
               );
           } else {
             return const CircularProgressIndicator();
@@ -81,7 +87,7 @@ class ProfileViewA extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Future<Bike> bikeData = getBike(bikeId);
-    
+
     return FutureBuilder<Bike>(
       future: bikeData,
       builder: (context, AsyncSnapshot<Bike> snapshot) {
@@ -89,9 +95,8 @@ class ProfileViewA extends StatelessWidget {
             Bike checkedOutBike = snapshot.data!;
             String bikeName = checkedOutBike.getName();
             String bikeId = checkedOutBike.getId();
-            int lockCombination = checkedOutBike.getLockCombination();
-            print('lock combo: $lockCombination');
-             print('bikeName: $bikeName');
+            setCheckedOutBike(bikeId);
+            int bikeCombo = checkedOutBike.getLockCombination();
             return Column(
               children:  [
                 Text('Welcome, $userGivenName!'),
@@ -99,12 +104,11 @@ class ProfileViewA extends StatelessWidget {
                 const Text('Bike Info:'),
                 Text('Bike Name: $bikeName'),
                 Text('Bike ID: $bikeId'),
-                Text('Lock Combination: $CHECKED_OUT_BIKE_COMBO'),
+                Text('Lock Combination: $bikeCombo'),
                 CheckedOutBikeRow(checkedOutBike: checkedOutBike),
                 OutlinedButton(
                   onPressed: () {
-                    checkInBike(bikeId);
-                    Navigator.pushNamed(context, ProfileView.routeName,);
+                    Navigator.pushNamed(context, ReturnBikeForm.routeName,);
                     debugPrint('Return Bike button clicked');
                   },
                   child: const Text('Return Bike'),
@@ -169,7 +173,7 @@ class ProfileViewB extends StatelessWidget {
 // checked out
 // bugs: no known bugs
 // TODO: 
-// 
+// 1. Calculate how much time is left.
 class CheckedOutBikeRow extends StatelessWidget {
   final Bike checkedOutBike;
   const CheckedOutBikeRow({ Key? key,
@@ -185,7 +189,6 @@ class CheckedOutBikeRow extends StatelessWidget {
           width: 200,
           fit:BoxFit.cover  
         ),
-        // TODO: calculate how much time is left.
         const Text('Due Back in 22 Minutes')
       ],      
     );

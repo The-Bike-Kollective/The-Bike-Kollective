@@ -5,24 +5,16 @@ import 'package:the_bike_kollective/get-photo.dart';
 import 'add_bike_page.dart';
 import 'package:the_bike_kollective/bike_list_view.dart';
 import 'home_view.dart';
-//import 'models.dart';
-import 'mock_data.dart';
 import 'profile_view.dart';
 import 'bike_list_view.dart';
 import 'Login/user_agreement.dart';
 import 'Login/spash_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'dart:async';
-import 'Maps/map_functions.dart';
+import 'return-bike-form.dart';
 
 Future<void> main() async {
-  for(int i = 0; i < 10; i+=1) {
-    print(generateCoordinates());
-  }
   
-  
-  // fillMockList();
-  // print(mockList.bikes[0].name);
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(const MainPage());
@@ -36,6 +28,10 @@ Future<void> main() async {
 // bugs: no known bugs
 // TODO: Fill in themeData info.
 
+
+///  WE MIGHT BE ABLE TO DELETE THIS, AND JUST HAVE THE MAIN FUNCTION
+///  GO TO APP INSTEAD, BUT I LET IT IN CASE THAT'S WRONG. I THINK IT MIGHT
+///  JUST BE A VESTIGE THAT IS NO LONGER NEEDED, LIKE THE APPENDIX.
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
 
@@ -59,10 +55,11 @@ class App extends State<MainPage> {
         ProfileView.routeName: (context) => const ProfileView(),
         BikeListView.routeName: (context) => const BikeListView(),
         '/spash-screen': (context) => const SplashScreen(),
+        ReturnBikeForm.routeName: (context) => ReturnBikeForm(),
         // user is directed to agreement page if first time making account
         AgreementPage.routeName: (context) => AgreementPage(),
         GetPhoto.routeName: (context) => const GetPhoto(),
-        AddBikePage.routeName: (context) => const AddBikePage(),
+        AddBikePage.routeName: (context) => AddBikePage(),
         LoginPage.routeName: (context) => const LoginPage()
       },
     );

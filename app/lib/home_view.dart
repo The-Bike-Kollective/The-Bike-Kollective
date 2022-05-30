@@ -1,13 +1,6 @@
 import 'package:flutter/material.dart';
-//import 'profile_view.dart';
-//import 'package:the_bike_kollective/profile_view.dart';
 import 'MenuDrawer.dart';
-//import 'models.dart';
 import 'Login/login_page.dart';
-//import 'main.dart';
-//import 'Login/user_agreement.dart';
-//import 'Login/spash_screen.dart';
-//import 'requests.dart';
 
 // information/instructions: Flutter Widget; This is the home view, when the
 //user first opesn the app and is not signed in.
@@ -36,11 +29,6 @@ class HomeView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
-            //This is just a placeholder image for now. We can change
-            // if we want to. We can use network images from a URL, but
-            // there is a step to allow cross-origin requests, and
-            // I can't remember what I did before, so for now I am using
-            // an asset image.
             Image.asset('assets/bikes.png'),
             Text(aboutUs),
             const HomeButtonGroup()
@@ -66,11 +54,6 @@ class HomeButtonGroup extends StatelessWidget {
       children: [
         OutlinedButton(
           onPressed: () {
-            //createBikeTest();
-            // This was copied in pasted from the docs. Debug print
-            // prints the message to the console. All the buttons work
-            // so we know this is where we put the code to do whatever
-            // we want this button to do.
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const LoginPage()),
@@ -100,10 +83,4 @@ class HomeButtonGroup extends StatelessWidget {
       ],
     );
   }
-}
-
-
-void goToLogin(goNext) {
-
-
 }

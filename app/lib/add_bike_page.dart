@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:the_bike_kollective/global_values.dart';
 import 'package:the_bike_kollective/profile_view.dart';
 import 'models.dart';
 import 'MenuDrawer.dart';
@@ -39,25 +40,42 @@ class BikeFormArgument {
 // @params: User
 // @return: Page with form.
 // bugs: no known bugs
+// TODO: 
+// 1. Clean up code, remove unused unneeded comments:
 class AddBikePage extends StatelessWidget {
-  const AddBikePage({
+  AddBikePage({
     Key? key,
     /*required this.user*/
   }) : super(key: key);
   //final User user;
   static const routeName = '/new-bike-form';
+  final Future<User> currentUser = getUser(getCurrentUserIdentifier());
+
   @override
-  Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as BikeFormArgument;
-    return Scaffold(
+  Widget build(BuildContext context){
+    final args = ModalRoute.of(context)!
+    .settings.arguments as BikeFormArgument;
+    return Scaffold( 
         appBar: AppBar(
           title: const Text('The Bike Kollective'),
           leading:
               (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
         ),
         endDrawer: const MenuDrawer(),
-        body: AddBikeForm(
-            user: currentUser, imageStringBase64: args.imageStringBase64));
+        body: FutureBuilder(
+          future: currentUser,
+          builder: (context, AsyncSnapshot<User> snapshot) {
+            if (snapshot.hasData) {
+              return  AddBikeForm(
+                user: snapshot.data!, 
+                imageStringBase64: args.imageStringBase64
+              );
+            } else {
+              return const CircularProgressIndicator();
+            }
+          }
+        )
+    );
   }
 }
 
@@ -124,7 +142,6 @@ class _AddBikeFormState extends State<AddBikeForm> {
           // Type Drop Down 
           // Size Drop Down
 
-
           // Lock Combination Field
           TextFormField(
             decoration: const InputDecoration(
@@ -175,19 +192,6 @@ class _AddBikeFormState extends State<AddBikeForm> {
             ),
           ),
             
-
-
-
-
-
-
-
-
-
-
-
-          //############################################################3
-
           // CheckBox Agree to Release Form
           CheckboxListTileFormField(
             title: const Text('I Agree'),
@@ -200,40 +204,10 @@ class _AddBikeFormState extends State<AddBikeForm> {
               }
               return null;
             },
-            // onChanged: (value) {
-            //   if (value) {
-            //     print("ListTile Checked :)");
-            //   } else {
-            //     print("ListTile Not Checked :(");
-            //   }
-            // },
+            
             contentPadding: EdgeInsets.all(1),
           ),
-                  // CheckboxIconFormField(
-                  //   context: context,
-                  //   initialValue: isChecked!,
-                  //   enabled: true,
-                  //   iconSize: 32,
-                  //   onSaved: (bool? value) {
-                  //     isChecked = value;
-                  //   },
-                  //   onChanged: (value) {
-                  //     if (value) {
-                  //       print("Icon Checked :)");
-                  //     } else {
-                  //       print("Icon Not Checked :(");
-                  //     }
-                  //   },
-                  // ),
-
-
-
-
-
-
-
-
-/////************************************************************************** */
+                 
           ElevatedButton(
             onPressed: () {
               // Validate returns true if the form is valid, or false otherwise.
