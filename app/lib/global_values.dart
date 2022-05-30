@@ -25,7 +25,7 @@ final backUpServerRedirectUri ='redirect_uri=http%3A%2F%2Fec2-34-213-186-200.us-
 
 
 
-const String globalUrl = cloudUrl3;
+const String globalUrl = backUpServer;
 
 
 //group API
