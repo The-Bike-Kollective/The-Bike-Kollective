@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:the_bike_kollective/global_values.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:the_bike_kollective/requests.dart';
 import 'models.dart';
 import 'MenuDrawer.dart';
-import 'bike_list_view.dart';
 import 'Maps/googlemaps.dart';
 import 'requests.dart';
 import 'profile_view.dart';
+
 
 // information/instructions: Renders a detail view of an individual
 // bike, using data from a Bike(). The view is structured as a Column().
@@ -28,7 +28,7 @@ class BikeDetailView extends StatelessWidget {
     return Scaffold(
         appBar: AppBar(
           title: const Text('Bike Details'),
-          leading: (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
+          leading: (ModalRoute.of(context)?.canPop ?? false) ? const BackButton() : null,
           actions: <Widget>[
             IconButton(
               icon: const Icon(
@@ -55,10 +55,11 @@ class BikeDetailView extends StatelessWidget {
               style: TextStyle(fontSize: 28),
             ),
             NoteList(
-              bikeData: bikeData,
+              notes: bikeData.getNotes(),
             )
           ],
-        ));
+        )
+      );
   }
 }
 
@@ -80,12 +81,12 @@ class BikeDetailView extends StatelessWidget {
 class BikeDetailTopRow extends StatelessWidget {
   final Bike bikeData;
   const BikeDetailTopRow({Key? key, required this.bikeData}) : super(key: key);
-
+   
   @override
   Widget build(BuildContext context) {
     String bikeImageUrl = bikeData.getImageUrl();
     String bikeNameString = bikeData.getName();
-    num bikeRating = bikeData.getRating();
+    num bikeRating = bikeData.getAverageRating();
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -93,20 +94,28 @@ class BikeDetailTopRow extends StatelessWidget {
         Column(
           mainAxisAlignment: MainAxisAlignment.end,
           crossAxisAlignment: CrossAxisAlignment.end,
-          children: 
-            [Text(bikeNameString), 
-            RatingStars(rating: bikeRating),
-              OutlinedButton(
-                onPressed: () {
-                  debugPrint('checkout Bike button clicked');
-                 
-                  Future bikeCheckout = checkOutBike(bikeData.getId() );
-                  Navigator.pushNamed(context, ProfileView.routeName);
-                 
-                },
-                child: const Text('Check Out'),
+          children: [
+            Text(bikeNameString), 
+            //RatingStars(rating: bikeRating),
+            RatingBarIndicator(
+              rating: bikeRating.toDouble(),
+              itemBuilder: (context, index) => const Icon(
+                  Icons.star,
+                  color: Colors.amber,
               ),
-            ],
+              itemCount: 5,
+              itemSize: 25.0,
+              direction: Axis.horizontal,
+            ),
+            OutlinedButton(
+              onPressed: () async {
+                debugPrint('checkout Bike button clicked');
+                checkOutBike(bikeData.getId() );
+                Navigator.pushNamed(context, ProfileView.routeName);
+              },
+              child: const Text('Check Out'),
+            ),
+          ],
         )
       ],
     );
@@ -125,8 +134,8 @@ class BikeDetailTopRow extends StatelessWidget {
 //  any notes at the moment. I'll look into that on the next PR.
 // 3.
 class NoteList extends StatelessWidget {
-  final Bike bikeData;
-  const NoteList({Key? key, required this.bikeData}) : super(key: key);
+  final List notes;
+  const NoteList({Key? key, required this.notes}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -135,9 +144,9 @@ class NoteList extends StatelessWidget {
         padding: const EdgeInsets.all(10),
           child: SizedBox(
             child: ListView.builder(
-              itemCount: bikeData.notes.length,
+              itemCount: notes.length,
               itemBuilder: (context,i) {
-                return NoteTile(note: bikeData.notes[i]);
+                return NoteTile(note: notes[i]['note_body']);
               }
             )
           )
@@ -155,14 +164,13 @@ class NoteList extends StatelessWidget {
 // 1. Create a Note model that contains the text, author, date.
 // right now it's just a String, but probably will need more detail
 // than that.
-// 2.
-// 3.
 class NoteTile extends StatelessWidget {
   final String note;
   const NoteTile({Key? key, required this.note}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    print(note);
     return Text(note);
   }
 }

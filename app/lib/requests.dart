@@ -10,6 +10,8 @@ import 'package:http/http.dart';
 import 'package:the_bike_kollective/Login/user_agreement.dart';
 import 'package:the_bike_kollective/Login/helperfunctions.dart';
 import 'package:the_bike_kollective/login_functions.dart';
+import 'Maps/map_functions.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 // get headers for requests.
@@ -46,19 +48,20 @@ Future<BikeListModel> getBikeList() async {
   );
   print('status code' + response.statusCode.toString() );
   if (response.statusCode == 200) {
-    print('Success with code 200: bike list received');
-    print('response body' + response.body);
+    print('Success: Bike list received');
+    //print('response body' + response.body);
     final responseJson = jsonDecode(response.body);
-    print('response json: ');
-    print(responseJson['bikes'].toString() );    
+    //print('response json: ');
+    //print(responseJson['bikes'].toString() );    
     BikeListModel currentBikes = BikeListModel();
     Bike newBike;
     var newBikeJson;
     num numBikes = responseJson['bikes'].length;
     for(int i = 0; i < numBikes; i += 1) {
+      print('index: $i');
       newBikeJson = responseJson['bikes'][i];
       newBike = Bike.fromBikeList(newBikeJson);
-      print(newBike);
+      print('Bike Name: ' + newBike.getName());
       currentBikes.addBike(newBike);
     }
     // update access token
@@ -88,7 +91,7 @@ Future<BikeListModel> getBikeList() async {
       message = 'Error on login.';
     }
   }
-  throw Exception(message);
+  throw Exception('known error');
  
 }
 
@@ -151,9 +154,10 @@ Future<String> getImageDownloadLink(fileStringBase64) async {
 // The check in doesn't work yet.
 // @params: none
 // @return: none
-// bugs: Sometimes it gets stuck on the spinning wheel after checkout
-// I think it's an issue with ProfileView
-// TODO: fix the bug with the spinning wheel
+// bugs:
+// TODO: 
+// 1. Get lock combination and save it. (Using shared prefences, 
+// but have not been able to get it to work.)
 Future checkOutBike(bikeId) async {
   //Build request url
   String requestUrl = getGlobalUrl();
@@ -162,9 +166,9 @@ Future checkOutBike(bikeId) async {
   requestUrl += getCurrentUserIdentifier()!;
 
   //Build request body
-  //TODO: get user location or generate random
-  String locationLong = '25';
-  String locationLat = '-25';
+  List coordinates = generateCoordinates();
+  String locationLong = coordinates[0].toString();
+  String locationLat = coordinates[1].toString();
   String requestBody;
   requestBody = '{"location_long":$locationLong,';
   requestBody += '"location_lat":$locationLat}';
@@ -176,9 +180,10 @@ Future checkOutBike(bikeId) async {
     body: requestBody
   );
   print(response.statusCode);
+  print('checkOUtBike() response body: ' + response.body);
   var responseJson = jsonDecode(response.body);
   
-  if (response.statusCode == 201) {
+  if (response.statusCode == 200) {
     print("checkOutBike() success: ");
     print(responseJson['message']);
     // update access token
@@ -186,7 +191,19 @@ Future checkOutBike(bikeId) async {
     updateAccessToken(newAccessToken); 
     int newCombo = responseJson['lock_combination'];
     print('new combo: $newCombo');
-    setCheckedOutBikeCombo(newCombo);  
+    
+    // save combination using global:
+    //setCheckedOutBikeCombo(newCombo);
+
+    // save combination using sharedPreferences:
+    // obtain shared preferences
+    print('checkoutBike test1');
+    final prefs = await SharedPreferences.getInstance();
+
+    // set value
+    await prefs.setInt('combination', newCombo);  
+    print('checkoutBike test2');
+    return;
   } 
 
   String message;
@@ -206,7 +223,7 @@ Future checkOutBike(bikeId) async {
       break;
     }
     default: {
-      message = 'Error getting image link.';
+      message = 'Error with bike checkout.';
     }
   }
   throw Exception(message);
@@ -280,7 +297,23 @@ Future<User> getUser(userId) async {
 }
 
 
-//getBike function (modeled after getUser)
+// information/instructions: gets a singble bike object from the db.
+// is rendered.
+// @params: bike ID string
+// @return: a Future, so to actually get the data, you have to call
+// then on the return value. Since this took me a while to figure out,
+// here is an example for future (pun was unintentional) reference:
+// 
+//  Future<Bike> bikeFromDatabase = getBike(someBikeId);
+//  bikeFromDatabase.then( (receivedBikeObject) {
+//    //Do something with the data you received here.
+//  });
+
+//// bugs: No known bugs
+//
+// TODO: 
+// 1. remove print statements (keeping there there for now beacause 
+// // they help with debugging)
 Future<Bike> getBike(String bikeId) async {
   String requestUrl = getGlobalUrl();
   requestUrl += '/bikes/$bikeId';
@@ -296,14 +329,13 @@ Future<Bike> getBike(String bikeId) async {
   if (response.statusCode == 200) {
     print('Success: bike received');
     Bike bikeData = Bike.fromJson(json);
+
     //update access token   
     updateAccessToken(bikeData.getAccessToken());
+    
     return bikeData;
     
   } 
-
-
-
   else if (response.statusCode == 404) {
     throw Exception('Failure: ' + json['message']);
   }
@@ -324,21 +356,30 @@ Future<Bike> getBike(String bikeId) async {
 }
 
 
-// information/instructions: 
-// @params: none
-// @return: 
+// information/instructions: Returns the bike, updating the bike and the user on
+// the database. This function is called after the user submits the returnBike
+// form, using data captured by that form to return the bike.
+// @params: bikeId, note, rating.
+// @return: nothing returned
 // bugs: no known bugs
-Future checkInBike(String bikeId) async {
-  print('checkOutBike()');
+// TODO: 
+// 1. remove print statements (keeping there there for now beacause 
+// // they help with debugging)
+Future returnBike(String bikeId, String? note, num rating) async {
+  print('returnBike()');
+  String starRating = rating.toString();
   String? requestUrl = getGlobalUrl();
-  
+  List coordinates = generateCoordinates();
+  String locationLong = coordinates[0].toString();
+  String locationLat = coordinates[1].toString();
   requestUrl += '/bikes/$bikeId/';
   requestUrl += getCurrentUserIdentifier().toString();
   
-  String requestBody = '{"location_long":75.0,';
-  requestBody += '"location_lat":-75.0,';
-  requestBody += '"note": "this was a nice bike!",';
-  requestBody += '"rating":5,';   
+  
+  String requestBody = '{"location_long":$locationLong,';
+  requestBody += '"location_lat":$locationLat,';
+  requestBody += '"note": "$note",';
+  requestBody += '"rating":$starRating,';   
   requestBody += '"condition": true}';
 
   print('checkIn() requestUrl: ');
@@ -393,11 +434,6 @@ Future checkInBike(String bikeId) async {
     }
   }
   throw Exception(message);
-
-
-
-
-  throw Exception('Error');
 }
 
 // information/instructions: Creates a bike on the data base. Use 
@@ -414,8 +450,12 @@ Future createBike(bikeData) async {
 
   print('createBike()');
   //TODO: create function to generate random location near OSU.
-  bikeData['location_long'] = 25;
-  bikeData['location_lat'] = -25;
+  List coordinates = generateCoordinates();
+  String locationLong = coordinates[0].toString();
+  String locationLat = coordinates[1].toString();
+  
+  bikeData['location_long'] = locationLong;
+  bikeData['location_lat'] = locationLat;
   //TODO: Users choose size and type.
   bikeData['size'] = 'size 2';
   bikeData['type'] = 'type 2';
@@ -455,8 +495,14 @@ Future createBike(bikeData) async {
 }
 
 
-
-
+// information/instructions: I didn't write this function, but I noticed it
+// doesn't have a header. I think it basically logs the user in and then 
+// navigates to the agreements page.
+// @params: none
+// @return: 
+// bugs: no known bugs
+// TODO:
+// 1. perhaps update the header if there is time
 void postState(context) async {
   Customer user;
   final String state = getState();
@@ -506,8 +552,14 @@ void postState(context) async {
   }
 }
 
-
-
+// information/instructions: Changes the user info on the database to 
+// reflect that the waiver has been signed. 
+// @params: none
+// @return: 
+// bugs: no known bugs
+// TODO: 
+// 1. remove print statements (keeping there there for now beacause 
+// // they help with debugging)
 Future signWaiver() async {
   print("signWaiver()");
   String requestUrl = getGlobalUrl();
@@ -523,11 +575,8 @@ Future signWaiver() async {
   print('signWaiver() response.statusCode: ' + response.statusCode.toString());
   print('signWaiver() reponse.body: ' + response.body);
   if (response.statusCode == 200) {
-    print(responseJson['message']);
-    //User userData = User.fromJson(responseJson);    
-    // update access token
-    updateAccessToken(responseJson['access_token']);
-    //return userData;
+    print(responseJson['message']);  
+    updateAccessToken(responseJson['access_token']); // update access token
     return;
   } 
 
