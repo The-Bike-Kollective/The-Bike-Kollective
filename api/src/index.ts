@@ -11,6 +11,8 @@ const userRoutes = require("./routes/userRoutes");
 const bikeRoutes = require("./routes/bikeRoutes");
 const imageRoutes = require("./routes/imageRoutes");
 const checkoutRecordsRoutes = require("./routes/checkoutRecords");
+const reportRoutes = require("./routes/reportRoute");
+
 
 
 import { userRegistration } from "./routes/userHelperFunctions";
@@ -40,6 +42,7 @@ app.use("/users", userRoutes);
 app.use("/bikes", bikeRoutes);
 app.use("/images", imageRoutes);
 app.use("/records",checkoutRecordsRoutes);
+app.use("/reports",reportRoutes);
 
 // information/instructions: for login redirect to google service
 // @params: [Maybe] state
