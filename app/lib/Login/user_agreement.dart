@@ -2,6 +2,7 @@ import 'package:the_bike_kollective/global_values.dart';
 import 'package:the_bike_kollective/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:the_bike_kollective/profile_view.dart';
+import 'package:the_bike_kollective/global_values.dart';
 //import 'package:the_bike_kollective/models.dart';
 //import 'package:the_bike_kollective/Login/spash_screen.dart';
 // import 'package:the_bike_kollective/access_token.dart';
@@ -19,18 +20,7 @@ import 'package:the_bike_kollective/profile_view.dart';
 //  3. redirect user to user page if accepts (implement user info)
 //  4. clean-up code and separate into different widgets
 //  5. send signedWaiver = true to update back-end if accepts signs waiver
-const String pdfText = """MEMBERSHIP RULES
-Lorem ipsum dolor sit amet. Sed repudiandae voluptas et consequatur perspiciatis 
-cum quia corrupti aut illum iusto cum voluptatem maxime. Est numquam maxime est culpa 
-reiciendis et odit eaque et sapiente blanditiis ad voluptas omnis. Ut quod atque 
-id illo atque et nihil eligendi in eius sint et quisquam explicabo sed nobis enim. 
-Et assumenda vitae nam dignissimos incidunt quo dolores maiores. Et eveniet nemo est 
-amet blanditiis qui voluptates fugit qui galisum quam eum velit iusto! Aut earum magni 
-hic commodi cumque sed aliquid modi sed dolorem incidunt et internos provident est 
-perspiciatis provident. In fugiat provident est voluptates quasi aut provident 
-molestiae? Aut alias iste est quis nostrum aut laborum iusto qui reiciendis 
-libero. Et dicta esse ea repellendus officiis id excepturi temporibus in 
-deserunt ducimus. Id delectus omnis aut atque sapiente ea eius corrupti.""";
+const String pdfText = userAgreement;
 
 class AgreementPage extends StatefulWidget {
   //const AgreementPage({Key? key}) : super(key: key);
@@ -48,13 +38,13 @@ class _AgreementPage extends State<AgreementPage> {
   void _doSomething() {
     // Do something
   }
-  
 
   @override
   Widget build(BuildContext context) {
-    print("Test inside AgreementPage build(): access token via global variable below ");
+    print(
+        "Test inside AgreementPage build(): access token via global variable below ");
     print(getAccessToken());
-    
+
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,
@@ -134,7 +124,8 @@ class _AgreementPage extends State<AgreementPage> {
                             Navigator.push(
                               context,
                               MaterialPageRoute(
-                                  builder: (context) => const ProfileView(),),
+                                builder: (context) => const ProfileView(),
+                              ),
                             );
                             debugPrint('Agree clicked');
                           },

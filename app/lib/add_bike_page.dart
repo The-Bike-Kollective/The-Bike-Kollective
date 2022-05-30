@@ -7,19 +7,20 @@ import 'mock_data.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'global_values.dart';
+import 'Maps/mapwidgets/map_functions.dart';
 
-// information/instructions: 
-// @params: 
-// @return: 
+// information/instructions:
+// @params:
+// @return:
 // bugs: no known bugs
 
-// information/instructions: This class creates an object that 
+// information/instructions: This class creates an object that
 // is passed to AddBikePage when navigating to that page.
 // That route contains a function which can access it. It seems
 // weird because the AddBikePage class doesn't take an argument
 // according to the class declaration, but you pass it anyway,
-// and it is accessed in the build method as an argument. 
-// The object contains an image file encoded in base 64. 
+// and it is accessed in the build method as an argument.
+// The object contains an image file encoded in base 64.
 // @params: none
 // @return: none
 // bugs: no known bugs
@@ -28,7 +29,6 @@ class BikeFormArgument {
   BikeFormArgument(this.imageStringBase64);
 }
 
-
 // information/instructions: This page view has a form that users
 // fill out with bike data. When they submit it, a new bike is
 // added to the database.
@@ -36,28 +36,29 @@ class BikeFormArgument {
 // @return: Page with form.
 // bugs: no known bugs
 class AddBikePage extends StatelessWidget {
-  const AddBikePage({ Key? key, /*required this.user*/}) : 
-    super(key: key);
+  const AddBikePage({
+    Key? key,
+    /*required this.user*/
+  }) : super(key: key);
   //final User user;
   static const routeName = '/new-bike-form';
   @override
   Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!
-    .settings.arguments as BikeFormArgument;
-    return Scaffold( 
+    final args = ModalRoute.of(context)!.settings.arguments as BikeFormArgument;
+    return Scaffold(
         appBar: AppBar(
           title: const Text('The Bike Kollective'),
-          leading: (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
+          leading:
+              (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
         ),
         endDrawer: const MenuDrawer(),
-        body: AddBikeForm(user: currentUser, imageStringBase64: args.imageStringBase64)
-    );
+        body: AddBikeForm(
+            user: currentUser, imageStringBase64: args.imageStringBase64));
   }
 }
 
-
 // information/instructions: This is the form that is rendered inside
-// of the newBike page view. 
+// of the newBike page view.
 // @params: User(), the same user supplied to the page view is passed
 // to this widget
 // @return: form for usker to fill out. When user taps submit, the
@@ -65,10 +66,9 @@ class AddBikePage extends StatelessWidget {
 // bugs: no known bugs
 // TODO: include options for type and size
 class AddBikeForm extends StatefulWidget {
-  const AddBikeForm({  Key? key, 
-                      required this.user,
-                      required this.imageStringBase64 }) :
-                        super(key: key);
+  const AddBikeForm(
+      {Key? key, required this.user, required this.imageStringBase64})
+      : super(key: key);
   final User user;
   final String imageStringBase64;
   @override
@@ -81,6 +81,8 @@ class _AddBikeFormState extends State<AddBikeForm> {
   // and allows validation of the form.
   final _formKey = GlobalKey<FormState>();
   var bikeData = {};
+  bool isChecked = false;
+  List randomCoord = [];
 
   @override
   Widget build(BuildContext context) {
@@ -102,10 +104,11 @@ class _AddBikeFormState extends State<AddBikeForm> {
               }
               return null;
             },
-            onSaved: (String? value) {//save value of 'Name' field.
+            onSaved: (String? value) {
+              //save value of 'Name' field.
               bikeData["name"] = value;
             },
-          ),  
+          ),
           TextFormField(
             decoration: const InputDecoration(
               icon: Icon(Icons.lock),
@@ -122,17 +125,34 @@ class _AddBikeFormState extends State<AddBikeForm> {
               bikeData["lock_combination"] = int.parse(value!);
             },
           ),
+          CheckboxListTile(
+            title: Text("Input Location"),
+            value: isChecked,
+            onChanged: (bool? value) {
+             
+              setState(() {
+                isChecked = value!;
+              });
+
+              if (isChecked == true) {
+                randomCoord = generateCoordinates();
+                bikeData["location_lat"] = randomCoord[1];
+                bikeData["location_long"] = randomCoord[0];
+              }
+            },
+          ),
           ElevatedButton(
             onPressed: () {
               // Validate returns true if the form is valid, or false otherwise.
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState?.save();
-                Future imageLink = getImageDownloadLink(widget.imageStringBase64);
+                Future imageLink =
+                    getImageDownloadLink(widget.imageStringBase64);
                 imageLink.then((value) {
                   bikeData['image'] = value;
                   createBike(bikeData);
                   Navigator.pushNamed(context, ProfileView.routeName);
-                }); 
+                });
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(content: Text('Adding bike to the database.')),
                 );
@@ -145,5 +165,3 @@ class _AddBikeFormState extends State<AddBikeForm> {
     );
   }
 }
-
-

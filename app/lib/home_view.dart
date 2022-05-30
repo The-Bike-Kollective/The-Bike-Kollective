@@ -5,7 +5,6 @@ import 'MenuDrawer.dart';
 //import 'models.dart';
 import 'Login/login_page.dart';
 //import 'main.dart';
-import 'Login/create_account_page.dart';
 //import 'Login/user_agreement.dart';
 //import 'Login/spash_screen.dart';
 //import 'requests.dart';
@@ -78,19 +77,19 @@ class HomeButtonGroup extends StatelessWidget {
             );
             debugPrint('sign in clicked');
           },
-          child: const Text('Sign In'),
+          child: const Text('Sign In/Create Account'),
         ),
-        OutlinedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => const CreateAccountPage()),
-            );
-            debugPrint('Create Account Clicked');
-          },
-          child: const Text('Create Account'),
-        ),
+        // OutlinedButton(
+        //   onPressed: () {
+        //     Navigator.push(
+        //       context,
+        //       MaterialPageRoute(
+        //           builder: (context) => const CreateAccountPage()),
+        //     );
+        //     debugPrint('Create Account Clicked');
+        //   },
+        //   child: const Text('Create Account'),
+        // ),
         OutlinedButton(
           onPressed: () {
             // TODO: navigate to a form to exit application.
