@@ -317,6 +317,16 @@ const bikeUpdateConditionDB = async (bike_id: string,new_value:boolean) => {
   return true;
 };
 
+const bikeUpdateActivenessDB = async (bike_id: string,new_value:boolean) => {
+  const result = await Bike.updateOne(
+    { _id: new ObjectID(bike_id) },
+    {$set:{ active: new_value}}
+  );
+  console.log(`bikeUpdateActivenessDB updated`);
+  console.log(result)
+  return true;
+};
+
 const bikeUpdateNotesDB = async (bike_id: string,new_value:any) => {
   const result = await Bike.updateOne(
     { _id: new ObjectID(bike_id) },
@@ -482,5 +492,6 @@ export {
   userSignedWaiverDB,
   addBikeToOwnerListDB,
   changeUserSuspensionMoodeDB,
-  bikeUpdateAvergaeRatingDB
+  bikeUpdateAvergaeRatingDB,
+  bikeUpdateActivenessDB
 };
