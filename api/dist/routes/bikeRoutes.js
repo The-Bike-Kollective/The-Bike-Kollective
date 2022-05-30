@@ -16,6 +16,7 @@ const express_1 = __importDefault(require("express"));
 const db_1 = require("../db/db");
 const userHelperFunctions_1 = require("./userHelperFunctions");
 const checkoutRecordsHelpers_1 = require("./checkoutRecordsHelpers");
+const bikeHelperfunctions_1 = require("./bikeHelperfunctions");
 const router = express_1.default.Router();
 // information/instructions: for registering a bike by a valid user
 // @params: Auth code
@@ -73,7 +74,7 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         const name = req.body.name;
         const type = req.body.type;
         const size = req.body.size;
-        const newBike = createBikeObject(date_added, image, active, condition, owner_id, lock_combination, notes, rating, rating_history, location_long, location_lat, check_out_id, check_out_time, check_out_history, name, type, size);
+        const newBike = (0, bikeHelperfunctions_1.createBikeObject)(date_added, image, active, condition, owner_id, lock_combination, notes, rating, rating_history, location_long, location_lat, check_out_id, check_out_time, check_out_history, name, type, size);
         const bikeFromDB = yield (0, db_1.addBiketoDB)(newBike);
         // get updated user info to return valid access token
         userFromDb = yield (0, db_1.findUserByIdentifier)(userFromDb[0]["identifier"]);
@@ -82,7 +83,7 @@ router.post("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         yield (0, db_1.addBikeToOwnerListDB)(String(userFromDb[0]["_id"]), [...ownedBikes, String(bikeFromDB["_id"])]);
         res
             .status(201)
-            .send(createBikeResponse(createBikeObjectfromDB(bikeFromDB), userFromDb[0]["access_token"]));
+            .send((0, bikeHelperfunctions_1.createBikeResponse)((0, bikeHelperfunctions_1.createBikeObjectfromDB)(bikeFromDB), userFromDb[0]["access_token"]));
     }
 }));
 // information/instructions: returns all bikes in DB
@@ -136,7 +137,7 @@ router.get("/", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                     // hide id is notes
                     note.id = "hidden";
                 });
-                bikesToSend.push(createBikeObjectfromDB(bike));
+                bikesToSend.push((0, bikeHelperfunctions_1.createBikeObjectfromDB)(bike));
             }
         });
         res.status(200).send({ bikes: bikesToSend, access_token: userFromDb[0]['access_token'] });
@@ -189,7 +190,7 @@ router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 .status(500)
                 .send({ message: "Multiple BIKE ERROR", access_token: access_token });
         }
-        let bikeObject = createBikeObjectfromDB(bikeFromDB[0]);
+        let bikeObject = (0, bikeHelperfunctions_1.createBikeObjectfromDB)(bikeFromDB[0]);
         //hide lock combination if requestor has not check out the bike
         if (bikeObject['check_out_id'] != userFromDb[0]['identifier']) {
             bikeObject['lock_combination'] = -99;
@@ -211,7 +212,7 @@ router.get("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         // there is 1 bike in returned list
         return res
             .status(200)
-            .send(createBikeResponse(bikeObject, access_token));
+            .send((0, bikeHelperfunctions_1.createBikeResponse)(bikeObject, access_token));
     }
 }));
 // information/instructions: to update a bike
@@ -293,7 +294,7 @@ router.put("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     // only items that can cause 400 is notes if provided
     let notes = bikeFromDB[0]["notes"];
     if (req.body.notes) {
-        if (validateNoteObject(req.body.notes) &&
+        if ((0, bikeHelperfunctions_1.validateNoteObject)(req.body.notes) &&
             req.body.notes.id == userFromDb[0]["identifier"]) {
             notes = [...bikeFromDB[0]["notes"], req.body.notes];
         }
@@ -321,7 +322,7 @@ router.put("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     const check_out_id = bikeFromDB[0]["check_out_id"];
     const check_out_time = bikeFromDB[0]["check_out_time"];
     const check_out_history = bikeFromDB[0]["check_out_history"];
-    const newBike = createBikeObject(date_added, image, active, condition, owner_id, lock_combination, notes, rating, rating_history, location_long, location_lat, check_out_id, check_out_time, check_out_history, name, type, size);
+    const newBike = (0, bikeHelperfunctions_1.createBikeObject)(date_added, image, active, condition, owner_id, lock_combination, notes, rating, rating_history, location_long, location_lat, check_out_id, check_out_time, check_out_history, name, type, size);
     // update bike on DB
     (0, db_1.updateAnExisitngBike)(bikeFromDB[0]["id"], newBike);
     //get updated bike from DB
@@ -329,7 +330,7 @@ router.put("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     // return updated result
     return res
         .status(200)
-        .send(createBikeResponse(createBikeObjectfromDB(bikeFromDB[0]), access_token));
+        .send((0, bikeHelperfunctions_1.createBikeResponse)((0, bikeHelperfunctions_1.createBikeObjectfromDB)(bikeFromDB[0]), access_token));
 }));
 // information/instructions: for checking out a bike
 // @params: Auth code, bike_id , user_identifier
@@ -449,9 +450,9 @@ router.post("/:bike_id/:user_identifier", (req, res) => __awaiter(void 0, void 0
         });
     }
     // 12. create a new checkout record using infroamtion and add it to the DB
-    const checkoutLocation = createNewLocation(req.body.location_long, req.body.location_lat);
-    const checkinLocation = createNewLocation(NaN, NaN); // dummy location
-    const checkoutRecord = createNewCheckout(user_identifier, bike_id, checkoutLocation, checkoutTimestamp, checkinLocation);
+    const checkoutLocation = (0, bikeHelperfunctions_1.createNewLocation)(req.body.location_long, req.body.location_lat);
+    const checkinLocation = (0, bikeHelperfunctions_1.createNewLocation)(NaN, NaN); // dummy location
+    const checkoutRecord = (0, bikeHelperfunctions_1.createNewCheckout)(user_identifier, bike_id, checkoutLocation, checkoutTimestamp, checkinLocation);
     const checkoutRecordfromDB = yield (0, db_1.addCheckoutRecordToDB)(checkoutRecord);
     console.log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
     console.log(checkoutRecordfromDB);
@@ -595,7 +596,7 @@ router.delete("/:bike_id/:user_identifier", (req, res) => __awaiter(void 0, void
     // 11. update condition
     yield (0, db_1.bikeUpdateConditionDB)(bike_id, req.body.condition);
     // 12. create return location, retrive checkoutRating and updateit, calculate total time
-    const checkinLocation = createNewLocation(req.body.location_long, req.body.location_lat);
+    const checkinLocation = (0, bikeHelperfunctions_1.createNewLocation)(req.body.location_long, req.body.location_lat);
     const checkoutRecord = yield (0, db_1.findCheckoutRecordByID)(userFromDb[0]['checkout_record_id']);
     console.log("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@ restored checkout record");
     console.log(checkoutRecord);
@@ -605,7 +606,7 @@ router.delete("/:bike_id/:user_identifier", (req, res) => __awaiter(void 0, void
     checkoutObject.calculateMinutes();
     // 13. suspend user if passed limit
     let userSuspended = false;
-    if (checkoutObject.total_minutes > 8 * 60) {
+    if (checkoutObject.total_minutes > 24 * 60) {
         yield (0, db_1.changeUserSuspensionMoodeDB)(userFromDb[0]['id'], true);
         userSuspended = true;
     }
@@ -695,96 +696,6 @@ const verifyBikePostBody = (body) => {
         });
         return resolve(true);
     }));
-};
-// create bike object for DB processing
-// @params: bike data from req
-// @return: bike data for DB processes
-// bugs: no known bugs
-const createBikeObject = (date_added, image, active, condition, owner_id, lock_combination, notes, rating, rating_history, location_long, location_lat, check_out_id, check_out_time, check_out_history, name, type, size) => {
-    let bikeObject = {
-        date_added: date_added,
-        image: image,
-        active: active,
-        condition: condition,
-        owner_id: owner_id,
-        lock_combination: lock_combination,
-        notes: notes,
-        rating: rating,
-        rating_history: rating_history,
-        location_long: location_long,
-        location_lat: location_lat,
-        check_out_id: check_out_id,
-        check_out_time: check_out_time,
-        check_out_history: check_out_history,
-        name: name,
-        type: type,
-        size: size,
-    };
-    return bikeObject;
-    // return Object.fromEntries(Object.entries(bikeObject).sort())
-};
-// create bike object for response.
-// @params: Bike data from DB
-// @return: Bike data for HTTP response
-// bugs: no known bugs
-const createBikeObjectfromDB = (bikeFromDB) => {
-    let bikeObject = {
-        date_added: bikeFromDB.date_added,
-        image: bikeFromDB.image,
-        active: bikeFromDB.active,
-        condition: bikeFromDB.condition,
-        owner_id: bikeFromDB.owner_id,
-        lock_combination: bikeFromDB.lock_combination,
-        notes: bikeFromDB.notes,
-        rating: bikeFromDB.rating,
-        rating_history: bikeFromDB.rating_history,
-        location_long: bikeFromDB.location_long,
-        location_lat: bikeFromDB.location_lat,
-        check_out_id: bikeFromDB.check_out_id,
-        check_out_time: bikeFromDB.check_out_time,
-        check_out_history: bikeFromDB.check_out_history,
-        id: bikeFromDB._id,
-        name: bikeFromDB.name,
-        type: bikeFromDB.type,
-        size: bikeFromDB.size,
-    };
-    return bikeObject;
-};
-// create HTTP response body
-// @params: bike data and access token
-// @return: formatted body for HTTP response.
-// bugs: no known bugs
-const createBikeResponse = (bikeObject, access_token) => {
-    return { bike: bikeObject, access_token: access_token };
-};
-function validateNoteObject(note) {
-    return note.id !== undefined;
-}
-const createNewCheckout = (user_identifier, bike_id, checkout_location, checkout_timestamp, checkin_location) => {
-    let newCheckout = {
-        user_identifier: user_identifier,
-        bike_id: bike_id,
-        checkout_timestamp: checkout_timestamp,
-        checkin_timestamp: -1,
-        total_minutes: -1,
-        condition_on_return: true,
-        note: " ",
-        rating: -1,
-        checkout_location: checkout_location,
-        checkin_location: checkin_location,
-    };
-    console.log(`newCheckout Record created:`);
-    console.log(newCheckout);
-    return newCheckout;
-};
-const createNewLocation = (long, lat) => {
-    let newLocation = {
-        lat: lat,
-        long: long,
-    };
-    console.log(`newLocation created:`);
-    console.log(newLocation);
-    return newLocation;
 };
 module.exports = router;
 //# sourceMappingURL=bikeRoutes.js.map
