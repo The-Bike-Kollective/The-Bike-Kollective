@@ -190,7 +190,7 @@ Future checkOutBike(bikeId) async {
     String newAccessToken = responseJson['access_token'];
     updateAccessToken(newAccessToken); 
     int newCombo = responseJson['lock_combination'];
-    print('new combo: $newCombo');
+    //print('new combo: $newCombo');
     
     // save combination using global:
     //setCheckedOutBikeCombo(newCombo);
@@ -198,35 +198,33 @@ Future checkOutBike(bikeId) async {
     // save combination using sharedPreferences:
     // obtain shared preferences
     print('checkoutBike test1');
-    final prefs = await SharedPreferences.getInstance();
+    //final prefs = await SharedPreferences.getInstance();
 
     // set value
-    await prefs.setInt('combination', newCombo);  
+    //await prefs.setInt('combination', newCombo);  
     print('checkoutBike test2');
     return;
   } 
 
-  String message;
+  String message =responseJson['message'];
   switch(response.statusCode) {
-    case 400: { 
-      message = 'Bad request.';
-      break;
+    case 400:
+    case 409:
+    case 500: {
+      return message;
     }
-    case 401: {
-      launchURLInApp(); 
-      message = 'Unauthorized. Invalid access token.';
-      break;
-    }
+
+    case 401:
+    case 403:
     case 404: {
       launchURLInApp(); 
-      message = 'User not found. Non-existing access token.';
-      break;
+      return message;
     }
     default: {
-      message = 'Error with bike checkout.';
+      return message;
     }
   }
-  throw Exception(message);
+  //throw Exception(message);
 
 }
 
@@ -394,46 +392,48 @@ Future returnBike(String bikeId, String? note, num rating) async {
   );
   print('check in status code: ' + response.statusCode.toString());
   print(response.body);
+  final responseJson = jsonDecode(response.body);
+  String message = responseJson['message'];
   if (response.statusCode == 200) {
-    print('Success: checkIn successful');
-     
+    print('Bike Returned Successfully');
     //update access token 
-    final responseJson = jsonDecode(response.body);
     String newAccessToken = responseJson['access_token'];
     updateAccessToken(newAccessToken);
+    return message;
   } 
-  String message;
   switch(response.statusCode) {
-    case 400: { 
-      message = 'Bad request.';
-      break;
+    case 400:
+    case 409:
+    case 500:{ 
+      return message;
+    
     }
-    case 401: {
+    case 401:
+    case 403: {
       launchURLInApp(); 
-      message = 'Unauthorized. Invalid access token.';
-      break;
+      return message;
     }
 
-    case 409: { 
-      message = 'Checkout failed.';
-      break;
-    }
-    case 403: {
-      message = 'The client does not have access rights to the content.';
-      break;
-    }
+    // case 409: { 
+    //   message = 'Checkout failed.';
+    //   break;
+    // }
+    // case 403: {
+    //   message = 'The client does not have access rights to the content.';
+    //   break;
+    // }
     
 
-    case 500: {
-      message = 'Multiple USER ERROR.';
-      break;
-    }
+    // case 500: {
+    //   message = 'Multiple USER ERROR.';
+    //   break;
+    // }
 
     default: {
-      message = 'Error getting user.';
+      return message;
     }
   }
-  throw Exception(message);
+  //throw Exception(message);
 }
 
 // information/instructions: Creates a bike on the data base. Use 

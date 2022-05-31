@@ -98,11 +98,11 @@ class _ReturnBikeFormBodyState extends State<ReturnBikeFormBody> {
           ),  
           
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               // Validate returns true if the form is valid, or false otherwise.
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState?.save();
-                returnBike(
+                await returnBike(
                   getCheckedOutBike()!, 
                   bikeData['note'] as String,
                   bikeData['rating'] as num

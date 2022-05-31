@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:the_bike_kollective/Maps/maps_from_list.dart';
-import 'package:the_bike_kollective/global_values.dart';
+//import 'package:the_bike_kollective/global_values.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:the_bike_kollective/requests.dart';
 import 'models.dart';
 import 'MenuDrawer.dart';
-import 'Maps/googlemaps.dart';
+//import 'Maps/googlemaps.dart';
 import 'requests.dart';
 import 'profile_view.dart';
 import 'package:the_bike_kollective/Maps/mapwidgets/bike_modal_bottom.dart';
@@ -131,7 +131,7 @@ class BikeDetailTopRow extends StatelessWidget {
             OutlinedButton(
               onPressed: () async {
                 debugPrint('checkout Bike button clicked');
-                checkOutBike(bikeData.getId() );
+                await checkOutBike(bikeData.getId() );
                 Navigator.pushNamed(context, ProfileView.routeName);
               },
               child: const Text('Check Out'),
