@@ -6,6 +6,7 @@ import 'package:the_bike_kollective/requests.dart';
 import 'models.dart';
 import 'MenuDrawer.dart';
 //import 'Maps/googlemaps.dart';
+import 'style.dart';
 import 'requests.dart';
 import 'profile_view.dart';
 import 'package:the_bike_kollective/Maps/mapwidgets/bike_modal_bottom.dart';
@@ -133,6 +134,10 @@ class BikeDetailTopRow extends StatelessWidget {
               direction: Axis.horizontal,
             ),
             OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                backgroundColor: buttonStyle['backgroundColor'],
+                primary: buttonStyle['textColor']
+              ),
               onPressed: () async {
                 debugPrint('checkout Bike button clicked');
                 checkOutBike(bikeData.getId() );
@@ -141,12 +146,18 @@ class BikeDetailTopRow extends StatelessWidget {
               child: const Text('Check Out'),
             ),
             OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                backgroundColor: buttonStyle['reportBackground'],
+                primary: buttonStyle['textColor']
+              ),
               onPressed: () async {
                 debugPrint('Report Missing button clicked');
-                checkOutBike(bikeData.getId() );
+                await reportBikeMissing(bikeData.getId() );
                 Navigator.pushNamed(context, ProfileView.routeName);
               },
-              child: const Text('Report Missing'),
+              child: const Text('Report Missing',
+                style: TextStyle(fontSize: 16),
+              ),
             ),
           ],
         )

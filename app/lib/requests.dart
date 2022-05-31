@@ -617,8 +617,43 @@ Future signWaiver() async {
     default: {
       throw Exception(message);
     }
-
   }
- 
+}
+
+
+Future reportBikeMissing(bikeId) async {
+  String requestUrl = getGlobalUrl() + '/reports';
+  requestUrl += '/$bikeId';
+  
+  final response = await http.post(
+    Uri.parse(requestUrl),
+    headers: getHeaders(),
+  );
+
+  print(response.statusCode);
+  print('reportBike() response body: ' + response.body);
+  var responseJson = jsonDecode(response.body);
+  
+  if (response.statusCode == 200) {
+    print("reportBike() success: ");
+    // update access token
+    String newAccessToken = responseJson['access_token'];
+    updateAccessToken(newAccessToken); 
+    return;
+  } 
+
+  switch(response.statusCode) {
+    case 401:
+    case 404:
+    case 500: {
+      String message =responseJson['message'];
+      return message;
+    }
+    
+    default: {
+      throw Exception("Error reporting bike.");
+    }
+  }
+  
 
 }
