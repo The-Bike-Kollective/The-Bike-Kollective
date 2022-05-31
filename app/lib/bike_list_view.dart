@@ -27,6 +27,7 @@ class BikeListView extends StatefulWidget {
 
 
 enum Size {none, small, medium, large}
+enum Type {none, road, mountain}
 // This is the state object that is called by BikeListView().
 class _BikeListViewState extends State<BikeListView> {
   String buttonToolTipText = "add a bike";
@@ -35,7 +36,9 @@ class _BikeListViewState extends State<BikeListView> {
   String size = "";
   String type = "";
   Size? _size = Size.none;
+  Type? _type = Type.none;
   Map tags = {'size': '', 'type': ''};
+  
 
 
   @override
@@ -82,14 +85,85 @@ class _BikeListViewState extends State<BikeListView> {
           builder: (context, AsyncSnapshot<BikeListModel> snapshot) {
             if (snapshot.hasData) {
               BikeListModel bikeList = snapshot.data!;
-              //return BikeListBody(bikeList: snapshot.data!);
               return Column(
                 children:[
-                
+
+                  // Title Filter Type
+                  const Text('Filter by Type:',
+                    style: TextStyle(fontSize: 18)
+                  ),
+                  
+                  // Size Radio Button Labels
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: const[
+                      Text('none') ,
+                      Text('road') ,
+                      Text('mountain') ,
+                    ],
+                  ),
+
+                  //Type Filter Radio Buttons
+                  Row(
+                    children: [
+                       Expanded(//type 'none' radio button
+                        child: Radio<Type>(
+                          value: Type.none,
+                          groupValue: _type,
+                          onChanged: (Type? value) {
+                            setState(() {
+                              _type = value;
+                              tags['type'] = '';
+                              currentList = getBikeList(
+                                size:tags['size'],
+                                type:tags['type']
+                              );
+                            });
+                          },
+                        ),
+                      ),
+                      Expanded(///type 'road' radio button
+                        child: Radio<Type>(
+                          value: Type.road,
+                          groupValue: _type,
+                          onChanged: (Type? value) {
+                            setState(() {
+                              _type = value;
+                              tags['type'] = 'road';
+                              currentList = getBikeList(
+                                size:tags['size'],
+                                type:tags['type']
+                              );
+                            });
+                          },
+                        ),
+                      ),
+                       Expanded(//type 'mountain' radio button
+                        child: Radio<Type>(
+                          value: Type.mountain,
+                          groupValue: _type,
+                          onChanged: (Type? value) {
+                            setState(() {
+                              _type = value;
+                              tags['type'] = 'mountain';
+                              currentList = getBikeList(
+                                size:tags['size'],
+                                type:tags['type']
+                              );
+                            });
+                          },
+                        ),
+                      ),
+                      
+                    ]
+                  ),
+
+                  // Title Filter Type:
                   const Text('Filter Size:',
                     style: TextStyle(fontSize: 18)
                   ),
-    
+                  
+                  // Type Radio Button Labels
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: const[
@@ -97,13 +171,14 @@ class _BikeListViewState extends State<BikeListView> {
                       Text('small') ,
                       Text('medium') ,
                       Text('large') ,
-                       
                     ],
                   ),
-                  
-                  Row(//size filter radio buttons
+
+
+                  //Size Filter Radio Buttons
+                  Row(
                     children: [
-                       Expanded(
+                       Expanded(//none radio button
                         child: Radio<Size>(
                           value: Size.none,
                           groupValue: _size,
@@ -119,7 +194,7 @@ class _BikeListViewState extends State<BikeListView> {
                           },
                         ),
                       ),
-                      Expanded(
+                      Expanded(///small radio button
                         child: Radio<Size>(
                           value: Size.small,
                           groupValue: _size,
@@ -135,7 +210,7 @@ class _BikeListViewState extends State<BikeListView> {
                           },
                         ),
                       ),
-                       Expanded(
+                       Expanded(//medium radio button
                         child: Radio<Size>(
                           value: Size.medium,
                           groupValue: _size,
@@ -151,7 +226,7 @@ class _BikeListViewState extends State<BikeListView> {
                           },
                         ),
                       ),
-                      Expanded(
+                      Expanded(//large radio button
                         child: Radio<Size>(
                           value: Size.large,
                           groupValue: _size,
@@ -167,9 +242,9 @@ class _BikeListViewState extends State<BikeListView> {
                           },
                         ),
                       ),
-                      
                     ]
                   ),
+
                   Flexible(
                     child: ListView.builder(
                       itemCount: bikeList.getLength(),
