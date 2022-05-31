@@ -28,7 +28,8 @@ class GetPhoto extends StatelessWidget {
             onPressed: () async {
               debugPrint('Upload a Picture button clicked');
               String imagePath;
-              final pickedImage = await ImagePicker().pickImage(source: ImageSource.gallery);
+              final pickedImage = await ImagePicker().pickImage(
+                source: ImageSource.gallery);
               if (pickedImage != null) {
                 imagePath = pickedImage.path;
                 final bytes = File(imagePath).readAsBytesSync();
@@ -45,8 +46,22 @@ class GetPhoto extends StatelessWidget {
           ),
           //take a new photo
           OutlinedButton(
-            onPressed: () {
-              debugPrint('Upload a Picture button clicked');
+            onPressed: () async {
+              debugPrint('Take a Picture button clicked');
+              String imagePath;
+              final pickedImage = await ImagePicker().pickImage(
+                source: ImageSource.camera);
+              if (pickedImage != null) {
+                imagePath = pickedImage.path;
+                final bytes = File(imagePath).readAsBytesSync();
+                var img64 = base64Encode(bytes);
+                //print(img64);
+                Navigator.pushNamed(
+                  context,
+                  AddBikePage.routeName,
+                  arguments: BikeFormArgument(img64)
+                );
+              } 
             },
             child: const Text('Take a Picture'),
           ),
