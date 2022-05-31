@@ -48,9 +48,13 @@ Future<BikeListModel> getBikeList(
   if (size != '') {
     requestUrl += '?size=' + size;
   }
+  if (size != '' && type != '') {
+    requestUrl += '&';
+  }
   if (type != '') {
     requestUrl += '?type=' + type;
   }
+  print(requestUrl);
   final response = await http.get(
     Uri.parse(requestUrl),
     headers: getHeaders()
