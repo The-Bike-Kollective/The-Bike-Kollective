@@ -9,9 +9,6 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'global_values.dart';
 import 'Maps/mapwidgets/map_functions.dart';
-// import 'package:http/http.dart' as http;
-// import 'dart:convert';
-// import 'global_values.dart';
 import 'package:checkbox_formfield/checkbox_formfield.dart';
 
 // information/instructions:
@@ -105,7 +102,8 @@ class _AddBikeFormState extends State<AddBikeForm> {
   var bikeData = {};
   bool isChecked = false;
   List randomCoord = [];
-  //bool? isChecked = false;
+  String type = 'Choose a Type';
+  String size = 'Choose a Size';
   String releaseOfInterestFormText =
     'If, God forbid, your bike is damaged, stolen, or goes missing, it sucks to be you. By checking this box, you are agreeing not to sue us.';
 
@@ -114,7 +112,8 @@ class _AddBikeFormState extends State<AddBikeForm> {
     // Build a Form widget using the _formKey created above.
     return Form(
       key: _formKey,
-      child: Column(
+      child: ListView(
+        
         children: <Widget>[
           // Bike Name Field
           TextFormField(
@@ -134,13 +133,62 @@ class _AddBikeFormState extends State<AddBikeForm> {
               //save value of 'Name' field.
               bikeData["name"] = value;
             },
-          ),
-          //),  
+          ),  
           
           // ADD DROPDOWNS HERE:
-
           // Type Drop Down 
+          DropdownButton<String>(
+            value: type,
+            icon: const Icon(Icons.arrow_downward),
+            elevation: 16,
+            style: const TextStyle(color: Colors.deepPurple),
+            underline: Container(
+              height: 2,
+              color: Colors.deepPurpleAccent,
+            ),
+            onChanged: (String? newType) {
+              setState(() {
+                type = newType!; 
+                bikeData['type'] = newType;
+              });
+            },
+            items: <String>['Choose a Type', 'Road', 'Mountain']
+                .map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+          ),
+
+
+    
           // Size Drop Down
+
+          DropdownButton<String>(
+            value: size,
+            icon: const Icon(Icons.arrow_downward),
+            elevation: 16,
+            style: const TextStyle(color: Colors.deepPurple),
+            underline: Container(
+              height: 2,
+              color: Colors.deepPurpleAccent,
+            ),
+            onChanged: (String? newSize) {
+              setState(() {
+                size = newSize!; 
+                bikeData['size'] = newSize;
+              });
+            },
+            items: <String>['Choose a Size', 'Small', 'Medium', 'Large']
+                .map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+          ),
+
 
           // Lock Combination Field
           TextFormField(
@@ -160,7 +208,7 @@ class _AddBikeFormState extends State<AddBikeForm> {
             },
           ),
           CheckboxListTile(
-            title: Text("Input Location"),
+            title: const Text("Input Location"),
             value: isChecked,
             onChanged: (bool? value) {
              

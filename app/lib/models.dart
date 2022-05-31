@@ -108,6 +108,8 @@ class Bike {
   List ratingHistory = [];
   List checkoutHistory = [];
   String accessToken;
+  String type;
+  String size;
   Bike({ this.name = "unnamed",
         this.imageUrl = "no_image",
         this.locationLat = -1.0,
@@ -125,6 +127,8 @@ class Bike {
         this.checkOutId = '-1', 
         this.id = "-1",
         this.accessToken = "-1", 
+        this.type = 'no type provided',
+        this.size = 'no size provided'
 
 
   });
@@ -138,6 +142,8 @@ class Bike {
   setRating(double rating) {rating = rating;}
   setImageUrl(String url) {imageUrl = imageUrl;}
   setId(String newId) {id = newId;}
+  setType(String newType) {type = newType;}
+  setSize(String newSize) {size = newSize;}
 
   //getters
   String getName() => name;
@@ -148,6 +154,8 @@ class Bike {
   int getLockCombination() => lockCombination;
   num getAverageRating() => rating;
   List getNotes() => notes;
+  String getType() => type;
+  String getSize() => size;
   
 
   //methods
@@ -167,7 +175,9 @@ class Bike {
     'location_lat' : locationLat,
     'check_out_time': checkOutTime,
     'check_out_history': checkOutHistory,
-    'check_out_id' : checkOutId
+    'check_out_id' : checkOutId,
+    'size': size,
+    'type' : type
   };
 
   factory Bike.fromBikeList(Map<String, dynamic> json) {
@@ -187,6 +197,8 @@ class Bike {
       locationLat: json['location_lat'] as num,
       checkOutId: json['check_out_id'] as String,
       checkOutTime: json['check_out_time'] as int,
+      type: json['type'],
+      size: json['size']
       //accessToken: json['access_token'] as String
       //checkOutHistory: json['check_out_history'] as List<dynamic>
     );
@@ -211,7 +223,9 @@ class Bike {
       locationLat: json['bike']['location_lat'] as num,
       checkOutId: json['bike']['check_out_id'] as String,
       checkOutTime: json['bike']['check_out_time'] as int,
-      accessToken: json['access_token'] as String
+      accessToken: json['access_token'] as String,
+      type: json['bike']['type'],
+      size: json['bike']['size']
       //checkOutHistory: json['check_out_history'] as List<dynamic>
     );
   }    

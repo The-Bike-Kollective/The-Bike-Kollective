@@ -449,16 +449,14 @@ Future returnBike(String bikeId, String? note, num rating) async {
 Future createBike(bikeData) async {
 
   print('createBike()');
-  //TODO: create function to generate random location near OSU.
   List coordinates = generateCoordinates();
   String locationLong = coordinates[0].toString();
   String locationLat = coordinates[1].toString();
   
   bikeData['location_long'] = locationLong;
   bikeData['location_lat'] = locationLat;
-  //TODO: Users choose size and type.
-  bikeData['size'] = 'size 2';
-  bikeData['type'] = 'type 2';
+  //bikeData['size'] = 'size 2';
+  //bikeData['type'] = 'type 2';
   String requestBody = jsonEncode(bikeData);
   String requestUrl = getGlobalUrl();
   String? accessToken = getAccessToken();

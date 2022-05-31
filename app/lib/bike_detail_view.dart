@@ -106,8 +106,10 @@ class BikeDetailTopRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String bikeImageUrl = bikeData.getImageUrl();
-    String bikeNameString = bikeData.getName();
+    String bikeNameString = 'Bike Name: "' + bikeData.getName() + '"';
     num bikeRating = bikeData.getAverageRating();
+    String typeString = 'Type: ' + bikeData.getType();
+    String sizeString = 'Size: ' + bikeData.getSize();
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -117,6 +119,8 @@ class BikeDetailTopRow extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(bikeNameString), 
+            Text(typeString),
+            Text(sizeString),
             //RatingStars(rating: bikeRating),
             RatingBarIndicator(
               rating: bikeRating.toDouble(),
@@ -131,7 +135,7 @@ class BikeDetailTopRow extends StatelessWidget {
             OutlinedButton(
               onPressed: () async {
                 debugPrint('checkout Bike button clicked');
-                await checkOutBike(bikeData.getId() );
+                checkOutBike(bikeData.getId() );
                 Navigator.pushNamed(context, ProfileView.routeName);
               },
               child: const Text('Check Out'),
