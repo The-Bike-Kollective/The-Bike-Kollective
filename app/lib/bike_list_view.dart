@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:the_bike_kollective/get-photo.dart';
-import 'package:the_bike_kollective/global_values.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'models.dart';
 import 'MenuDrawer.dart';
 import 'bike_detail_view.dart';
@@ -17,7 +17,6 @@ import 'requests.dart';
 // If we include sort filters, it may be the case that
 // stateful is what we want, so that the list will render differently
 // based on which filters are used.
-
 class BikeListView extends StatefulWidget {
   const BikeListView({Key? key}) : super(key: key);
   static const routeName = '/bike-list';
@@ -42,10 +41,18 @@ class _BikeListViewState extends State<BikeListView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: (ModalRoute.of(context)?.canPop ?? false)
-            ? const BackButton()
-            : null,
-        title: const Text('Bikes Nearby'),
+        leading: (ModalRoute.of(context)?.canPop ?? false) ? const BackButton() : null,
+        title: FutureBuilder(
+          future: currentList,
+          builder: (context, AsyncSnapshot<BikeListModel> snapshot) {
+            if (snapshot.hasData) {
+              int numBikes = snapshot.data!.getLength();
+              return Text('There $numBikes bikes nearby.');
+            } else {
+              return const Text('Searching for bikes...');
+            }
+          }
+        ),  
         actions: <Widget>[
           IconButton(
             icon: const Icon(
@@ -104,6 +111,7 @@ class BikeListBody extends StatelessWidget {
         child: ListView.builder(
             itemCount: bikeList.getLength(),
             itemBuilder: (context, i) {
+              //TODO: (this looks wrong, double check it)
               if (bikeList.bikes[i].getCheckOutId() != '-1') {
                 return Container();
               } else {
@@ -135,7 +143,7 @@ class BikeListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    num bikeRating = bikeData.getRating();
+    num averageRating = bikeData.getAverageRating();
     String bikeNameString = bikeData.getName();
     String distanceString = 'distance:' + distanceFromUser.toString();
     String bikeImageUrl = bikeData.getImageUrl();
@@ -147,27 +155,51 @@ class BikeListTile extends StatelessWidget {
                   builder: (context) => BikeDetailView(bikeData: bikeData)));
         },
         child: ListTile(
-            title:
-                Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Row(
-            // top row of an individual bike listing
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [Text(bikeNameString), Text(distanceString)],
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          title: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Image.network(bikeImageUrl, width: 100, fit: BoxFit.cover),
-              RatingStars(rating: bikeRating)
-            ],
-          ),
-          const Divider(
-            height: 20,
-            thickness: 5,
-            endIndent: 0,
-            color: Colors.grey,
-          ),
-        ])));
+              Row( // top row of an individual bike listing
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(bikeNameString),
+                  Text(distanceString)
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Image.network(bikeImageUrl,
+                    width: 100,
+                    fit:BoxFit.cover  
+                  ), 
+                  const Text('average rating:'),
+                   // placeholder for stars
+                  //(averageRating == -1.0) ? const Text('(no ratings yet)') 
+                  //:
+                  RatingBarIndicator(
+                    rating: averageRating.toDouble(),
+                    itemBuilder: (context, index) => const Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                    ),
+                    itemCount: 5,
+                    itemSize: 25.0,
+                    direction: Axis.horizontal,
+                  ),
+                  //RatingStars(rating: bikeRating)   
+                ],
+              ),
+              const Divider(
+                height: 20,
+                thickness: 5,
+                endIndent: 0,
+                color: Colors.grey,
+              ),
+       
+            ] 
+          )
+        )
+      );
   }
 }
 
@@ -207,3 +239,32 @@ class RatingStars extends StatelessWidget {
     );
   }
 }
+// TODO: 
+// 2. 
+// 3. 
+// class RatingStars extends StatelessWidget {
+//   final num rating;
+//   final numStarsPossible = 5;  
+//   const RatingStars({Key? key, this.rating = 0})
+//       : super(key: key);  
+  
+//   @override
+//   Widget build(BuildContext context) {
+//     return Row(
+//       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//       children: [
+//         const Text('rating:'),
+//         Row(//row of stars
+//           mainAxisSize: MainAxisSize.min,
+//           children: List.generate(numStarsPossible, (index) {
+//             return Icon(
+//               index < rating ? Icons.star : Icons.star_border,
+//               color:const Color(0xFFFDCC0D)
+//             );
+//           }),
+//         )
+//       ],
+//     ); 
+      
+//   }
+// }

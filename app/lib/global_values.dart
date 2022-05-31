@@ -17,7 +17,16 @@ const String cloudUrl2 =
 const String cloudUrl3 =
     "http://ec2-35-166-192-222.us-west-2.compute.amazonaws.com:5000";
 
-const String globalUrl = cloudUrl3;
+
+const String backUpServer = "http://ec2-34-213-186-200.us-west-2.compute.amazonaws.com:5000";
+
+//used in login functions if using the backup server
+final backUpServerRedirectUri ='redirect_uri=http%3A%2F%2Fec2-34-213-186-200.us-west-2.compute.amazonaws.com%3A5000%2Fprofile&flowName=GeneralOAuthFlow';
+
+
+
+const String globalUrl = backUpServer;
+
 
 //group API
 const String googleAPIKey = "AIzaSyD-HlsqR99_XmX5NM0Cy-1nEsau-FSwkgk";
@@ -51,30 +60,29 @@ those within Oregon State University and alumni, unless provided by David, Ali a
 
 //global variable where front-end can access access toke
 //for every post/get request to back-end
-
 String? ACCESS_TOKEN;
 String? CURRENT_USER_IDENTIFIER;
-bool isLoggedIn = false;
+int? CHECKED_OUT_BIKE_COMBO;
+
+// void setCheckedOutBike(String bikeId) {
+//   CHECKED_OUT_BIKE = bikeId;
+// }
+
+//String? getCheckedOutBike() => CHECKED_OUT_BIKE;
+//bool isLoggedInGetter() => isLoggedIn;
+// void setLoginStatus(bool status) {
+//   isLoggedIn = status;
+// }
+//bool isLoggedIn = false;
+//String? CHECKED_OUT_BIKE;
 String? CHECKED_OUT_BIKE;
 
-void setCheckedOutBike(String bikeId) {
-  CHECKED_OUT_BIKE = bikeId;
-}
-
+void setCheckedOutBike(String bikeId) {CHECKED_OUT_BIKE = bikeId;}
 String? getCheckedOutBike() => CHECKED_OUT_BIKE;
-bool isLoggedInGetter() => isLoggedIn;
-void setLoginStatus(bool status) {
-  isLoggedIn = status;
-}
-
+int? getCheckedOutBikeCombo() => CHECKED_OUT_BIKE_COMBO;
+void setCheckedOutBikeCombo(int newCombo) { CHECKED_OUT_BIKE_COMBO = newCombo;}
 String? getAccessToken() => ACCESS_TOKEN;
-void updateAccessToken(String? newToken) {
-  ACCESS_TOKEN = newToken!;
-}
-
+void updateAccessToken(String? newToken) {ACCESS_TOKEN = newToken!;}
 String? getCurrentUserIdentifier() => CURRENT_USER_IDENTIFIER;
-void updateCurrentUserIdentifier(newId) {
-  CURRENT_USER_IDENTIFIER = newId;
-}
-
+void updateCurrentUserIdentifier(newId) {CURRENT_USER_IDENTIFIER= newId;}
 String getGlobalUrl() => globalUrl;

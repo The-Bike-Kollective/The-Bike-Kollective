@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:the_bike_kollective/global_values.dart';
 import 'package:the_bike_kollective/profile_view.dart';
 import 'models.dart';
 import 'MenuDrawer.dart';
@@ -8,6 +9,10 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'global_values.dart';
 import 'Maps/mapwidgets/map_functions.dart';
+// import 'package:http/http.dart' as http;
+// import 'dart:convert';
+// import 'global_values.dart';
+import 'package:checkbox_formfield/checkbox_formfield.dart';
 
 // information/instructions:
 // @params:
@@ -35,25 +40,42 @@ class BikeFormArgument {
 // @params: User
 // @return: Page with form.
 // bugs: no known bugs
+// TODO: 
+// 1. Clean up code, remove unused unneeded comments:
 class AddBikePage extends StatelessWidget {
-  const AddBikePage({
+  AddBikePage({
     Key? key,
     /*required this.user*/
   }) : super(key: key);
   //final User user;
   static const routeName = '/new-bike-form';
+  final Future<User> currentUser = getUser(getCurrentUserIdentifier());
+
   @override
-  Widget build(BuildContext context) {
-    final args = ModalRoute.of(context)!.settings.arguments as BikeFormArgument;
-    return Scaffold(
+  Widget build(BuildContext context){
+    final args = ModalRoute.of(context)!
+    .settings.arguments as BikeFormArgument;
+    return Scaffold( 
         appBar: AppBar(
           title: const Text('The Bike Kollective'),
           leading:
               (ModalRoute.of(context)?.canPop ?? false) ? BackButton() : null,
         ),
         endDrawer: const MenuDrawer(),
-        body: AddBikeForm(
-            user: currentUser, imageStringBase64: args.imageStringBase64));
+        body: FutureBuilder(
+          future: currentUser,
+          builder: (context, AsyncSnapshot<User> snapshot) {
+            if (snapshot.hasData) {
+              return  AddBikeForm(
+                user: snapshot.data!, 
+                imageStringBase64: args.imageStringBase64
+              );
+            } else {
+              return const CircularProgressIndicator();
+            }
+          }
+        )
+    );
   }
 }
 
@@ -83,6 +105,9 @@ class _AddBikeFormState extends State<AddBikeForm> {
   var bikeData = {};
   bool isChecked = false;
   List randomCoord = [];
+  //bool? isChecked = false;
+  String releaseOfInterestFormText =
+    'If, God forbid, your bike is damaged, stolen, or goes missing, it sucks to be you. By checking this box, you are agreeing not to sue us.';
 
   @override
   Widget build(BuildContext context) {
@@ -91,6 +116,7 @@ class _AddBikeFormState extends State<AddBikeForm> {
       key: _formKey,
       child: Column(
         children: <Widget>[
+          // Bike Name Field
           TextFormField(
             // The validator receives the text that the user has entered.
             decoration: const InputDecoration(
@@ -109,11 +135,19 @@ class _AddBikeFormState extends State<AddBikeForm> {
               bikeData["name"] = value;
             },
           ),
+          //),  
+          
+          // ADD DROPDOWNS HERE:
+
+          // Type Drop Down 
+          // Size Drop Down
+
+          // Lock Combination Field
           TextFormField(
             decoration: const InputDecoration(
               icon: Icon(Icons.lock),
               hintText: '[Enter the lock combination.]',
-              labelText: 'Lock Combintation',
+              labelText: 'Lock Combination',
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
@@ -141,6 +175,39 @@ class _AddBikeFormState extends State<AddBikeForm> {
               }
             },
           ),
+          
+          // Release Form
+          Text("Release of Interest",
+           style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 1.5)
+          ),
+
+          Container(
+            //height: 150,
+            padding: const EdgeInsets.all(10),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.black),
+            ),
+            child: Text(releaseOfInterestFormText,
+              style: DefaultTextStyle.of(context).style.apply(fontSizeFactor: 1.25),
+            ),
+          ),
+            
+          // CheckBox Agree to Release Form
+          CheckboxListTileFormField(
+            title: const Text('I Agree'),
+            onSaved: (bool? value) {
+              print(value);
+            },
+            validator: (bool? value) {
+              if (value == false ) {
+                return 'Required';
+              }
+              return null;
+            },
+            
+            contentPadding: EdgeInsets.all(1),
+          ),
+                 
           ElevatedButton(
             onPressed: () {
               // Validate returns true if the form is valid, or false otherwise.
