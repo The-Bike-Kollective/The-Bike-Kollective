@@ -40,10 +40,23 @@ void test() async {
 // @params: none
 // @return: none
 // bugs: no known bugs, but need to do some more testing
-Future<BikeListModel> getBikeList() async {
+Future<BikeListModel> getBikeList(
+    {String size =  "",
+    String type = ""}) async {
   //print('getBikeList()');
+  String requestUrl = getGlobalUrl()+ '/bikes';
+  if (size != '') {
+    requestUrl += '?size=' + size;
+  }
+  if (size != '' && type != '') {
+    requestUrl += '&';
+  }
+  if (type != '') {
+    requestUrl += '?type=' + type;
+  }
+  print(requestUrl);
   final response = await http.get(
-    Uri.parse(getGlobalUrl()+ '/bikes'),
+    Uri.parse(requestUrl),
     headers: getHeaders()
   );
   print('status code' + response.statusCode.toString() );
@@ -190,7 +203,7 @@ Future checkOutBike(bikeId) async {
     String newAccessToken = responseJson['access_token'];
     updateAccessToken(newAccessToken); 
     int newCombo = responseJson['lock_combination'];
-    print('new combo: $newCombo');
+    //print('new combo: $newCombo');
     
     // save combination using global:
     //setCheckedOutBikeCombo(newCombo);
@@ -198,35 +211,33 @@ Future checkOutBike(bikeId) async {
     // save combination using sharedPreferences:
     // obtain shared preferences
     print('checkoutBike test1');
-    final prefs = await SharedPreferences.getInstance();
+    //final prefs = await SharedPreferences.getInstance();
 
     // set value
-    await prefs.setInt('combination', newCombo);  
+    //await prefs.setInt('combination', newCombo);  
     print('checkoutBike test2');
     return;
   } 
 
-  String message;
+  String message =responseJson['message'];
   switch(response.statusCode) {
-    case 400: { 
-      message = 'Bad request.';
-      break;
+    case 400:
+    case 409:
+    case 500: {
+      return message;
     }
-    case 401: {
-      launchURLInApp(); 
-      message = 'Unauthorized. Invalid access token.';
-      break;
-    }
+
+    case 401:
+    case 403:
     case 404: {
       launchURLInApp(); 
-      message = 'User not found. Non-existing access token.';
-      break;
+      return message;
     }
     default: {
-      message = 'Error with bike checkout.';
+      return message;
     }
   }
-  throw Exception(message);
+  //throw Exception(message);
 
 }
 
@@ -394,46 +405,48 @@ Future returnBike(String bikeId, String? note, num rating) async {
   );
   print('check in status code: ' + response.statusCode.toString());
   print(response.body);
+  final responseJson = jsonDecode(response.body);
+  String message = responseJson['message'];
   if (response.statusCode == 200) {
-    print('Success: checkIn successful');
-     
+    print('Bike Returned Successfully');
     //update access token 
-    final responseJson = jsonDecode(response.body);
     String newAccessToken = responseJson['access_token'];
     updateAccessToken(newAccessToken);
+    return message;
   } 
-  String message;
   switch(response.statusCode) {
-    case 400: { 
-      message = 'Bad request.';
-      break;
+    case 400:
+    case 409:
+    case 500:{ 
+      return message;
+    
     }
-    case 401: {
+    case 401:
+    case 403: {
       launchURLInApp(); 
-      message = 'Unauthorized. Invalid access token.';
-      break;
+      return message;
     }
 
-    case 409: { 
-      message = 'Checkout failed.';
-      break;
-    }
-    case 403: {
-      message = 'The client does not have access rights to the content.';
-      break;
-    }
+    // case 409: { 
+    //   message = 'Checkout failed.';
+    //   break;
+    // }
+    // case 403: {
+    //   message = 'The client does not have access rights to the content.';
+    //   break;
+    // }
     
 
-    case 500: {
-      message = 'Multiple USER ERROR.';
-      break;
-    }
+    // case 500: {
+    //   message = 'Multiple USER ERROR.';
+    //   break;
+    // }
 
     default: {
-      message = 'Error getting user.';
+      return message;
     }
   }
-  throw Exception(message);
+  //throw Exception(message);
 }
 
 // information/instructions: Creates a bike on the data base. Use 
@@ -449,16 +462,14 @@ Future returnBike(String bikeId, String? note, num rating) async {
 Future createBike(bikeData) async {
 
   print('createBike()');
-  //TODO: create function to generate random location near OSU.
   List coordinates = generateCoordinates();
   String locationLong = coordinates[0].toString();
   String locationLat = coordinates[1].toString();
   
   bikeData['location_long'] = locationLong;
   bikeData['location_lat'] = locationLat;
-  //TODO: Users choose size and type.
-  bikeData['size'] = 'size 2';
-  bikeData['type'] = 'type 2';
+  //bikeData['size'] = 'size 2';
+  //bikeData['type'] = 'type 2';
   String requestBody = jsonEncode(bikeData);
   String requestUrl = getGlobalUrl();
   String? accessToken = getAccessToken();
@@ -606,8 +617,43 @@ Future signWaiver() async {
     default: {
       throw Exception(message);
     }
-
   }
- 
+}
+
+
+Future reportBikeMissing(bikeId) async {
+  String requestUrl = getGlobalUrl() + '/reports';
+  requestUrl += '/$bikeId';
+  
+  final response = await http.post(
+    Uri.parse(requestUrl),
+    headers: getHeaders(),
+  );
+
+  print(response.statusCode);
+  print('reportBike() response body: ' + response.body);
+  var responseJson = jsonDecode(response.body);
+  
+  if (response.statusCode == 200) {
+    print("reportBike() success: ");
+    // update access token
+    String newAccessToken = responseJson['access_token'];
+    updateAccessToken(newAccessToken); 
+    return;
+  } 
+
+  switch(response.statusCode) {
+    case 401:
+    case 404:
+    case 500: {
+      String message =responseJson['message'];
+      return message;
+    }
+    
+    default: {
+      throw Exception("Error reporting bike.");
+    }
+  }
+  
 
 }

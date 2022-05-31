@@ -79,14 +79,16 @@ class _ProfileViewState extends State<ProfileView> {
 class ProfileViewA extends StatelessWidget {
   final String bikeId;
   final String userGivenName;
-  const ProfileViewA({ Key? key, 
+  
+  ProfileViewA({ Key? key, 
     required this.bikeId,
     required this.userGivenName })
     : super(key: key);
-  
+  late Future<Bike> bikeData = getBike(bikeId);
+
   @override
   Widget build(BuildContext context) {
-    final Future<Bike> bikeData = getBike(bikeId);
+    // final Future<Bike> bikeData = getBike(bikeId);
 
     return FutureBuilder<Bike>(
       future: bikeData,

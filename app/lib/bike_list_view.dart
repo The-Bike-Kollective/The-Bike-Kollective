@@ -24,12 +24,22 @@ class BikeListView extends StatefulWidget {
   State<BikeListView> createState() => _BikeListViewState();
 }
 
+
+
+enum Size {none, small, medium, large}
+enum Type {none, road, mountain}
 // This is the state object that is called by BikeListView().
 class _BikeListViewState extends State<BikeListView> {
   String buttonToolTipText = "add a bike";
   //const num numofBikes = 0;
   Future<BikeListModel> currentList = getBikeList();
+  String size = "";
+  String type = "";
+  Size? _size = Size.none;
+  Type? _type = Type.none;
+  Map tags = {'size': '', 'type': ''};
   
+
 
   @override
   // I'm not totally sure what this does or if we need it.
@@ -74,7 +84,184 @@ class _BikeListViewState extends State<BikeListView> {
           future: currentList,
           builder: (context, AsyncSnapshot<BikeListModel> snapshot) {
             if (snapshot.hasData) {
-              return BikeListBody(bikeList: snapshot.data!);
+              BikeListModel bikeList = snapshot.data!;
+              return Column(
+                children:[
+
+                  // Title Filter Type
+                  const Text('Filter by Type:',
+                    style: TextStyle(fontSize: 18)
+                  ),
+                  
+                  // Size Radio Button Labels
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: const[
+                      Text('none') ,
+                      Text('road') ,
+                      Text('mountain') ,
+                    ],
+                  ),
+
+                  //Type Filter Radio Buttons
+                  Row(
+                    children: [
+                       Expanded(//type 'none' radio button
+                        child: Radio<Type>(
+                          value: Type.none,
+                          groupValue: _type,
+                          onChanged: (Type? value) {
+                            setState(() {
+                              _type = value;
+                              tags['type'] = '';
+                              currentList = getBikeList(
+                                size:tags['size'],
+                                type:tags['type']
+                              );
+                            });
+                          },
+                        ),
+                      ),
+                      Expanded(///type 'road' radio button
+                        child: Radio<Type>(
+                          value: Type.road,
+                          groupValue: _type,
+                          onChanged: (Type? value) {
+                            setState(() {
+                              _type = value;
+                              tags['type'] = 'road';
+                              currentList = getBikeList(
+                                size:tags['size'],
+                                type:tags['type']
+                              );
+                            });
+                          },
+                        ),
+                      ),
+                       Expanded(//type 'mountain' radio button
+                        child: Radio<Type>(
+                          value: Type.mountain,
+                          groupValue: _type,
+                          onChanged: (Type? value) {
+                            setState(() {
+                              _type = value;
+                              tags['type'] = 'mountain';
+                              currentList = getBikeList(
+                                size:tags['size'],
+                                type:tags['type']
+                              );
+                            });
+                          },
+                        ),
+                      ),
+                      
+                    ]
+                  ),
+
+                  // Title Filter Type:
+                  const Text('Filter Size:',
+                    style: TextStyle(fontSize: 18)
+                  ),
+                  
+                  // Type Radio Button Labels
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: const[
+                      Text('none') ,
+                      Text('small') ,
+                      Text('medium') ,
+                      Text('large') ,
+                    ],
+                  ),
+
+
+                  //Size Filter Radio Buttons
+                  Row(
+                    children: [
+                       Expanded(//none radio button
+                        child: Radio<Size>(
+                          value: Size.none,
+                          groupValue: _size,
+                          onChanged: (Size? value) {
+                            setState(() {
+                              _size = value;
+                              tags['size'] = '';
+                              currentList = getBikeList(
+                                size:tags['size'],
+                                type:tags['type']
+                              );
+                            });
+                          },
+                        ),
+                      ),
+                      Expanded(///small radio button
+                        child: Radio<Size>(
+                          value: Size.small,
+                          groupValue: _size,
+                          onChanged: (Size? value) {
+                            setState(() {
+                              _size = value;
+                              tags['size'] = 'small';
+                              currentList = getBikeList(
+                                size:tags['size'],
+                                type:tags['type']
+                              );
+                            });
+                          },
+                        ),
+                      ),
+                       Expanded(//medium radio button
+                        child: Radio<Size>(
+                          value: Size.medium,
+                          groupValue: _size,
+                          onChanged: (Size? value) {
+                            setState(() {
+                              _size = value;
+                              tags['size'] = 'medium';
+                              currentList = getBikeList(
+                                size:tags['size'],
+                                type:tags['type']
+                              );
+                            });
+                          },
+                        ),
+                      ),
+                      Expanded(//large radio button
+                        child: Radio<Size>(
+                          value: Size.large,
+                          groupValue: _size,
+                          onChanged: (Size? value) {
+                            setState(() {
+                              _size = value;
+                              tags['size'] = 'large';
+                              currentList = getBikeList(
+                                size:tags['size'],
+                                type:tags['type']
+                              );
+                            });
+                          },
+                        ),
+                      ),
+                    ]
+                  ),
+
+                  Flexible(
+                    child: ListView.builder(
+                      itemCount: bikeList.getLength(),
+                      itemBuilder: (context, i) {
+                        //TODO: (this looks wrong, double check it)
+                        if (bikeList.bikes[i].getCheckOutId() != '-1') {
+                          return Container();
+                        } else {
+                          return BikeListTile(bikeData: bikeList.bikes[i]);
+                        }
+                      }
+                    )
+                  ),
+                ]
+              );  
+
+
             } else {
               return const CircularProgressIndicator();
             }
@@ -107,8 +294,11 @@ class BikeListBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-        child: ListView.builder(
+    return Column(
+      children:[
+        const Text('Filter by size:'),
+        Flexible(
+          child: ListView.builder(
             itemCount: bikeList.getLength(),
             itemBuilder: (context, i) {
               //TODO: (this looks wrong, double check it)
@@ -117,7 +307,12 @@ class BikeListBody extends StatelessWidget {
               } else {
                 return BikeListTile(bikeData: bikeList.bikes[i]);
               }
-            }));
+            }
+          )
+        ),
+      ]
+    );
+    
   }
 }
 

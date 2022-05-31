@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:the_bike_kollective/Maps/maps_from_list.dart';
-import 'package:the_bike_kollective/global_values.dart';
+//import 'package:the_bike_kollective/global_values.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:the_bike_kollective/requests.dart';
 import 'models.dart';
 import 'MenuDrawer.dart';
-import 'Maps/googlemaps.dart';
+//import 'Maps/googlemaps.dart';
+import 'style.dart';
 import 'requests.dart';
 import 'profile_view.dart';
 import 'package:the_bike_kollective/Maps/mapwidgets/bike_modal_bottom.dart';
@@ -106,8 +107,10 @@ class BikeDetailTopRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String bikeImageUrl = bikeData.getImageUrl();
-    String bikeNameString = bikeData.getName();
+    String bikeNameString = 'Bike Name: "' + bikeData.getName() + '"';
     num bikeRating = bikeData.getAverageRating();
+    String typeString = 'Type: ' + bikeData.getType();
+    String sizeString = 'Size: ' + bikeData.getSize();
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -117,6 +120,8 @@ class BikeDetailTopRow extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(bikeNameString), 
+            Text(typeString),
+            Text(sizeString),
             //RatingStars(rating: bikeRating),
             RatingBarIndicator(
               rating: bikeRating.toDouble(),
@@ -129,12 +134,30 @@ class BikeDetailTopRow extends StatelessWidget {
               direction: Axis.horizontal,
             ),
             OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                backgroundColor: buttonStyle['backgroundColor'],
+                primary: buttonStyle['textColor']
+              ),
               onPressed: () async {
                 debugPrint('checkout Bike button clicked');
                 checkOutBike(bikeData.getId() );
                 Navigator.pushNamed(context, ProfileView.routeName);
               },
               child: const Text('Check Out'),
+            ),
+            OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                backgroundColor: buttonStyle['reportBackground'],
+                primary: buttonStyle['textColor']
+              ),
+              onPressed: () async {
+                debugPrint('Report Missing button clicked');
+                await reportBikeMissing(bikeData.getId() );
+                Navigator.pushNamed(context, ProfileView.routeName);
+              },
+              child: const Text('Report Missing',
+                style: TextStyle(fontSize: 16),
+              ),
             ),
           ],
         )
