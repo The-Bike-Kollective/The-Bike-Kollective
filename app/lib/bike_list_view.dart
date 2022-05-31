@@ -35,6 +35,7 @@ class _BikeListViewState extends State<BikeListView> {
   String size = "";
   String type = "";
   Size? _size = Size.small;
+  Map tags = {'size': '', 'type': ''};
 
 
   @override
@@ -91,7 +92,7 @@ class _BikeListViewState extends State<BikeListView> {
                       Expanded(
                         child: ListTile(
                           title: const Text('small',
-                            style: TextStyle(fontSize: 10)
+                            style: TextStyle(fontSize: 8)
                           ),
                           trailing: Radio<Size>(
                             value: Size.small,
@@ -99,6 +100,12 @@ class _BikeListViewState extends State<BikeListView> {
                             onChanged: (Size? value) {
                               setState(() {
                                 _size = value;
+                                tags['size'] = 'small';
+                                currentList = getBikeList(
+                                  size:tags['size'],
+                                  type:tags['type']
+                                );
+
                               });
                             },
                           ),
@@ -107,7 +114,7 @@ class _BikeListViewState extends State<BikeListView> {
                        Expanded(
                         child: ListTile(
                           title: const Text('medium',
-                            style: TextStyle(fontSize: 10)
+                            style: TextStyle(fontSize: 8)
                           ),
                           trailing: Radio<Size>(
                           
@@ -115,7 +122,14 @@ class _BikeListViewState extends State<BikeListView> {
                             groupValue: _size,
                             onChanged: (Size? value) {
                               setState(() {
-                                _size = value;
+                                  _size = value;
+                                  tags['size'] = 'medium';
+                                  currentList = getBikeList(
+                                  size:tags['size'],
+                                  type:tags['type']
+                                );
+
+
                               });
                             },
                           ),
@@ -124,14 +138,19 @@ class _BikeListViewState extends State<BikeListView> {
                       Expanded(
                         child: ListTile(
                           title: const Text('large',
-                            style: TextStyle(fontSize: 10)
+                            style: TextStyle(fontSize: 8)
                           ),
                           trailing: Radio<Size>(
                             value: Size.large,
                             groupValue: _size,
                             onChanged: (Size? value) {
                               setState(() {
-                                _size = value;
+                                 _size = value;
+                                  tags['size'] = 'large';
+                                  currentList = getBikeList(
+                                  size:tags['size'],
+                                  type:tags['type']
+                                );
                               });
                             },
                           ),
