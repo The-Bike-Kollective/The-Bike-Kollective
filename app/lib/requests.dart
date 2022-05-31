@@ -40,10 +40,19 @@ void test() async {
 // @params: none
 // @return: none
 // bugs: no known bugs, but need to do some more testing
-Future<BikeListModel> getBikeList() async {
+Future<BikeListModel> getBikeList(
+    {String size =  "",
+    String type = ""}) async {
   //print('getBikeList()');
+  String requestUrl = getGlobalUrl()+ '/bikes';
+  if (size != '') {
+    requestUrl += '?size=' + size;
+  }
+  if (type != '') {
+    requestUrl += '?type=' + type;
+  }
   final response = await http.get(
-    Uri.parse(getGlobalUrl()+ '/bikes'),
+    Uri.parse(requestUrl),
     headers: getHeaders()
   );
   print('status code' + response.statusCode.toString() );

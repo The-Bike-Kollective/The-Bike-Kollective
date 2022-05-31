@@ -24,12 +24,18 @@ class BikeListView extends StatefulWidget {
   State<BikeListView> createState() => _BikeListViewState();
 }
 
+
+
+enum Size {small, medium, large}
 // This is the state object that is called by BikeListView().
 class _BikeListViewState extends State<BikeListView> {
   String buttonToolTipText = "add a bike";
   //const num numofBikes = 0;
   Future<BikeListModel> currentList = getBikeList();
-  
+  String size = "";
+  String type = "";
+  Size? _size = Size.small;
+
 
   @override
   // I'm not totally sure what this does or if we need it.
@@ -74,7 +80,83 @@ class _BikeListViewState extends State<BikeListView> {
           future: currentList,
           builder: (context, AsyncSnapshot<BikeListModel> snapshot) {
             if (snapshot.hasData) {
-              return BikeListBody(bikeList: snapshot.data!);
+              BikeListModel bikeList = snapshot.data!;
+              //return BikeListBody(bikeList: snapshot.data!);
+              return Column(
+                children:[
+                
+                  const Text('Filter Size:'),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ListTile(
+                          title: const Text('small',
+                            style: TextStyle(fontSize: 10)
+                          ),
+                          trailing: Radio<Size>(
+                            value: Size.small,
+                            groupValue: _size,
+                            onChanged: (Size? value) {
+                              setState(() {
+                                _size = value;
+                              });
+                            },
+                          ),
+                        )
+                      ),
+                       Expanded(
+                        child: ListTile(
+                          title: const Text('medium',
+                            style: TextStyle(fontSize: 10)
+                          ),
+                          trailing: Radio<Size>(
+                          
+                            value: Size.medium,
+                            groupValue: _size,
+                            onChanged: (Size? value) {
+                              setState(() {
+                                _size = value;
+                              });
+                            },
+                          ),
+                        )
+                      ),
+                      Expanded(
+                        child: ListTile(
+                          title: const Text('large',
+                            style: TextStyle(fontSize: 10)
+                          ),
+                          trailing: Radio<Size>(
+                            value: Size.large,
+                            groupValue: _size,
+                            onChanged: (Size? value) {
+                              setState(() {
+                                _size = value;
+                              });
+                            },
+                          ),
+                        )
+                      )
+                      
+                    ]
+                  ),
+                  Flexible(
+                    child: ListView.builder(
+                      itemCount: bikeList.getLength(),
+                      itemBuilder: (context, i) {
+                        //TODO: (this looks wrong, double check it)
+                        if (bikeList.bikes[i].getCheckOutId() != '-1') {
+                          return Container();
+                        } else {
+                          return BikeListTile(bikeData: bikeList.bikes[i]);
+                        }
+                      }
+                    )
+                  ),
+                ]
+              );  
+
+
             } else {
               return const CircularProgressIndicator();
             }
@@ -107,8 +189,11 @@ class BikeListBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-        child: ListView.builder(
+    return Column(
+      children:[
+        const Text('Filter by size:'),
+        Flexible(
+          child: ListView.builder(
             itemCount: bikeList.getLength(),
             itemBuilder: (context, i) {
               //TODO: (this looks wrong, double check it)
@@ -117,7 +202,12 @@ class BikeListBody extends StatelessWidget {
               } else {
                 return BikeListTile(bikeData: bikeList.bikes[i]);
               }
-            }));
+            }
+          )
+        ),
+      ]
+    );
+    
   }
 }
 

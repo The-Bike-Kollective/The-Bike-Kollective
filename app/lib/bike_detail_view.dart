@@ -140,6 +140,14 @@ class BikeDetailTopRow extends StatelessWidget {
               },
               child: const Text('Check Out'),
             ),
+            OutlinedButton(
+              onPressed: () async {
+                debugPrint('Report Missing button clicked');
+                checkOutBike(bikeData.getId() );
+                Navigator.pushNamed(context, ProfileView.routeName);
+              },
+              child: const Text('Report Missing'),
+            ),
           ],
         )
       ],
