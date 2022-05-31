@@ -26,7 +26,7 @@ class BikeListView extends StatefulWidget {
 
 
 
-enum Size {small, medium, large}
+enum Size {none, small, medium, large}
 // This is the state object that is called by BikeListView().
 class _BikeListViewState extends State<BikeListView> {
   String buttonToolTipText = "add a bike";
@@ -34,7 +34,7 @@ class _BikeListViewState extends State<BikeListView> {
   Future<BikeListModel> currentList = getBikeList();
   String size = "";
   String type = "";
-  Size? _size = Size.small;
+  Size? _size = Size.none;
   Map tags = {'size': '', 'type': ''};
 
 
@@ -86,76 +86,87 @@ class _BikeListViewState extends State<BikeListView> {
               return Column(
                 children:[
                 
-                  const Text('Filter Size:'),
+                  const Text('Filter Size:',
+                    style: TextStyle(fontSize: 18)
+                  ),
+    
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: const[
+                      Text('none') ,
+                      Text('small') ,
+                      Text('medium') ,
+                      Text('large') ,
+                       
+                    ],
+                  ),
+                  
+                  Row(//size filter radio buttons
                     children: [
+                       Expanded(
+                        child: Radio<Size>(
+                          value: Size.none,
+                          groupValue: _size,
+                          onChanged: (Size? value) {
+                            setState(() {
+                              _size = value;
+                              tags['size'] = '';
+                              currentList = getBikeList(
+                                size:tags['size'],
+                                type:tags['type']
+                              );
+                            });
+                          },
+                        ),
+                      ),
                       Expanded(
-                        child: ListTile(
-                          title: const Text('small',
-                            style: TextStyle(fontSize: 8)
-                          ),
-                          trailing: Radio<Size>(
-                            value: Size.small,
-                            groupValue: _size,
-                            onChanged: (Size? value) {
-                              setState(() {
-                                _size = value;
-                                tags['size'] = 'small';
-                                currentList = getBikeList(
-                                  size:tags['size'],
-                                  type:tags['type']
-                                );
-
-                              });
-                            },
-                          ),
-                        )
+                        child: Radio<Size>(
+                          value: Size.small,
+                          groupValue: _size,
+                          onChanged: (Size? value) {
+                            setState(() {
+                              _size = value;
+                              tags['size'] = 'small';
+                              currentList = getBikeList(
+                                size:tags['size'],
+                                type:tags['type']
+                              );
+                            });
+                          },
+                        ),
                       ),
                        Expanded(
-                        child: ListTile(
-                          title: const Text('medium',
-                            style: TextStyle(fontSize: 8)
-                          ),
-                          trailing: Radio<Size>(
-                          
-                            value: Size.medium,
-                            groupValue: _size,
-                            onChanged: (Size? value) {
-                              setState(() {
-                                  _size = value;
-                                  tags['size'] = 'medium';
-                                  currentList = getBikeList(
-                                  size:tags['size'],
-                                  type:tags['type']
-                                );
-
-
-                              });
-                            },
-                          ),
-                        )
+                        child: Radio<Size>(
+                          value: Size.medium,
+                          groupValue: _size,
+                          onChanged: (Size? value) {
+                            setState(() {
+                              _size = value;
+                              tags['size'] = 'medium';
+                              currentList = getBikeList(
+                                size:tags['size'],
+                                type:tags['type']
+                              );
+                            });
+                          },
+                        ),
                       ),
                       Expanded(
-                        child: ListTile(
-                          title: const Text('large',
-                            style: TextStyle(fontSize: 8)
-                          ),
-                          trailing: Radio<Size>(
-                            value: Size.large,
-                            groupValue: _size,
-                            onChanged: (Size? value) {
-                              setState(() {
-                                 _size = value;
-                                  tags['size'] = 'large';
-                                  currentList = getBikeList(
-                                  size:tags['size'],
-                                  type:tags['type']
-                                );
-                              });
-                            },
-                          ),
-                        )
-                      )
+                        child: Radio<Size>(
+                          value: Size.large,
+                          groupValue: _size,
+                          onChanged: (Size? value) {
+                            setState(() {
+                              _size = value;
+                              tags['size'] = 'large';
+                              currentList = getBikeList(
+                                size:tags['size'],
+                                type:tags['type']
+                              );
+                            });
+                          },
+                        ),
+                      ),
                       
                     ]
                   ),
