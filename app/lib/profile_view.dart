@@ -51,6 +51,7 @@ class _ProfileViewState extends State<ProfileView> {
           ),
         ),
         child:  Center(
+          
           child: FutureBuilder<User>(
             future: user,
             builder: (context, AsyncSnapshot<User> snapshot) {
@@ -101,24 +102,65 @@ class ProfileViewA extends StatelessWidget {
             String bikeName = checkedOutBike.getName();
             String bikeId = checkedOutBike.getId();
             int bikeCombo = checkedOutBike.getLockCombination();
-            return Column(
-              children:  [
-                Text('Welcome, $userGivenName!'),
-                const Text('You currently have a bike checked out.'),
-                const Text('Bike Info:'),
-                Text('Bike Name: $bikeName'),
-                Text('Bike ID: $bikeId'),
-                Text('Lock Combination: $bikeCombo'),
-                CheckedOutBikeRow(checkedOutBike: checkedOutBike),
-                OutlinedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, ReturnBikeForm.routeName,);
-                    debugPrint('Return Bike button clicked');
-                  },
-                  child: const Text('Return Bike'),
-                ),
-              ],
-            );   
+            return 
+            Container(
+              // height:400,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,  
+                mainAxisAlignment: MainAxisAlignment.start,
+                children:  [
+                  Padding(
+                    padding: const EdgeInsets.all(3),
+                    child: Text('Welcome, $userGivenName!', 
+                      style: pagesStyle['defaultText'],
+                      textAlign: TextAlign.center
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(3),
+                    child: Text('You currently have a bike checked out.', 
+                      style: pagesStyle['defaultText'],
+                      textAlign: TextAlign.center
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Padding(
+                    padding: const EdgeInsets.all(3),
+                    child: Text('Bike Name: "$bikeName"', 
+                      style: pagesStyle['defaultText'],
+                      textAlign: TextAlign.center
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(3),
+                    child: Text('Bike ID: $bikeId', 
+                      style: pagesStyle['defaultText'],
+                      textAlign: TextAlign.center
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(3),
+                    child: Text('Lock Combination: $bikeCombo', 
+                      style: pagesStyle['defaultText'],
+                      textAlign: TextAlign.center
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  CheckedOutBikeRow(checkedOutBike: checkedOutBike),
+                  const SizedBox(height: 15),
+                  OutlinedButton(
+                    
+                    style:buttonStyle['main'],
+                    onPressed: () {
+                      Navigator.pushNamed(context, ReturnBikeForm.routeName,);
+                      debugPrint('Return Bike button clicked');
+                    },
+                    child: const Text('Return Bike'),
+                  ),
+                ],
+              )
+          );
+               
           } else {
             return const CircularProgressIndicator();
           }
@@ -204,12 +246,14 @@ class CheckedOutBikeRow extends StatelessWidget {
     String imageUrl = checkedOutBike.getImageUrl();
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Image.network(imageUrl,
           width: 200,
           fit:BoxFit.cover  
         ),
-        const Text('Due Back in 22 Minutes')
+        Text('Enjoy your ride!', style: pagesStyle['defaultText'] ),
+        const SizedBox(width: 2)
       ],      
     );
   }
