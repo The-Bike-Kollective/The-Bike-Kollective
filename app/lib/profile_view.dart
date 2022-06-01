@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-//import 'package:the_bike_kollective/access_token.dart';
 import 'package:the_bike_kollective/bike_list_view.dart';
 import 'package:the_bike_kollective/return-bike-form.dart';
 import 'package:the_bike_kollective/get-photo.dart';
@@ -7,6 +6,7 @@ import 'package:the_bike_kollective/global_values.dart';
 import 'models.dart';
 import 'requests.dart';
 import 'global_values.dart';
+import 'style.dart';
 
 
 // information/instructions: ProfileView is a template that will
@@ -16,10 +16,8 @@ import 'global_values.dart';
 // @params: required User object with a property HasABikeCheckedOut.
 // @return: nothing returned
 // bugs: no known bugs
-// TODO: 
-// 1. style these ugly pages
 class ProfileView extends StatefulWidget {
-  const ProfileView({ Key? key/*, required this.user*/ }) 
+  const ProfileView({ Key? key }) 
       : super(key: key);
 
   static const routeName = '/profile-view';
@@ -34,7 +32,6 @@ class _ProfileViewState extends State<ProfileView> {
   void initState() {
     super.initState();
   }
-
   Future<User> user = 
     getUser(getCurrentUserIdentifier() );
   
@@ -42,26 +39,39 @@ class _ProfileViewState extends State<ProfileView> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('The Bike Collective')
+        title: const Text('The Bike Kollective')
         ),
-      body: FutureBuilder<User>(
-        future: user,
-        builder: (context, AsyncSnapshot<User> snapshot) {
-          if(snapshot.hasData) {
-            User userData = snapshot.data!;
-            String checkedOutBike = userData.getCheckedOutBike();
-            return (checkedOutBike == "-1") ? 
-              ProfileViewB(user: userData) : 
-              ProfileViewA(
-                bikeId: userData.getCheckedOutBike(),
-                userGivenName: userData.getGivenName(),
-              );
-          } else {
-            return const CircularProgressIndicator();
-          }
-        }
+      //backgroundColor: appStyle['backGroundColor'],
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(
+                "assets/background.jpg"),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child:  Center(
+          
+          child: FutureBuilder<User>(
+            future: user,
+            builder: (context, AsyncSnapshot<User> snapshot) {
+              if(snapshot.hasData) {
+                User userData = snapshot.data!;
+                String checkedOutBike = userData.getCheckedOutBike();
+                return (checkedOutBike == "-1") ? 
+                  ProfileViewB(user: userData) : 
+                  ProfileViewA(
+                    bikeId: userData.getCheckedOutBike(),
+                    userGivenName: userData.getGivenName(),
+                  );
+              } else {
+                return const CircularProgressIndicator();
+              }
+            }
+          )
+        )
       )
-      );
+    );
   }
 }
 
@@ -72,10 +82,6 @@ class _ProfileViewState extends State<ProfileView> {
 // @params: required User object with a property HasABikeCheckedOut.
 // @return: nothing returned
 // bugs: no known bugs
-// TODO: 
-// 1. style these ugly pages
-// 2. Preload the image
-// 3. Make the buttons functional
 class ProfileViewA extends StatelessWidget {
   final String bikeId;
   final String userGivenName;
@@ -88,8 +94,6 @@ class ProfileViewA extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final Future<Bike> bikeData = getBike(bikeId);
-
     return FutureBuilder<Bike>(
       future: bikeData,
       builder: (context, AsyncSnapshot<Bike> snapshot) {
@@ -97,26 +101,66 @@ class ProfileViewA extends StatelessWidget {
             Bike checkedOutBike = snapshot.data!;
             String bikeName = checkedOutBike.getName();
             String bikeId = checkedOutBike.getId();
-            setCheckedOutBike(bikeId);
             int bikeCombo = checkedOutBike.getLockCombination();
-            return Column(
-              children:  [
-                Text('Welcome, $userGivenName!'),
-                const Text('You currently have a bike checked out.'),
-                const Text('Bike Info:'),
-                Text('Bike Name: $bikeName'),
-                Text('Bike ID: $bikeId'),
-                Text('Lock Combination: $bikeCombo'),
-                CheckedOutBikeRow(checkedOutBike: checkedOutBike),
-                OutlinedButton(
-                  onPressed: () {
-                    Navigator.pushNamed(context, ReturnBikeForm.routeName,);
-                    debugPrint('Return Bike button clicked');
-                  },
-                  child: const Text('Return Bike'),
-                ),
-              ],
-            );   
+            return 
+            Container(
+              // height:400,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,  
+                mainAxisAlignment: MainAxisAlignment.start,
+                children:  [
+                  Padding(
+                    padding: const EdgeInsets.all(3),
+                    child: Text('Welcome, $userGivenName!', 
+                      style: pagesStyle['defaultText'],
+                      textAlign: TextAlign.center
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(3),
+                    child: Text('You currently have a bike checked out.', 
+                      style: pagesStyle['defaultText'],
+                      textAlign: TextAlign.center
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  Padding(
+                    padding: const EdgeInsets.all(3),
+                    child: Text('Bike Name: "$bikeName"', 
+                      style: pagesStyle['defaultText'],
+                      textAlign: TextAlign.center
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(3),
+                    child: Text('Bike ID: $bikeId', 
+                      style: pagesStyle['defaultText'],
+                      textAlign: TextAlign.center
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(3),
+                    child: Text('Lock Combination: $bikeCombo', 
+                      style: pagesStyle['defaultText'],
+                      textAlign: TextAlign.center
+                    ),
+                  ),
+                  const SizedBox(height: 15),
+                  CheckedOutBikeRow(checkedOutBike: checkedOutBike),
+                  const SizedBox(height: 15),
+                  OutlinedButton(
+                    
+                    style:buttonStyle['main'],
+                    onPressed: () {
+                      Navigator.pushNamed(context, ReturnBikeForm.routeName,);
+                      debugPrint('Return Bike button clicked');
+                    },
+                    child: const Text('Return Bike'),
+                  ),
+                ],
+              )
+          );
+               
           } else {
             return const CircularProgressIndicator();
           }
@@ -130,10 +174,6 @@ class ProfileViewA extends StatelessWidget {
 // @params: required User object with a property HasABikeCheckedOut.
 // @return: nothing returned
 // bugs: no known bugs
-// TODO: 
-// 1. style these ugly pages
-// 2. Preload the image
-// 3. Make the buttons functional
 class ProfileViewB extends StatelessWidget {
   final User user;
   const ProfileViewB({ Key? key, required this.user }) 
@@ -141,27 +181,49 @@ class ProfileViewB extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     String currentUserGivenName = user.getGivenName();
-    return Column(children: [
-        Text('Welcome, $currentUserGivenName!'),
-        OutlinedButton(
-          onPressed: () {
-            debugPrint('Find a Bike button clicked');
-            Navigator.pushNamed(
-              context, BikeListView.routeName,
-            );    
-            
-          },
-          child: const Text('Find a Bike'),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        // Welcome Message  
+        Padding(
+          padding: const EdgeInsets.all(3),
+          child: Text('Welcome, $currentUserGivenName!', 
+            style: pagesStyle['welcomeMessage'],
+            textAlign: TextAlign.center
+          )
         ),
-        OutlinedButton(
-          onPressed: () {
-            Navigator.pushNamed(
-              context, GetPhoto.routeName,
-            );       
-            debugPrint('add bike clicked');   
-          },
-          child: const Text('Add a Bike'),
+
+        // Find a Bike Button
+        SizedBox(
+          child: OutlinedButton(
+            style: buttonStyle['main'],
+            onPressed: () {
+              debugPrint('Find a Bike button clicked');
+              Navigator.pushNamed(
+                context, BikeListView.routeName,
+              );           
+            },
+            child: const Text('Find a Bike'),
+          ),
+          width: 200
         ),
+
+        // Add a Bike Button
+        SizedBox(
+          child: OutlinedButton(
+            style: buttonStyle['main'],
+            onPressed: () {
+              Navigator.pushNamed(
+                context, GetPhoto.routeName,
+              );       
+              debugPrint('add bike clicked');   
+            },
+            child: const Text('Add a Bike'),
+          ),
+          width:200
+        )
+
       ],
     );  
   }
@@ -174,8 +236,6 @@ class ProfileViewB extends StatelessWidget {
 // @return: Renders row with info about the bike that is
 // checked out
 // bugs: no known bugs
-// TODO: 
-// 1. Calculate how much time is left.
 class CheckedOutBikeRow extends StatelessWidget {
   final Bike checkedOutBike;
   const CheckedOutBikeRow({ Key? key,
@@ -186,12 +246,14 @@ class CheckedOutBikeRow extends StatelessWidget {
     String imageUrl = checkedOutBike.getImageUrl();
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Image.network(imageUrl,
           width: 200,
           fit:BoxFit.cover  
         ),
-        const Text('Due Back in 22 Minutes')
+        Text('Enjoy your ride!', style: pagesStyle['defaultText'] ),
+        const SizedBox(width: 2)
       ],      
     );
   }

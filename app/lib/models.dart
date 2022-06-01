@@ -3,10 +3,6 @@
 // @params: no params
 // @return: nothing returned
 // bugs: no known bugs
-// TODO: 
-// 1. complete the model, making sure that it matches the back end, 
-// with all the same properties and datatypes.
-// 2. 
 class User {
   String id;
   String familyName;
@@ -66,7 +62,6 @@ class User {
       givenName: parsedJson['user']["given_name"],
       email: parsedJson['user']["email"],
       identifier: parsedJson['user']["identifier"],
-      //ownedBikes: List<dynamic>.from(parsedJson["owned_bikes"].map((x) => x)),
       checkedOutBike: parsedJson['user']["checked_out_bike"],
       checkedOutTime: parsedJson['user']["checked_out_time"],
       suspended: parsedJson['user']["suspended"],
@@ -74,12 +69,9 @@ class User {
       refreshToken: parsedJson['user']["refresh_token"],
       signedWaiver: parsedJson['user']["signed_waiver"],
       state: parsedJson['user']["state"],
-      //checkoutHistory:
-      //    List<dynamic>.from(parsedJson["checkout_history"].map((x) => x)),
       checkoutRecordId: parsedJson['user']["checkout_record_id"],
     );
   }
-
 }
 
 
@@ -87,8 +79,6 @@ class User {
 // @params: no params
 // @return: nothing returned
 // bugs: no known bugs
-// TODO: 
-// 1. Figure out what to do with date/time.
 class Bike {
   late bool active;
   List checkOutHistory = [];
@@ -121,15 +111,12 @@ class Bike {
         this.condition = true, 
         this.ownerId = "-1", 
         required this.notes , 
-        //this.ratingHistory, 
         this.checkOutTime = 1, 
-        //this.checkOutHistory,
         this.checkOutId = '-1', 
         this.id = "-1",
         this.accessToken = "-1", 
         this.type = 'no type provided',
         this.size = 'no size provided'
-
 
   });
   
@@ -191,16 +178,14 @@ class Bike {
       ownerId: json['owner_id'] as String,
       lockCombination: json['lock_combination'] as int,
       notes: (json['notes'] != null) ? json['notes'] : [],
-      rating: double.parse(json['rating'].toString()),// as double,
-      //ratingHistory: json['rating_history'] as List<dynamic>,
+      rating: double.parse(json['rating'].toString()),
       locationLong: json['location_long'] as num,
       locationLat: json['location_lat'] as num,
       checkOutId: json['check_out_id'] as String,
       checkOutTime: json['check_out_time'] as int,
       type: json['type'],
       size: json['size']
-      //accessToken: json['access_token'] as String
-      //checkOutHistory: json['check_out_history'] as List<dynamic>
+      
     );
 
   }
@@ -215,10 +200,8 @@ class Bike {
       condition: json['bike']['condition'] as bool,
       ownerId: json['bike']['owner_id'] as String,
       lockCombination: json['bike']['lock_combination'] as int,
-      // problem with next line
       notes: (json['notes'] != null) ? json['notes'] : [],
-      rating: json['bike']['rating'],// as double,
-      //ratingHistory: json['rating_history'] as List<dynamic>,
+      rating: json['bike']['rating'],
       locationLong: json['bike']['location_long'] as num,
       locationLat: json['bike']['location_lat'] as num,
       checkOutId: json['bike']['check_out_id'] as String,
@@ -226,7 +209,7 @@ class Bike {
       accessToken: json['access_token'] as String,
       type: json['bike']['type'],
       size: json['bike']['size']
-      //checkOutHistory: json['check_out_history'] as List<dynamic>
+
     );
   }    
 }
@@ -237,12 +220,6 @@ class Bike {
 // @params: none
 // @return: none
 // bugs: no known bugs
-// TODO: 
-// 1. Expand as needed to contain a more complete model of the 
-// data. Right now it just contains what is needed to render
-// what is currently being rendered.
-// 2. 
-// 3. 
 class BikeListModel {
   BikeListModel({bikes}); 
   List<Bike> bikes = [];

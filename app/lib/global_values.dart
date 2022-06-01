@@ -39,21 +39,17 @@ const String userAgreement =
 affiliates, officers and directors (collectively, “The Bike Kollective,” “we,” “us” or “our”) governing your 
 use of the The Bike Kollective application (the “The Bike Kollective App”), website, and technology platform 
 (collectively, the “The Bike Kollective Platform”).
-
 PLEASE BE ADVISED: THIS AGREEMENT CONTAINS PROVISIONS THAT GOVERN HOW CLAIMS BETWEEN YOU AND The Bike Kollective 
 CAN BE BROUGHT (SEE SECTION 17 BELOW). THESE PROVISIONS WILL, WITH LIMITED EXCEPTION, REQUIRE YOU TO SUBMIT CLAIMS 
 YOU HAVE AGAINST The Bike Kollective TO BINDING AND FINAL ARBITRATION ON AN INDIVIDUAL BASIS, NOT AS A PLAINTIFF OR CLASS 
 MEMBER IN ANY CLASS, GROUP OR REPRESENTATIVE ACTION OR PROCEEDING. AS A DRIVER OR DRIVER APPLICANT, YOU HAVE AN OPPORTUNITY TO OPT OUT OF ARBITRATION WITH RESPECT TO CERTAIN CLAIMS AS PROVIDED IN SECTION 17.
-
 By entering into this Agreement, and/or by using or accessing the The Bike Kollective Platform you expressly acknowledge 
 that you understand this Agreement (including the dispute resolution and arbitration provisions in Section 17) and accept all 
 of its terms. IF YOU DO NOT AGREE TO BE BOUND BY THE TERMS AND CONDITIONS OF THIS AGREEMENT, YOU MAY NOT USE OR ACCESS THE
  The Bike Kollective PLATFORM OR ANY OF THE SERVICES PROVIDED THROUGH THE The Bike Kollective PLATFORM. If you use the 
  The Bike Kollective Platform in another country, you agree to be subject to The Bike Kollective's terms of service for that country.
-
 When using the The Bike Kollective Platform, you also agree to conduct yourself in accordance with our Community Guidelines, 
 which shall form part of this Agreement between you and The Bike Kollective.
-
 The Bike Kollective is a student project and is not meant to be used for public use. Any use outside of the 
 scope of Oregon State University's CS 467 course is at the risk of the user. This app should only be accessed by 
 those within Oregon State University and alumni, unless provided by David, Ali and Esther.""";

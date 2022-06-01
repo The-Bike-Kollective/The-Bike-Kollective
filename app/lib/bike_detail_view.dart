@@ -5,7 +5,6 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:the_bike_kollective/requests.dart';
 import 'models.dart';
 import 'MenuDrawer.dart';
-//import 'Maps/googlemaps.dart';
 import 'style.dart';
 import 'requests.dart';
 import 'profile_view.dart';
@@ -19,10 +18,6 @@ import 'package:the_bike_kollective/Maps/mapwidgets/bike_modal_bottom.dart';
 // @params: Bike()
 // @return: A page showing all the details about the Bike object.
 // bugs: no known bugs
-// TODO:
-// 1. Include the rest of the data about the bike.
-// 2. Caculate and display bike's distance from user.
-// 3. Style
 class BikeDetailView extends StatelessWidget {
   final Bike bikeData;
   const BikeDetailView({Key? key, required this.bikeData}) : super(key: key);
@@ -61,7 +56,6 @@ class BikeDetailView extends StatelessWidget {
                           );
                         },
                       );
-                debugPrint('Find Bike Near Me Clicked');
               },
             );
             })
@@ -92,14 +86,11 @@ class BikeDetailView extends StatelessWidget {
 // @return: Rendered view of Bike Details
 // bugs: no known bugs
 // TODO:
-// 1. Add more data
 // 2. Consider that the distance from current user may best be
 // calculated within the Bike Model itself, so that it can be
 // displayed wherever we need it. The BikeModel would have to
 // have access to the user's location somehow for that to work.
-// 3. We may have decided to generate random locations
-// for the first version. Let's confirm this and if so, implement
-// that.
+
 class BikeDetailTopRow extends StatelessWidget {
   final Bike bikeData;
   const BikeDetailTopRow({Key? key, required this.bikeData}) : super(key: key);
@@ -122,7 +113,6 @@ class BikeDetailTopRow extends StatelessWidget {
             Text(bikeNameString), 
             Text(typeString),
             Text(sizeString),
-            //RatingStars(rating: bikeRating),
             RatingBarIndicator(
               rating: bikeRating.toDouble(),
               itemBuilder: (context, index) => const Icon(
@@ -140,7 +130,7 @@ class BikeDetailTopRow extends StatelessWidget {
               ),
               onPressed: () async {
                 debugPrint('checkout Bike button clicked');
-                checkOutBike(bikeData.getId() );
+                await checkOutBike(bikeData.getId() );
                 Navigator.pushNamed(context, ProfileView.routeName);
               },
               child: const Text('Check Out'),
@@ -171,12 +161,6 @@ class BikeDetailTopRow extends StatelessWidget {
 // @params: Bike()
 // @return: list
 // bugs: no known bugs
-// TODO:
-// 1. The Note widget may add some things, like date, author, and
-// style, at which point this will need to be updated.
-// 2. there May Still be a bug here, but none of our bikes have
-//  any notes at the moment. I'll look into that on the next PR.
-// 3.
 class NoteList extends StatelessWidget {
   final List notes;
   const NoteList({Key? key, required this.notes}) : super(key: key);
@@ -204,10 +188,6 @@ class NoteList extends StatelessWidget {
 // @params: String note (note will probably need to be it's own Class)
 // @return:
 // bugs: no known bugs
-// TODO:
-// 1. Create a Note model that contains the text, author, date.
-// right now it's just a String, but probably will need more detail
-// than that.
 class NoteTile extends StatelessWidget {
   final String note;
   const NoteTile({Key? key, required this.note}) : super(key: key);

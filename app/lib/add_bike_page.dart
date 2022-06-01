@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:the_bike_kollective/global_values.dart';
 import 'package:the_bike_kollective/profile_view.dart';
+import 'package:the_bike_kollective/style.dart';
 import 'models.dart';
 import 'MenuDrawer.dart';
 import 'requests.dart';
-import 'mock_data.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'style.dart';
 import 'global_values.dart';
-import 'Maps/mapwidgets/map_functions.dart';
 import 'package:checkbox_formfield/checkbox_formfield.dart';
 
 // information/instructions:
@@ -37,14 +35,10 @@ class BikeFormArgument {
 // @params: User
 // @return: Page with form.
 // bugs: no known bugs
-// TODO: 
-// 1. Clean up code, remove unused unneeded comments:
 class AddBikePage extends StatelessWidget {
   AddBikePage({
     Key? key,
-    /*required this.user*/
   }) : super(key: key);
-  //final User user;
   static const routeName = '/new-bike-form';
   final Future<User> currentUser = getUser(getCurrentUserIdentifier());
 
@@ -83,7 +77,6 @@ class AddBikePage extends StatelessWidget {
 // @return: form for usker to fill out. When user taps submit, the
 // input is validated, converted to JSON and sent to the database.
 // bugs: no known bugs
-// TODO: include options for type and size
 class AddBikeForm extends StatefulWidget {
   const AddBikeForm(
       {Key? key, required this.user, required this.imageStringBase64})
@@ -134,17 +127,15 @@ class _AddBikeFormState extends State<AddBikeForm> {
               bikeData["name"] = value;
             },
           ),  
-          
-          // ADD DROPDOWNS HERE:
           // Type Drop Down 
           DropdownButton<String>(
             value: type,
             icon: const Icon(Icons.arrow_downward),
             elevation: 16,
-            style: const TextStyle(color: Colors.deepPurple),
+            style: TextStyle(color: dropdownStyle['textColor']),
             underline: Container(
               height: 2,
-              color: Colors.deepPurpleAccent,
+              color: dropdownStyle['textColor'],
             ),
             onChanged: (String? newType) {
               setState(() {
@@ -160,19 +151,16 @@ class _AddBikeFormState extends State<AddBikeForm> {
               );
             }).toList(),
           ),
-
-
     
           // Size Drop Down
-
           DropdownButton<String>(
             value: size,
             icon: const Icon(Icons.arrow_downward),
             elevation: 16,
-            style: const TextStyle(color: Colors.deepPurple),
+            style: TextStyle(color: dropdownStyle['textColor']),
             underline: Container(
               height: 2,
-              color: Colors.deepPurpleAccent,
+              color: dropdownStyle['textColor'],
             ),
             onChanged: (String? newSize) {
               setState(() {
@@ -189,7 +177,6 @@ class _AddBikeFormState extends State<AddBikeForm> {
             }).toList(),
           ),
 
-
           // Lock Combination Field
           TextFormField(
             decoration: const InputDecoration(
@@ -205,22 +192,6 @@ class _AddBikeFormState extends State<AddBikeForm> {
             },
             onSaved: (String? value) {
               bikeData["lock_combination"] = int.parse(value!);
-            },
-          ),
-          CheckboxListTile(
-            title: const Text("Input Location"),
-            value: isChecked,
-            onChanged: (bool? value) {
-             
-              setState(() {
-                isChecked = value!;
-              });
-
-              if (isChecked == true) {
-                randomCoord = generateCoordinates();
-                bikeData["location_lat"] = randomCoord[1];
-                bikeData["location_long"] = randomCoord[0];
-              }
             },
           ),
           

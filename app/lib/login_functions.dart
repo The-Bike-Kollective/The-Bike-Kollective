@@ -59,23 +59,7 @@ String redirect_uri = backUpServerRedirectUri;
 
   final url = 'https://$host$path$access_type$prompt$scope$urlState$response_type$client_id$redirect_uri';
   
-  final queryParamerters = {
-    'state' : sstate,
-    'access_type': 'offline',
-    'prompt': 'consent',
-    'scope' : 'https%3A%2F%2Fwww.googleapis.com%2Fauth%2Fuserinfo.email&include_granted_scopes=true',
-    'response_type' : 'code',
-    'client_id' : '701199836944-k9grqhb7tl30mm974iv62k6ge3ha2cqs.apps.googleusercontent.com',
-    'redirect_uri' : 'http%3A%2F%2Fec2-54-71-143-21.us-west-2.compute.amazonaws.com%3A5000%2Fprofile&flowName=GeneralOAuthFlow'
-  };
-
-  // final Uri url = Uri(  
-  //   scheme: 'https',
-  //   host: host,
-  //   path: path,
-  //   queryParameters: queryParamerters
-  // );
-
+  
 
   if (await canLaunch(url)) {
     print('&&&&&&&&&&&&&&&&&&&&&&&&&&&&');
