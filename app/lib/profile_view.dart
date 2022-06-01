@@ -97,7 +97,7 @@ class ProfileViewA extends StatelessWidget {
             Bike checkedOutBike = snapshot.data!;
             String bikeName = checkedOutBike.getName();
             String bikeId = checkedOutBike.getId();
-            setCheckedOutBike(bikeId);
+            //setCheckedOutBike(bikeId);
             int bikeCombo = checkedOutBike.getLockCombination();
             return Column(
               children:  [

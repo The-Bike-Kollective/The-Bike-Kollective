@@ -7,14 +7,6 @@ import 'Login/login_page.dart';
 // @params: no params
 // @return: nothing returned
 // bugs: no known bugs
-// TODO:
-//  1. Figure out the cross-origin problem for images.
-// Currently asset images are being used, but when we start
-// using URLs we'll need a solution for this.
-// 2. Style this page, it looks like garbage right now (I can
-// say that because I made it. David)
-// 3. Preload the image so you don't have to wait for the image
-//  to load.
 class HomeView extends StatelessWidget {
   const HomeView({Key? key}) : super(key: key);
   final String aboutUs = "We help communities share bikes.";
@@ -43,8 +35,6 @@ class HomeView extends StatelessWidget {
 // @params: no params
 // @return: nothing returned
 // bugs: no known bugs
-// TODO: I think we want to center the buttons eventually.
-// TODO: navigate to a form to create new account.
 class HomeButtonGroup extends StatelessWidget {
   const HomeButtonGroup({Key? key}) : super(key: key);
 
@@ -62,20 +52,9 @@ class HomeButtonGroup extends StatelessWidget {
           },
           child: const Text('Sign In/Create Account'),
         ),
-        // OutlinedButton(
-        //   onPressed: () {
-        //     Navigator.push(
-        //       context,
-        //       MaterialPageRoute(
-        //           builder: (context) => const CreateAccountPage()),
-        //     );
-        //     debugPrint('Create Account Clicked');
-        //   },
-        //   child: const Text('Create Account'),
-        // ),
+      
         OutlinedButton(
           onPressed: () {
-            // TODO: navigate to a form to exit application.
             debugPrint('Quit Clicked');
           },
           child: const Text('Quit'),

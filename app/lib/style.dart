@@ -8,3 +8,11 @@ Map buttonStyle = {
   'reportBackground': Colors.red,
   
 };
+
+Map dropdownStyle = {
+  'textColor': Colors.black,
+};
+
+Map bikeListStyle = {
+  'textStyle': const TextStyle(fontSize: 32),
+};

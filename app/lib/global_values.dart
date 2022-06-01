@@ -24,7 +24,7 @@ const String backUpServer = "http://ec2-34-213-186-200.us-west-2.compute.amazona
 final backUpServerRedirectUri ='redirect_uri=http%3A%2F%2Fec2-34-213-186-200.us-west-2.compute.amazonaws.com%3A5000%2Fprofile&flowName=GeneralOAuthFlow';
 
 
-
+// This is the url to the server used through the app.
 const String globalUrl = backUpServer;
 
 
@@ -64,21 +64,8 @@ String? ACCESS_TOKEN;
 String? CURRENT_USER_IDENTIFIER;
 int? CHECKED_OUT_BIKE_COMBO;
 
-// void setCheckedOutBike(String bikeId) {
-//   CHECKED_OUT_BIKE = bikeId;
-// }
 
-//String? getCheckedOutBike() => CHECKED_OUT_BIKE;
-//bool isLoggedInGetter() => isLoggedIn;
-// void setLoginStatus(bool status) {
-//   isLoggedIn = status;
-// }
-//bool isLoggedIn = false;
-//String? CHECKED_OUT_BIKE;
-String? CHECKED_OUT_BIKE;
 
-void setCheckedOutBike(String bikeId) {CHECKED_OUT_BIKE = bikeId;}
-String? getCheckedOutBike() => CHECKED_OUT_BIKE;
 int? getCheckedOutBikeCombo() => CHECKED_OUT_BIKE_COMBO;
 void setCheckedOutBikeCombo(int newCombo) { CHECKED_OUT_BIKE_COMBO = newCombo;}
 String? getAccessToken() => ACCESS_TOKEN;

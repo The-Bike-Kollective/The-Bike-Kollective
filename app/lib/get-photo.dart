@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-//import 'package:the_bike_kollective/add-bike-page.dart';
 import 'add_bike_page.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -19,7 +18,7 @@ class GetPhoto extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('The Bike Collective')
+        title: const Text('The Bike Kollective')
       ),
       body: Row(
         children: [
