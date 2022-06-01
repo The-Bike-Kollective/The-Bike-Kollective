@@ -3,6 +3,7 @@ import 'package:the_bike_kollective/global_values.dart';
 import 'package:the_bike_kollective/profile_view.dart';
 import 'MenuDrawer.dart';
 import 'requests.dart';
+import 'models.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 
@@ -100,10 +101,12 @@ class _ReturnBikeFormBodyState extends State<ReturnBikeFormBody> {
           ElevatedButton(
             onPressed: () async {
               // Validate returns true if the form is valid, or false otherwise.
+              User currentUser = await getUser(getCurrentUserIdentifier());
               if (_formKey.currentState!.validate()) {
                 _formKey.currentState?.save();
                 await returnBike(
-                  getCheckedOutBike()!, 
+                  currentUser.getCheckedOutBike(),
+                  //getCheckedOutBike()!, 
                   bikeData['note'] as String,
                   bikeData['rating'] as num
                 );

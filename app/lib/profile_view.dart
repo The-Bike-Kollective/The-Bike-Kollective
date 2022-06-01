@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-//import 'package:the_bike_kollective/access_token.dart';
 import 'package:the_bike_kollective/bike_list_view.dart';
 import 'package:the_bike_kollective/return-bike-form.dart';
 import 'package:the_bike_kollective/get-photo.dart';
@@ -16,10 +15,8 @@ import 'global_values.dart';
 // @params: required User object with a property HasABikeCheckedOut.
 // @return: nothing returned
 // bugs: no known bugs
-// TODO: 
-// 1. style these ugly pages
 class ProfileView extends StatefulWidget {
-  const ProfileView({ Key? key/*, required this.user*/ }) 
+  const ProfileView({ Key? key }) 
       : super(key: key);
 
   static const routeName = '/profile-view';
@@ -34,7 +31,6 @@ class _ProfileViewState extends State<ProfileView> {
   void initState() {
     super.initState();
   }
-
   Future<User> user = 
     getUser(getCurrentUserIdentifier() );
   
@@ -72,10 +68,6 @@ class _ProfileViewState extends State<ProfileView> {
 // @params: required User object with a property HasABikeCheckedOut.
 // @return: nothing returned
 // bugs: no known bugs
-// TODO: 
-// 1. style these ugly pages
-// 2. Preload the image
-// 3. Make the buttons functional
 class ProfileViewA extends StatelessWidget {
   final String bikeId;
   final String userGivenName;
@@ -88,8 +80,6 @@ class ProfileViewA extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // final Future<Bike> bikeData = getBike(bikeId);
-
     return FutureBuilder<Bike>(
       future: bikeData,
       builder: (context, AsyncSnapshot<Bike> snapshot) {
@@ -97,7 +87,6 @@ class ProfileViewA extends StatelessWidget {
             Bike checkedOutBike = snapshot.data!;
             String bikeName = checkedOutBike.getName();
             String bikeId = checkedOutBike.getId();
-            //setCheckedOutBike(bikeId);
             int bikeCombo = checkedOutBike.getLockCombination();
             return Column(
               children:  [
@@ -130,10 +119,6 @@ class ProfileViewA extends StatelessWidget {
 // @params: required User object with a property HasABikeCheckedOut.
 // @return: nothing returned
 // bugs: no known bugs
-// TODO: 
-// 1. style these ugly pages
-// 2. Preload the image
-// 3. Make the buttons functional
 class ProfileViewB extends StatelessWidget {
   final User user;
   const ProfileViewB({ Key? key, required this.user }) 
@@ -174,8 +159,6 @@ class ProfileViewB extends StatelessWidget {
 // @return: Renders row with info about the bike that is
 // checked out
 // bugs: no known bugs
-// TODO: 
-// 1. Calculate how much time is left.
 class CheckedOutBikeRow extends StatelessWidget {
   final Bike checkedOutBike;
   const CheckedOutBikeRow({ Key? key,
