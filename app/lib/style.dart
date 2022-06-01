@@ -6,7 +6,10 @@ Map buttonStyle = {
   'textColor': Colors.white,
   'backgroundColor':Colors.blue,
   'reportBackground': Colors.red,
-  
+  'main': OutlinedButton.styleFrom(
+                backgroundColor: Colors.blue,
+                primary: Colors.white
+              ),
 };
 
 Map dropdownStyle = {
@@ -15,4 +18,10 @@ Map dropdownStyle = {
 
 Map bikeListStyle = {
   'textStyle': const TextStyle(fontSize: 32),
+};
+
+Map pagesStyle = {
+  'defaultText':const TextStyle(fontSize: 18),
+  'italicSubtitle' :const TextStyle(fontSize: 22, fontStyle: FontStyle.italic)
+
 };

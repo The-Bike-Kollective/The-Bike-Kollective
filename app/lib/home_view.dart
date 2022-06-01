@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'MenuDrawer.dart';
 import 'Login/login_page.dart';
+import 'style.dart';
 
 // information/instructions: Flutter Widget; This is the home view, when the
 //user first opesn the app and is not signed in.
@@ -18,11 +19,18 @@ class HomeView extends StatelessWidget {
         ),
         endDrawer: const MenuDrawer(),
         body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
             Image.asset('assets/bikes.png'),
-            Text(aboutUs),
+            Padding(
+              padding: const EdgeInsets.all(3),
+              child: Text(aboutUs, 
+                style: pagesStyle['italicSubtitle'],
+                textAlign: TextAlign.center
+              ),
+            ),
+            
             const HomeButtonGroup()
           ],
         ));
@@ -42,24 +50,33 @@ class HomeButtonGroup extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        OutlinedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const LoginPage()),
-            );
-            debugPrint('sign in clicked');
-          },
-          child: const Text('Sign In/Create Account'),
+        SizedBox(
+          child: OutlinedButton(
+            style: buttonStyle['main'],
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const LoginPage()),
+              );
+              debugPrint('sign in clicked');
+            },
+            child: const Text('Sign In/Create Account'),
+          ),
+          width: 200, 
         ),
-      
-        OutlinedButton(
-          onPressed: () {
-            debugPrint('Quit Clicked');
-          },
-          child: const Text('Quit'),
-        ),
-      ],
+        SizedBox(
+          child: OutlinedButton(
+            style: buttonStyle['main'],
+              onPressed: () {
+                debugPrint('Quit Clicked');
+              },
+              child: const Text('Quit'),
+          ),
+          width: 200
+          
+        )
+      ]
     );
+        
   }
 }

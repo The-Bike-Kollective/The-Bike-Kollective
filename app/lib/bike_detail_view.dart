@@ -130,7 +130,7 @@ class BikeDetailTopRow extends StatelessWidget {
               ),
               onPressed: () async {
                 debugPrint('checkout Bike button clicked');
-                checkOutBike(bikeData.getId() );
+                await checkOutBike(bikeData.getId() );
                 Navigator.pushNamed(context, ProfileView.routeName);
               },
               child: const Text('Check Out'),

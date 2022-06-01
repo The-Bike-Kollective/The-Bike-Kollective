@@ -409,6 +409,7 @@ Future createBike(bikeData) async {
       "Content-Type": "application/json; charset=UTF-8",
       "Access-Control-Allow-Origin": "*",
       "Authorization": "Bearer $accessToken"};
+  
   final response = await http.post(
     Uri.parse(requestUrl),
     headers: headers,
@@ -440,7 +441,8 @@ Future createBike(bikeData) async {
 // @params: none
 // @return: 
 // bugs: no known bugs
-
+// TODO:
+// 1. perhaps update the header if there is time
 void postState(context) async {
   Customer user;
   final String state = getState();
@@ -495,6 +497,9 @@ void postState(context) async {
 // @params: none
 // @return: 
 // bugs: no known bugs
+// TODO: 
+// 1. remove print statements (keeping there there for now beacause 
+// // they help with debugging)
 Future signWaiver() async {
  
   String requestUrl = getGlobalUrl();
@@ -506,6 +511,8 @@ Future signWaiver() async {
     headers: getHeaders()
   );
   var responseJson = jsonDecode(response.body);
+ 
+  print('signWaiver() reponse.body: ' + response.body);
   if (response.statusCode == 200) {
     print(responseJson['message']);  
     updateAccessToken(responseJson['access_token']); // update access token
@@ -551,6 +558,7 @@ Future reportBikeMissing(bikeId) async {
     headers: getHeaders(),
   );
 
+   print('reportBike() response body: ' + response.body);
   var responseJson = jsonDecode(response.body);
   
   if (response.statusCode == 200) {

@@ -54,7 +54,7 @@ class _ReturnBikeFormBodyState extends State<ReturnBikeFormBody> {
   // Create a global key that uniquely identifies the Form widget
   // and allows validation of the form.
   final _formKey = GlobalKey<FormState>();
-  var bikeData = {'rating': -1, 'note': ''};
+  var bikeData = {'rating': 3, 'note': ''};
   
   @override
   Widget build(BuildContext context) {
