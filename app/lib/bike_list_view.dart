@@ -79,10 +79,14 @@ class _BikeListViewState extends State<BikeListView> {
               BikeListModel bikeList = snapshot.data!;
               return Column(
                 children:[
-
+                
                   // Title Filter Type
-                  const Text('Filter by Type:',
-                    style:  TextStyle(fontSize: 22)
+                  Text('Filter by Type:',
+                    style:  TextStyle(
+                      fontFamily: 'Raleway' ,
+                      fontSize: 26, 
+                      fontWeight: FontWeight.bold,
+                      color:Colors.blue.shade900)
                   ),
                   
                   // Size Radio Button Labels
@@ -150,8 +154,12 @@ class _BikeListViewState extends State<BikeListView> {
                   ),
 
                   // Title Filter Type:
-                  const Text('Filter Size:',
-                    style: TextStyle(fontSize: 22)
+                  Text('Filter Size:',
+                    style:  TextStyle(
+                      fontFamily: 'Raleway' ,
+                      fontSize: 26, 
+                      fontWeight: FontWeight.bold,
+                      color:Colors.blue.shade900)
                   ),
                   
                   // Type Radio Button Labels
@@ -235,6 +243,13 @@ class _BikeListViewState extends State<BikeListView> {
                       ),
                     ]
                   ),
+                  Divider(
+                    height: 20,
+                    thickness: 5,
+                    endIndent: 0,
+                    color: Colors.blue.shade900,
+                  ),
+
 
                   Flexible(
                     child: ListView.builder(
